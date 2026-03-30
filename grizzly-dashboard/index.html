@@ -1774,7 +1774,7 @@ async function sendChat() {
   const thinking = addBubble('thinking', 'Thinking…');
 
   try {
-    const res = await fetch('/.netlify/functions/ask', {
+    const res = await fetch('/.netlify/functions/ask-question', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages: chatHistory }),
