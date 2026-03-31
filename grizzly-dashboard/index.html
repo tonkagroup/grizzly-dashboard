@@ -1589,21 +1589,8 @@ document.addEventListener('drop', e => {
 //   Drive file ID → https://drive.google.com/uc?export=download&id=FILE_ID
 // ══════════════════════════════════════════════════════════════════════════
 
-// ── Paste your Drive file IDs here ──────────────────────────────────────
-const DRIVE_FILE_IDS = {
-  snapshot:     '1-l0vyw4GDhXMwi7XnAg2p7AbDke9ZTvu',     // snapshot_latest.json
-  status:       '1gtJxptdp8DHzGIsh9xOMcl-TaMbM00So',       // dashboard_status.json
-  origination:  '<<<ORIGINATION_FILE_ID>>>',  // origination_latest.json
-  cancellation: '1XAC3ZGUQVsCaWQzCdM89bhScYE4hIJke', // cancellation_latest.json
-};
-// ────────────────────────────────────────────────────────────────────────
-
-function driveUrl(fileId) {
-  // Google Drive direct-download URL for publicly shared files.
-  // CORS note: Drive sets Access-Control-Allow-Origin: * on public files,
-  // so fetch() works fine from Netlify (or any origin).
-  return `https://drive.google.com/uc?export=download&id=${fileId}`;
-}
+// Drive data is fetched server-side via the Netlify function to avoid CORS issues.
+// File IDs are stored as environment variables in Netlify — not in this file.
 
 function applyDriveSnapshot(data) {
   if (!data || data.error) {
@@ -1643,37 +1630,27 @@ function setDriveStatus(state, msg) {
 }
 
 async function loadFromDrive() {
-  // If file IDs haven't been filled in yet, fall back to baseline.
-  const snapshotId = DRIVE_FILE_IDS.snapshot;
-  if (!snapshotId || snapshotId.startsWith('<<<')) {
-    setDriveStatus('warn', 'Drive IDs not configured — using hardcoded baseline');
-    refreshAll();
-    return;
-  }
-
   setDriveStatus('info', 'Fetching…');
-
   try {
-    // Fetch snapshot JSON
-    const snapResp = await fetch(driveUrl(snapshotId));
-    if (!snapResp.ok) throw new Error(`HTTP ${snapResp.status}`);
-    const snapData = await snapResp.json();
-    applyDriveSnapshot(snapData);
-  } catch (err) {
-    setDriveStatus('error', 'Fetch failed: ' + err.message);
-    refreshAll();
-  }
+    // Fetch Drive data server-side via Netlify function (avoids CORS)
+    const resp = await fetch('/.netlify/functions/ask-question', {
+      method: 'GET',
+    });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
 
-  // Fetch status JSON (non-critical — don't let failure block render)
-  const statusId = DRIVE_FILE_IDS.status;
-  if (statusId && !statusId.startsWith('<<<')) {
-    try {
-      const statusResp = await fetch(driveUrl(statusId));
-      if (statusResp.ok) {
-        const statusData = await statusResp.json();
-        applyDriveStatus(statusData);
-      }
-    } catch (_) { /* status is non-critical */ }
+    if (data.snapshot) {
+      applyDriveSnapshot(data.snapshot);
+    } else {
+      setDriveStatus('warn', 'No snapshot yet — using baseline');
+      refreshAll();
+    }
+
+    if (data.status) applyDriveStatus(data.status);
+
+  } catch(err) {
+    setDriveStatus('warn', 'Could not fetch live data — using baseline');
+    refreshAll();
   }
 }
 
