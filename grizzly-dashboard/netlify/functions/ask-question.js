@@ -119,7 +119,41 @@ First automated run expected Mar 31, 2026.
 `;
 
 exports.handler = async function(event, context) {
-  // Only allow POST
+  const path = event.path || '';
+  const action = event.queryStringParameters?.action || 'ask';
+
+  // ── FETCH DRIVE DATA (called by dashboard on load) ──────────
+  if (event.httpMethod === 'GET' || action === 'data') {
+    const fileIds = {
+      snapshot:     process.env.DRIVE_SNAPSHOT_ID,
+      status:       process.env.DRIVE_STATUS_ID,
+      cancellation: process.env.DRIVE_CANCELLATION_ID,
+    };
+
+    const results = {};
+    for (const [key, id] of Object.entries(fileIds)) {
+      if (!id) { results[key] = null; continue; }
+      try {
+        const url = `https://drive.google.com/uc?export=download&id=${id}`;
+        const resp = await fetch(url);
+        if (resp.ok) {
+          results[key] = await resp.json();
+        } else {
+          results[key] = { error: `HTTP ${resp.status}` };
+        }
+      } catch(e) {
+        results[key] = { error: e.message };
+      }
+    }
+
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      body: JSON.stringify(results),
+    };
+  }
+
+  // ── CLAUDE CHAT (POST) ──────────────────────────────────────
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
@@ -133,11 +167,8 @@ exports.handler = async function(event, context) {
   }
 
   let body;
-  try {
-    body = JSON.parse(event.body);
-  } catch (e) {
-    return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON body' }) };
-  }
+  try { body = JSON.parse(event.body); }
+  catch(e) { return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON body' }) }; }
 
   const { messages } = body;
   if (!messages || !Array.isArray(messages)) {
@@ -170,10 +201,10 @@ exports.handler = async function(event, context) {
 
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       body: JSON.stringify({ reply: text }),
     };
-  } catch (err) {
+  } catch(err) {
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'Function error: ' + err.message }),
