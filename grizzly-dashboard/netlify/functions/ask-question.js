@@ -110,35 +110,108 @@ async function fetchDriveFile(envKey) {
 // Summarize origination data into readable context for Claude
 function summarizeOrigination(data) {
   if (!data || !data.raw_rows || !data.raw_rows.length) return null;
-  
+
   const rows = data.raw_rows;
   const reportDate = data.report_date || 'unknown';
-  
-  // Count by origination date (bookings made each day)
+
+  // The date field Campspot uses
+  const DATE_KEY = 'Origination/Claimed (Park TZ) Date';
+
+  // Count by origination date
   const byDate = {};
-  const bySource = data.by_source || {};
-  
+  // Count by arrival month
+  const byArrivalMonth = {};
+  // Count by source
+  const bySource = {};
+  // Count by site type (classified)
+  const bySiteType = {};
+  // Count online vs offline
+  let online = 0, offline = 0;
+  // Lead time buckets
+  const leadBuckets = { same_day: 0, one_to_7: 0, eight_to_30: 0, thirty1_to_90: 0, over_90: 0 };
+  // Unique confirmation numbers (deduplicate multi-site reservations)
+  const uniqueConfs = new Set();
+
   rows.forEach(r => {
-    const d = r['Origination Date'] || r['origination_date'] || '';
+    // Date booked
+    const d = r[DATE_KEY] || '';
     if (d) byDate[d] = (byDate[d] || 0) + 1;
+
+    // Unique reservations
+    const conf = r['Confirmation'] || '';
+    uniqueConfs.add(conf);
+
+    // Arrival month
+    const arrival = r['Arrival Date'] || '';
+    if (arrival) {
+      const month = arrival.substring(0, 7); // e.g. "2026-06"
+      byArrivalMonth[month] = (byArrivalMonth[month] || 0) + 1;
+    }
+
+    // Source
+    const src = r['Reservation Source'] || 'Unknown';
+    bySource[src] = (bySource[src] || 0) + 1;
+
+    // Online vs offline
+    const origin = (r['Request Origin'] || '').toUpperCase();
+    if (origin === 'ONLINE') online++;
+    else offline++;
+
+    // Site type (simplified)
+    const siteType = r['Site/Add-on Type'] || '';
+    const st = siteType.toUpperCase();
+    let cls = 'Other';
+    if (st.includes('PRESIDENTIAL')) cls = 'Presidential';
+    else if (st.includes('PREMIUM PULL')) cls = 'Prem Pull-Thru';
+    else if (st.includes('PULL-THRU') || st.includes('PULL THRU')) cls = 'Pull-Thru';
+    else if (st.includes('PREMIUM BACK') || st.includes('PREMIUM FOREST')) cls = 'Prem Back-In';
+    else if (st.includes('GALLATIN') || st.includes('FOREST BACK')) cls = 'Gallatin';
+    else if (st.includes('BACK IN') || st.includes('BACK-IN')) cls = 'Back-In';
+    else if (st.includes('DRY')) cls = 'Dry Site';
+    else if (st.includes('ELECTRIC')) cls = 'Electric Only';
+    else if (st.includes('LUXURY')) cls = 'Lux Cabin';
+    else if (st.includes('CABIN')) cls = 'Cabin';
+    bySiteType[cls] = (bySiteType[cls] || 0) + 1;
+
+    // Lead time
+    if (d && arrival) {
+      const booked = new Date(d);
+      const arr = new Date(arrival);
+      const days = Math.round((arr - booked) / 86400000);
+      if (days === 0) leadBuckets.same_day++;
+      else if (days <= 7) leadBuckets.one_to_7++;
+      else if (days <= 30) leadBuckets.eight_to_30++;
+      else if (days <= 90) leadBuckets.thirty1_to_90++;
+      else leadBuckets.over_90++;
+    }
   });
-  
-  // Get last 7 days of booking activity
-  const dates = Object.keys(byDate).sort().slice(-14);
-  const recentActivity = dates.map(d => `${d}: ${byDate[d]} reservations`).join(' | ');
-  
-  // Source breakdown
-  const sourceLines = Object.entries(bySource)
-    .sort((a,b) => b[1]-a[1])
-    .slice(0, 10)
-    .map(([src, cnt]) => `${src}: ${cnt}`)
-    .join(' | ');
+
+  // Format date breakdown (sorted)
+  const dateLines = Object.entries(byDate).sort()
+    .map(([d, n]) => `${d}: ${n} line items`).join(' | ');
+
+  // Format arrival month breakdown
+  const arrivalLines = Object.entries(byArrivalMonth).sort()
+    .map(([m, n]) => `${m}: ${n}`).join(' | ');
+
+  // Format source breakdown
+  const sourceLines = Object.entries(bySource).sort((a,b) => b[1]-a[1])
+    .map(([s, n]) => `${s}: ${n}`).join(' | ');
+
+  // Format site type breakdown
+  const siteLines = Object.entries(bySiteType).sort((a,b) => b[1]-a[1])
+    .map(([s, n]) => `${s}: ${n}`).join(' | ');
 
   return `== LIVE ORIGINATION DATA (report date: ${reportDate}) ==
-Total reservations in report: ${rows.length}
-Bookings by date (recent): ${recentActivity || 'no date data'}
-Booking source breakdown: ${sourceLines || 'no source data'}
-Note: Origination report shows reservations at original booking date. Modifications appear at original booking date, not modification date.`;
+Total line items in report: ${rows.length} (note: one reservation may have multiple line items if multiple sites booked)
+Unique reservation confirmations: ${uniqueConfs.size}
+Line items by booking date: ${dateLines || 'none'}
+Online bookings: ${online} | Offline/phone bookings: ${offline}
+Booking source: ${sourceLines}
+Arrival month breakdown (line items): ${arrivalLines}
+Site type breakdown: ${siteLines}
+Lead time: same-day=${leadBuckets.same_day} | 1-7days=${leadBuckets.one_to_7} | 8-30days=${leadBuckets.eight_to_30} | 31-90days=${leadBuckets.thirty1_to_90} | 90+days=${leadBuckets.over_90}
+IMPORTANT: This report covers only the most recent email batch (last 2 days). It is NOT a cumulative total of all 2026 bookings.`;
 }
 
 // Summarize cancellation data into readable context for Claude
