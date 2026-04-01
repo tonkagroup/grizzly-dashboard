@@ -1102,13 +1102,13 @@ function classifySite(t) {
   if (t.includes('PRESIDENTIAL')) return 'Presidential';
   if (t.includes('PREMIUM PULL')) return 'Prem Pull-Thru';
   if (t.includes('PULL-THRU') || t.includes('PULL THRU')) return 'Pull-Thru';
-  if (t.includes('PREMIUM BACK') || t.includes('PREMIUM FOREST')) return 'Prem Back-In';
+  if (t.includes('PREMIUM FOREST')) return 'Prem Forest';    // must precede PREMIUM BACK
+  if (t.includes('PREMIUM BACK')) return 'Prem Back-In';
   if (t.includes('GALLATIN') || t.includes('FOREST BACK')) return 'Forest Back-In';
   if (t.includes('BACK IN')) return 'Back-In';
   if (t.includes('DRY')) return 'Dry Site';
   if (t.includes('ELECTRIC')) return 'Electric Only';
-  if (t.includes('LUXURY')) return 'Lux Cabin';
-  if (t.includes('CABIN')) return 'Cabin';
+  if (t.includes('LUXURY') || t.includes('CABIN')) return 'Cabin';  // all cabin variants → one bucket
   if (t.includes('APARTMENT')) return 'Apartment';
   return 'Other';
 }
