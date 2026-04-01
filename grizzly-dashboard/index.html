@@ -1383,50 +1383,6 @@ document.addEventListener('drop', e => {
 //   Drive file ID → https://drive.google.com/uc?export=download&id=FILE_ID
 // ══════════════════════════════════════════════════════════════════════════
 
-// ── Paste your Drive file IDs here ──────────────────────────────────────
-const DRIVE_FILE_IDS = {
-  snapshot:     '<<<SNAPSHOT_FILE_ID>>>',     // snapshot_latest.json
-  status:       '<<<STATUS_FILE_ID>>>',       // dashboard_status.json
-  origination:  '<<<ORIGINATION_FILE_ID>>>',  // origination_latest.json
-  cancellation: '<<<CANCELLATION_FILE_ID>>>', // cancellation_latest.json
-};
-// ────────────────────────────────────────────────────────────────────────
-
-function driveUrl(fileId) {
-  // Google Drive direct-download URL for publicly shared files.
-  // CORS note: Drive sets Access-Control-Allow-Origin: * on public files,
-  // so fetch() works fine from Netlify (or any origin).
-  return `https://drive.google.com/uc?export=download&id=${fileId}`;
-}
-
-function applyDriveSnapshot(data) {
-  if (!data || data.error) {
-    setDriveStatus('warn', data ? 'Drive error: ' + data.error : 'No snapshot in Drive yet');
-    refreshAll();
-    return;
-  }
-
-  const months = ['May','Jun','Jul','Aug','Sep'];
-  const newNights = months.map(m => data.totals[m] || 0);
-  if (newNights.some(v => v > 0)) {
-    STATE.onBooks26  = newNights;
-    STATE.rate26     = data.blended_rate > 0 ? data.blended_rate : STATE.rate26;
-    STATE.asOf       = 'Drive: ' + data.snapshot_date;
-    STATE.snapshotDate = data.snapshot_date;
-
-    document.getElementById('lastUpdated').textContent = 'Snapshot: ' + data.snapshot_date;
-    setDriveStatus('ok', 'Live · ' + data.snapshot_date);
-  } else {
-    setDriveStatus('warn', 'Snapshot empty — using baseline');
-  }
-  refreshAll();
-}
-
-function applyDriveStatus(status) {
-  if (!status || status.error) return;
-  // Could extend to show last pipeline run time in header tooltip
-}
-
 function setDriveStatus(state, msg) {
   const spinner = document.getElementById('driveSpinner');
   const text    = document.getElementById('driveStatusText');
@@ -1437,37 +1393,36 @@ function setDriveStatus(state, msg) {
 }
 
 async function loadFromDrive() {
-  // If file IDs haven't been filled in yet, fall back to baseline.
-  const snapshotId = DRIVE_FILE_IDS.snapshot;
-  if (!snapshotId || snapshotId.startsWith('<<<')) {
-    setDriveStatus('warn', 'Drive IDs not configured — using hardcoded baseline');
-    refreshAll();
-    return;
-  }
-
   setDriveStatus('info', 'Fetching…');
-
   try {
-    // Fetch snapshot JSON
-    const snapResp = await fetch(driveUrl(snapshotId));
-    if (!snapResp.ok) throw new Error(`HTTP ${snapResp.status}`);
-    const snapData = await snapResp.json();
-    applyDriveSnapshot(snapData);
+    // Route through Netlify Function (GET) — it fetches all Drive files server-side
+    // using env vars, avoiding CORS and exposing no file IDs in the browser.
+    const resp = await fetch('/.netlify/functions/ask-question');
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const payload = await resp.json();
+
+    const snap = payload.snapshot;
+    if (!snap) {
+      setDriveStatus('warn', 'No snapshot data yet');
+      refreshAll();
+      return;
+    }
+
+    const months = ['May','Jun','Jul','Aug','Sep'];
+    const newNights = months.map(m => snap.totals?.[m] || 0);
+    if (newNights.some(v => v > 0)) {
+      STATE.onBooks26    = newNights;
+      STATE.rate26       = snap.blended_rate > 0 ? snap.blended_rate : STATE.rate26;
+      STATE.snapshotDate = snap.snapshot_date;
+      document.getElementById('lastUpdated').textContent = 'Snapshot: ' + snap.snapshot_date;
+      setDriveStatus('ok', 'Live · ' + snap.snapshot_date);
+    } else {
+      setDriveStatus('warn', 'Snapshot empty — using baseline');
+    }
+    refreshAll();
   } catch (err) {
     setDriveStatus('error', 'Fetch failed: ' + err.message);
     refreshAll();
-  }
-
-  // Fetch status JSON (non-critical — don't let failure block render)
-  const statusId = DRIVE_FILE_IDS.status;
-  if (statusId && !statusId.startsWith('<<<')) {
-    try {
-      const statusResp = await fetch(driveUrl(statusId));
-      if (statusResp.ok) {
-        const statusData = await statusResp.json();
-        applyDriveStatus(statusData);
-      }
-    } catch (_) { /* status is non-critical */ }
   }
 }
 
