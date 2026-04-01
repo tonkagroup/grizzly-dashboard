@@ -258,6 +258,33 @@ input[type=file] { display: none; }
       </div>
     </div>
 
+    <div class="section-head"><h2>Booking velocity — nights/day</h2></div>
+    <div class="chart-card" style="margin-bottom:14px;">
+      <h3>Weekly booking pace — 2026 vs 2025 equivalent weeks</h3>
+      <div class="sub" id="velocityChartSub">Nights added per day, by week. Gray = 2025 fill curve equivalent period. Amber = 2026 actual.</div>
+      <div class="legend">
+        <div class="leg"><div class="leg-sq" style="background:var(--text3);opacity:0.6"></div>2025 pace (fill curve)</div>
+        <div class="leg"><div class="leg-sq" style="background:var(--amber)"></div>2026 pace</div>
+        <div class="leg"><div class="leg-sq" style="background:var(--text3);opacity:0.3;width:2px;height:14px;border-radius:0;"></div>99.7 avg</div>
+      </div>
+      <div style="height:200px"><canvas id="chartVelocity"></canvas></div>
+    </div>
+
+    <div class="section-head"><h2>Cancellation activity</h2></div>
+    <div class="grid-2" id="cancelSection">
+      <div class="chart-card" id="cancelRateCard">
+        <h3>Cancel volume by arrival month</h3>
+        <div class="sub">Cancellations recorded in latest report, by month of intended stay.</div>
+        <div id="cancelBars" style="padding:6px 0;"></div>
+      </div>
+      <div class="kpi" id="cancelSummaryCard" style="padding:16px 18px;">
+        <div class="kpi-label" style="margin-bottom:12px;">Cancellation summary</div>
+        <div id="cancelSummaryContent" style="font-family:var(--font-mono);font-size:12px;color:var(--text3);line-height:2;">
+          No cancellation data loaded yet
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- ══ FORECAST ═══════════════════════════════════════════════════════════ -->
@@ -517,6 +544,8 @@ let STATE = {
       '6 standard + 3 luxury cabins merged; 9 sites vs 9 in 2025',
     ],
   },
+  snapshotDate: null,
+  cancels: null,   // populated from Drive cancellation JSON
 };
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -1358,6 +1387,116 @@ function renderMomentum() {
   document.getElementById('momentumCards').style.gridTemplateColumns = '1fr 1fr';
 }
 
+function renderVelocity() {
+  // Build weekly 2026 pace series from VELOCITY_2026
+  // Use last 14 intervals (~12 weeks) for readability
+  const recent = VELOCITY_2026.slice(-14);
+  const labels26 = recent.map(v => {
+    const d = new Date(v.to);
+    return (d.getMonth()+1) + '/' + d.getDate();
+  });
+  const pace26 = recent.map(v => v.per_day);
+
+  // Build equivalent 2025 pace using fill curve
+  // For each 2026 interval end date, look up fill curve 1yr prior and compute pace
+  const pace25 = recent.map((v, i) => {
+    const d26end = new Date(v.to);
+    const d25end = new Date(d26end); d25end.setFullYear(d25end.getFullYear() - 1);
+    const d26start = i > 0 ? new Date(recent[i-1].to) : new Date(new Date(v.to) - v.days * 86400000);
+    const d25start = new Date(d26start); d25start.setFullYear(d25start.getFullYear() - 1);
+
+    const endStr   = d25end.toISOString().slice(0,10);
+    const startStr = d25start.toISOString().slice(0,10);
+
+    // Clamp to fill curve range
+    if (endStr < FC25_EARLIEST || startStr > FC25_LATEST) return null;
+    const endLookup   = lookupFC25(endStr);
+    const startLookup = lookupFC25(startStr);
+    const days = Math.max(1, Math.round((new Date(endLookup.date) - new Date(startLookup.date)) / 86400000));
+    const nights = Math.max(0, endLookup.val - startLookup.val);
+    return Math.round(nights / days * 10) / 10;
+  });
+
+  // Average pace line (2025 pre-season)
+  const avgLine = recent.map(() => PACE_2025_AVG);
+
+  mkChart('chartVelocity', {
+    type: 'bar',
+    data: {
+      labels: labels26,
+      datasets: [
+        { label:'2025 pace', data:pace25, backgroundColor:'rgba(90,88,86,0.45)', borderColor:'rgba(90,88,86,0.7)', borderWidth:1 },
+        { label:'2026 pace', data:pace26, backgroundColor:C.dAmber, borderColor:C.amber, borderWidth:1 },
+        { label:'2025 avg',  data:avgLine, type:'line', borderColor:'rgba(255,255,255,0.2)', borderWidth:1.5, borderDash:[4,3], pointRadius:0, fill:false },
+      ]
+    },
+    options: {
+      ...baseOpts(),
+      plugins: { legend: { display:false } },
+      scales: {
+        x: { grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'#5a5856',font:{size:9,family:'DM Mono'}} },
+        y: { grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'#5a5856',font:{size:10,family:'DM Mono'},callback:v=>v+'/d'} }
+      }
+    }
+  });
+}
+
+function renderCancels() {
+  const c = STATE.cancels;
+  if (!c) {
+    document.getElementById('cancelSummaryContent').innerHTML =
+      '<span style="color:var(--text3);">No cancellation data — pipeline may not have run yet</span>';
+    return;
+  }
+
+  // Summary card
+  const recoveryRate = c.totalLost > 0 ? (c.totalFees / c.totalLost * 100).toFixed(1) : '—';
+  const ob26total = STATE.onBooks26.reduce((a,b)=>a+b,0);
+  // Cancel rate vs on books (rough — cancel report is recent period, not season total)
+  document.getElementById('cancelSummaryContent').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div>
+        <div style="font-size:9px;letter-spacing:0.07em;color:var(--text3);margin-bottom:4px;">TOTAL CANCELS</div>
+        <div style="font-size:22px;font-weight:500;color:var(--amber);">${c.total.toLocaleString()}</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:2px;">report: ${c.reportDate || '—'}</div>
+      </div>
+      <div>
+        <div style="font-size:9px;letter-spacing:0.07em;color:var(--text3);margin-bottom:4px;">FEE RECOVERY</div>
+        <div style="font-size:22px;font-weight:500;color:var(--green);">${recoveryRate}%</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:2px;">of lost revenue recovered</div>
+      </div>
+      <div>
+        <div style="font-size:9px;letter-spacing:0.07em;color:var(--text3);margin-bottom:4px;">FEES COLLECTED</div>
+        <div style="font-size:16px;font-weight:500;color:var(--text);">$${Math.round(c.totalFees).toLocaleString()}</div>
+      </div>
+      <div>
+        <div style="font-size:9px;letter-spacing:0.07em;color:var(--text3);margin-bottom:4px;">LOST REVENUE</div>
+        <div style="font-size:16px;font-weight:500;color:var(--red);">$${Math.round(c.totalLost).toLocaleString()}</div>
+      </div>
+    </div>`;
+
+  // Cancel bars by arrival month
+  const months = ['May','Jun','Jul','Aug','Sep'];
+  const maxCancels = Math.max(...months.map(m => c.byArrMonth[m] || 0), 1);
+  const barsHtml = months.map(m => {
+    const n = c.byArrMonth[m] || 0;
+    const w = (n / maxCancels * 100).toFixed(1);
+    const ob = STATE.onBooks26[months.indexOf(m)];
+    const pct = ob > 0 ? (n / ob * 100).toFixed(1) : '—';
+    const color = parseFloat(pct) > 11 ? C.red : parseFloat(pct) > 8 ? C.amber : C.green;
+    return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;font-family:var(--font-mono);font-size:11px;">
+      <div style="width:28px;color:var(--text3);">${m}</div>
+      <div style="flex:1;height:5px;background:var(--surface3);border-radius:3px;position:relative;">
+        <div style="width:${w}%;height:100%;background:${color};border-radius:3px;"></div>
+      </div>
+      <div style="width:30px;text-align:right;color:var(--text2);">${n}</div>
+      <div style="width:44px;text-align:right;font-size:10px;color:${color};">${pct}%</div>
+    </div>`;
+  }).join('');
+  document.getElementById('cancelBars').innerHTML = barsHtml +
+    `<div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-top:6px;">% = cancels ÷ current on-books · green &lt;8% · amber 8–11% · red &gt;11%</div>`;
+}
+
 function refreshAll() {
   renderKPIs();
   renderAlert();
@@ -1366,6 +1505,8 @@ function refreshAll() {
   renderFillPctBars();
   renderSiteRatioChart();
   renderMomentum();
+  renderVelocity();
+  renderCancels();
 }
 
 // DRAG AND DROP
@@ -1436,8 +1577,59 @@ async function loadFromDrive() {
         sumMonths(bst['Prem Forest']),
         sumMonths(bst['Cabin']),            // all cabin types merged
       ];
+
+      // Append today's total to velocity data if not already present
+      const lastVel = VELOCITY_2026[VELOCITY_2026.length - 1];
+      if (lastVel.to < snap.snapshot_date) {
+        const prevTotal = lastVel.to === '2026-03-30' ? 16158 : null;
+        if (prevTotal !== null) {
+          const newTotal = snap.total_nights;
+          const daysDiff = Math.round((new Date(snap.snapshot_date) - new Date(lastVel.to)) / 86400000);
+          if (daysDiff > 0 && newTotal > prevTotal) {
+            VELOCITY_2026.push({
+              to: snap.snapshot_date,
+              per_day: Math.round((newTotal - prevTotal) / daysDiff * 10) / 10,
+              net: newTotal - prevTotal,
+              days: daysDiff,
+            });
+          }
+        }
+      }
     } else {
       setDriveStatus('warn', 'Snapshot empty — using baseline');
+    }
+
+    // Parse cancellation data
+    const cancelData = payload.cancellation;
+    if (cancelData && cancelData.raw_rows && cancelData.raw_rows.length) {
+      const rows = cancelData.raw_rows;
+      // Group cancels by arrival month
+      const byArrMonth = {};
+      let totalFees = 0, totalLost = 0;
+      rows.forEach(r => {
+        const arrival = r['Arrival Date'] || '';
+        if (arrival) {
+          const mo = new Date(arrival);
+          const key = ['May','Jun','Jul','Aug','Sep'][mo.getMonth() - 4];
+          if (key) byArrMonth[key] = (byArrMonth[key] || 0) + 1;
+        }
+        totalFees += parseFloat((r['Cancelation Fee']     || '0').replace(/[$,]/g,'')) || 0;
+        totalLost += parseFloat((r['Reservation Charges'] || '0').replace(/[$,]/g,'')) || 0;
+      });
+      // Group by cancel date for recent trend (last 30 days)
+      const byDay = {};
+      rows.forEach(r => {
+        const d = r['Cancelation Date'] || '';
+        if (d) byDay[d] = (byDay[d] || 0) + 1;
+      });
+      STATE.cancels = {
+        total: rows.length,
+        totalFees,
+        totalLost,
+        byArrMonth,
+        byDay,
+        reportDate: cancelData.report_date,
+      };
     }
     refreshAll();
   } catch (err) {
