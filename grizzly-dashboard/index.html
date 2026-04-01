@@ -295,7 +295,7 @@ input[type=file] { display: none; }
       </div>
       <div class="chart-card">
         <h3>Projected revenue by month — base case</h3>
-        <div class="sub">2026 base case vs 2025 actual. Rate premium ($168.69 vs $145.13) partially offsets volume softness.</div>
+        <div class="sub" id="forecastRevSub">2026 base case vs 2025 actual. Rate premium vs $145.13 partially offsets volume softness.</div>
         <div class="legend">
           <div class="leg"><div class="leg-sq" style="background:var(--text3);opacity:0.5"></div>2025 actual rev</div>
           <div class="leg"><div class="leg-sq" style="background:var(--amber)"></div>2026 base case rev</div>
@@ -331,7 +331,7 @@ input[type=file] { display: none; }
       <strong>Remaining late fill</strong> = 2025 total late fill − nights already landed since Mar 27 2026. As bookings accumulate through the season, the late fill bucket shrinks to avoid double-counting.<br>
       <strong>Cancel rates:</strong> Conservative 11% · Base 9% · Optimistic 7% — policy-aware Year 2 assumptions (structural floor ~6%)<br>
       <strong>Late fill basis:</strong> Toggle between Snapshot (measured net from 114 snapshots) and Demand-Adjusted (gross bookings − gross cancels from origination + cancellation reports) in the Projections tab.<br>
-      <strong>Revenue:</strong> Projected nights × $168.69 blended rate (+16.2% vs 2025 actual $145.13)
+      <strong>Revenue:</strong> Projected nights × current blended rate vs 2025 actual $145.13
     </div>
   </div>
 
@@ -442,7 +442,7 @@ input[type=file] { display: none; }
       <strong>Remaining late fill</strong> = 2025 total late fill − nights already landed since Mar 27 2026. Shrinks automatically as bookings accumulate, preventing double-counting.<br>
       2025 late fill = actual nights added after Mar 27 per month (measured from 114 daily snapshots + rent roll).<br>
       May includes +391 walk-up adder not captured in snapshots.<br>
-      Revenue = projected nights × $168.69 (2026 blended rate on books).
+      Revenue = projected nights × current blended rate (2026 on books).
     </div>
   </div>
 
@@ -503,7 +503,7 @@ let STATE = {
     nights25:     [546,  3756, 3829, 1799, 3333, 2265, 1284, 581],
     nights26:     [850,  2524, 4283, 1410, 3197, 1580, 1262, 335],
     sites25:      [5,    39,   64,   23,   51,   24,   12,   9],
-    sites26:      [8,    32,   70,   21,   51,   24,   12,   6],
+    sites26:      [8,    32,   70,   21,   51,   24,   12,   9],   // cabin: 6 standard + 3 luxury = 9
     rate25:       [183,  166,  154,  140,  107,  118,  135,  130],
     rate26:       [222,  197,  171,  160,  118,  143,  158,  155],
     notes: [
@@ -514,7 +514,7 @@ let STATE = {
       'Unchanged',
       'Unchanged — genuine demand concern',
       'Unchanged',
-      '−3 sites; merge all cabin subtypes',
+      '6 standard + 3 luxury cabins merged; 9 sites vs 9 in 2025',
     ],
   },
 };
@@ -675,6 +675,8 @@ function renderKPIs() {
   document.getElementById('kv-rate').textContent = `$${STATE.rate26.toFixed(2)}`;
   document.getElementById('kd-rate').innerHTML = `<span class="pos">▲ +${pct(STATE.rate26,145.13)}% vs 2025 ($145.13)</span>`;
   document.getElementById('kpi-rate').className = 'kpi good';
+  const forecastSub = document.getElementById('forecastRevSub');
+  if (forecastSub) forecastSub.textContent = `2026 base case vs 2025 actual. Rate premium $${STATE.rate26.toFixed(2)} vs $145.13 (+${pct(STATE.rate26,145.13)}%) partially offsets volume softness.`;
 
   document.getElementById('kv-proj').textContent = fmtN(projRev);
   const vs25r = pct(projRev, BASE.totalRev25);
@@ -1416,6 +1418,24 @@ async function loadFromDrive() {
       STATE.snapshotDate = snap.snapshot_date;
       document.getElementById('lastUpdated').textContent = 'Snapshot: ' + snap.snapshot_date;
       setDriveStatus('ok', 'Live · ' + snap.snapshot_date);
+
+      // Update per-site-type nights from snapshot by_site_type
+      // Apps Script classifier keys match STATE.siteTypes.labels exactly after Code.gs fix:
+      //   'Forest Back-In' → 'Gallatin' (different name, same sites)
+      //   'Cabin' → all cabin variants merged (Luxury + standard)
+      const bst = snap.by_site_type || {};
+      const sumMonths = obj => obj ? months.reduce((a,m) => a + (obj[m]||0), 0) : 0;
+
+      STATE.siteTypes.nights26 = [
+        sumMonths(bst['Presidential']),
+        sumMonths(bst['Prem Pull-Thru']),
+        sumMonths(bst['Pull-Thru']),
+        sumMonths(bst['Prem Back-In']),
+        sumMonths(bst['Back-In']),
+        sumMonths(bst['Forest Back-In']),   // Gallatin
+        sumMonths(bst['Prem Forest']),
+        sumMonths(bst['Cabin']),            // all cabin types merged
+      ];
     } else {
       setDriveStatus('warn', 'Snapshot empty — using baseline');
     }
