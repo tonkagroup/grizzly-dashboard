@@ -1388,37 +1388,54 @@ function renderMomentum() {
 }
 
 function renderVelocity() {
-  // Build weekly 2026 pace series from VELOCITY_2026
-  // Use last 14 intervals (~12 weeks) for readability
-  const recent = VELOCITY_2026.slice(-14);
-  const labels26 = recent.map(v => {
-    const d = new Date(v.to);
-    return (d.getMonth()+1) + '/' + d.getDate();
-  });
-  const pace26 = recent.map(v => v.per_day);
+  // Interpolate CUMUL_2026 onto consistent 7-day week boundaries
+  // so the chart shows true weekly pace rather than sporadic snapshot intervals
+  const cumulDates = CUMUL_2026.map(([d]) => new Date(d));
+  const cumulVals  = CUMUL_2026.map(([,v]) => v);
 
-  // Build equivalent 2025 pace using fill curve
-  // For each 2026 interval end date, look up fill curve 1yr prior and compute pace
-  const pace25 = recent.map((v, i) => {
-    const d26end = new Date(v.to);
-    const d25end = new Date(d26end); d25end.setFullYear(d25end.getFullYear() - 1);
-    const d26start = i > 0 ? new Date(recent[i-1].to) : new Date(new Date(v.to) - v.days * 86400000);
-    const d25start = new Date(d26start); d25start.setFullYear(d25start.getFullYear() - 1);
+  function interpCumul(target) {
+    const t = new Date(target);
+    if (t <= cumulDates[0]) return cumulVals[0];
+    if (t >= cumulDates[cumulDates.length-1]) return cumulVals[cumulVals.length-1];
+    for (let i = 1; i < cumulDates.length; i++) {
+      if (t <= cumulDates[i]) {
+        const span = cumulDates[i] - cumulDates[i-1];
+        const frac = (t - cumulDates[i-1]) / span;
+        return cumulVals[i-1] + frac * (cumulVals[i] - cumulVals[i-1]);
+      }
+    }
+    return cumulVals[cumulVals.length-1];
+  }
 
-    const endStr   = d25end.toISOString().slice(0,10);
-    const startStr = d25start.toISOString().slice(0,10);
+  // Anchor end date to latest snapshot, build 12 weekly buckets back from there
+  const snapDate = STATE.snapshotDate || '2026-03-30';
+  const endDate  = new Date(snapDate);
+  const NUM_WEEKS = 12;
 
-    // Clamp to fill curve range
-    if (endStr < FC25_EARLIEST || startStr > FC25_LATEST) return null;
-    const endLookup   = lookupFC25(endStr);
-    const startLookup = lookupFC25(startStr);
-    const days = Math.max(1, Math.round((new Date(endLookup.date) - new Date(startLookup.date)) / 86400000));
-    const nights = Math.max(0, endLookup.val - startLookup.val);
-    return Math.round(nights / days * 10) / 10;
-  });
+  const labels26 = [], pace26 = [], pace25 = [];
 
-  // Average pace line (2025 pre-season)
-  const avgLine = recent.map(() => PACE_2025_AVG);
+  for (let w = NUM_WEEKS - 1; w >= 0; w--) {
+    const wEnd   = new Date(endDate); wEnd.setDate(wEnd.getDate()   - w * 7);
+    const wStart = new Date(wEnd);    wStart.setDate(wStart.getDate() - 7);
+
+    // 2026 pace
+    const v26end   = interpCumul(wEnd);
+    const v26start = interpCumul(wStart);
+    pace26.push(Math.round((v26end - v26start) / 7 * 10) / 10);
+
+    // 2025 equivalent pace from fill curve (same calendar week -1yr)
+    const w25end   = new Date(wEnd);   w25end.setFullYear(w25end.getFullYear()   - 1);
+    const w25start = new Date(wStart); w25start.setFullYear(w25start.getFullYear() - 1);
+    const e25 = lookupFC25(w25end.toISOString().slice(0,10));
+    const s25 = lookupFC25(w25start.toISOString().slice(0,10));
+    const days25 = Math.max(1, Math.round((new Date(e25.date) - new Date(s25.date)) / 86400000));
+    pace25.push(Math.round(Math.max(0, e25.val - s25.val) / days25 * 10) / 10);
+
+    // Label: month/day of week end
+    labels26.push(`${wEnd.getMonth()+1}/${wEnd.getDate()}`);
+  }
+
+  const avgLine = pace26.map(() => PACE_2025_AVG);
 
   mkChart('chartVelocity', {
     type: 'bar',
@@ -1432,7 +1449,7 @@ function renderVelocity() {
     },
     options: {
       ...baseOpts(),
-      plugins: { legend: { display:false } },
+      plugins: { legend:{ display:false } },
       scales: {
         x: { grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'#5a5856',font:{size:9,family:'DM Mono'}} },
         y: { grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'#5a5856',font:{size:10,family:'DM Mono'},callback:v=>v+'/d'} }
