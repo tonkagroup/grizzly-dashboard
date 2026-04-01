@@ -1,0 +1,3 @@
+[build]
+  publish = "grizzly-dashboard"
+  command = ""
