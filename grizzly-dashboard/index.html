@@ -349,12 +349,12 @@ input[type=file] { display: none; }
           <tr>
             <th>Month</th>
             <th>On books</th>
-            <th>Cancels (9%)</th>
+            <th>Locked cancel</th>
             <th>Locked</th>
             <th>Already landed</th>
             <th>Remaining late fill</th>
             <th>Projected</th>
-            <th>Cap (97%)</th>
+            <th>Capacity</th>
             <th>Occ %</th>
             <th>Rev (proj)</th>
             <th>vs 2025</th>
@@ -365,7 +365,7 @@ input[type=file] { display: none; }
       </table>
     </div>
     <div class="method-box">
-      <strong>Formula:</strong> Projected = min((on-books × (1−cancel%)) + (remaining late fill × LF adj), 97% capacity)<br>
+      <strong>Formula:</strong> Projected = min((locked × 11% cancel) + (remaining late fill × demand mult × dynamic cancel rate), 100% capacity)<br>
       <strong>Remaining late fill</strong> = 2025 total late fill − nights already landed since Mar 27 2026. As bookings accumulate through the season, the late fill bucket shrinks to avoid double-counting.<br>
       <strong>Cancel rates:</strong> Conservative 11% · Base 9% · Optimistic 7% — policy-aware Year 2 assumptions (structural floor ~6%)<br>
       <strong>Late fill basis:</strong> Toggle between Snapshot (measured net from 114 snapshots) and Demand-Adjusted (gross bookings − gross cancels from origination + cancellation reports) in the Projections tab.<br>
@@ -429,9 +429,9 @@ input[type=file] { display: none; }
     <div class="section-head"><h2>Night projections — scenario model</h2></div>
     <div style="display:flex;align-items:center;gap:20px;margin-bottom:14px;flex-wrap:wrap;">
       <div style="display:flex;gap:4px;">
-        <button class="scen-btn active" id="scen-cons" onclick="setScenario('cons')">Conservative (11% · 85%)</button>
-        <button class="scen-btn" id="scen-base" onclick="setScenario('base')">Base (9% · 100%)</button>
-        <button class="scen-btn" id="scen-opt" onclick="setScenario('opt')">Optimistic (7% · 105%)</button>
+        <button class="scen-btn active" id="scen-cons" onclick="setScenario('cons')">Conservative (85% demand)</button>
+        <button class="scen-btn" id="scen-base" onclick="setScenario('base')">Base (100% demand)</button>
+        <button class="scen-btn" id="scen-opt" onclick="setScenario('opt')">Optimistic (115% demand)</button>
       </div>
       <div style="width:1px;height:24px;background:var(--border);flex-shrink:0;"></div>
       <div style="display:flex;align-items:center;gap:8px;">
@@ -450,7 +450,7 @@ input[type=file] { display: none; }
       <div class="legend">
         <div class="leg"><div class="leg-sq" style="background:var(--text3);opacity:0.5"></div>2025 actual</div>
         <div class="leg"><div class="leg-sq" style="background:var(--amber)"></div>2026 projected</div>
-        <div class="leg"><div class="leg-sq" style="background:var(--border2)"></div>97% capacity</div>
+        <div class="leg"><div class="leg-sq" style="background:var(--border2)"></div>100% capacity</div>
       </div>
       <div style="height:220px"><canvas id="chartProjScen"></canvas></div>
     </div>
@@ -461,12 +461,12 @@ input[type=file] { display: none; }
           <tr>
             <th>Month</th>
             <th>On books</th>
-            <th>Cancel est.</th>
+            <th>Locked cancel</th>
             <th>Locked</th>
             <th>Remaining LF</th>
             <th>Adj. late fill</th>
             <th>Projected</th>
-            <th>97% cap</th>
+            <th>Capacity</th>
             <th>Occ %</th>
             <th>vs 2025</th>
           </tr>
@@ -476,7 +476,7 @@ input[type=file] { display: none; }
       </table>
     </div>
     <div class="method-box">
-      <strong>How this is calculated:</strong> Projected = min((on-books × (1−cancel%)) + (remaining late fill × LF adj), 97% capacity)<br>
+      <strong>How this is calculated:</strong> Projected = min((on-books × (1−11%)) + (remaining late fill × demand mult × (1 − dynamic LF cancel rate)), 100% capacity)<br>
       <strong>Remaining late fill</strong> = 2025 total late fill − nights already landed since Mar 27 2026. Shrinks automatically as bookings accumulate, preventing double-counting.<br>
       2025 late fill = actual nights added after Mar 27 per month (measured from 114 daily snapshots + rent roll).<br>
       May includes +391 walk-up adder not captured in snapshots.<br>
@@ -549,7 +549,10 @@ const BASE = {
   // 2025 late fill — DEMAND basis: gross post-Mar-27 bookings minus cancels of post-Mar-27 bookings only
   // Correctly matches new bookings against their own cancels; walk-up traffic already in origination report
   // Jun/Jul/Aug/Sep show substantially more demand than snapshot net captured — capacity was the constraint
-  lateFill25_demand:  [1551, 1845, 3382, 3835, 4154],
+  // 2025 late fill — DEMAND basis: gross post-Mar-27 bookings minus same-day/next-day booking errors only
+  // Source: origination report cross-referenced with cancellation report (errors = cancelled within 1 day of booking)
+  // These are real demand nights — genuine post-booking cancels handled by cancel rate assumption, not baked out
+  lateFill25_demand:  [1660, 2052, 3782, 4155, 4586],
   // Active late fill set (toggled by UI)
   lateFill25:[1591, 1024, 2524, 3545, 3734],
   // 2026 on-books at Mar 27 (booking cycle start — fixed anchor for late fill calc)
@@ -640,29 +643,112 @@ let STATE = {
 // ══════════════════════════════════════════════════════════════════════════
 // SCENARIO DEFINITIONS
 // ══════════════════════════════════════════════════════════════════════════
+// ── Cancel rate model ────────────────────────────────────────────────────
+// Both cancel rates are functions of days-to-arrival only.
+// Source: 2025 origination × cancellation cross-reference, May-Sep stays.
+// To revert to flat rates: replace calcLockedCancelRate/calcLFCancelRate
+// with simple functions returning a constant (e.g. return 0.11).
+
+// Month midpoints used to compute days-to-arrival from snapshot date
+const MONTH_MIDPOINTS_2026 = {
+  May: '2026-05-16', Jun: '2026-06-15', Jul: '2026-07-16',
+  Aug: '2026-08-15', Sep: '2026-09-15',
+};
+
+// Locked cohort (pre-Mar-27 bookings): remaining cancel risk vs days to arrival
+// Derived from 2025 pre-Mar-27 cancellation timing vs total pre-booked nights
+const LOCKED_CANCEL_CURVE = [
+  { days: 180, rate: 0.179 },
+  { days: 150, rate: 0.168 },
+  { days: 120, rate: 0.150 },
+  { days:  90, rate: 0.130 },
+  { days:  60, rate: 0.098 },
+  { days:  45, rate: 0.077 },
+  { days:  30, rate: 0.050 },
+  { days:  14, rate: 0.029 },
+  { days:   7, rate: 0.019 },
+  { days:   0, rate: 0.010 },
+];
+
+// Late fill demand: cancel rate vs days to arrival (max booking window remaining)
+// Derived from 2025 post-Mar-27 gross bookings × matched cancellations
+const LF_CANCEL_CURVE = [
+  { days: 180, rate: 0.099 },
+  { days: 150, rate: 0.098 },
+  { days: 120, rate: 0.093 },
+  { days:  90, rate: 0.087 },
+  { days:  60, rate: 0.071 },
+  { days:  45, rate: 0.063 },
+  { days:  30, rate: 0.046 },
+  { days:  14, rate: 0.033 },
+  { days:   7, rate: 0.023 },
+];
+
+// Linear interpolation between curve points
+function interpolateCurve(curve, daysToArrival) {
+  if (daysToArrival >= curve[0].days) return curve[0].rate;
+  if (daysToArrival <= curve[curve.length-1].days) return curve[curve.length-1].rate;
+  for (let i = 0; i < curve.length - 1; i++) {
+    const hi = curve[i], lo = curve[i+1];
+    if (daysToArrival <= hi.days && daysToArrival >= lo.days) {
+      const t = (daysToArrival - lo.days) / (hi.days - lo.days);
+      return lo.rate + t * (hi.rate - lo.rate);
+    }
+  }
+  return 0.10;
+}
+
+function daysToArrival(snapDateStr, monthName) {
+  const snap = new Date(snapDateStr);
+  const mid  = new Date(MONTH_MIDPOINTS_2026[monthName]);
+  return Math.max(0, Math.round((mid - snap) / 86400000));
+}
+
+function calcLockedCancelRate(snapDateStr, monthName) {
+  return interpolateCurve(LOCKED_CANCEL_CURVE, daysToArrival(snapDateStr, monthName));
+}
+
+function calcLFCancelRate(snapDateStr, monthName) {
+  return interpolateCurve(LF_CANCEL_CURVE, daysToArrival(snapDateStr, monthName));
+}
+
+// ── Scenarios — demand multiplier only ───────────────────────────────────
+// Cancel rates are handled dynamically above, not as scenario levers.
+// The scenario toggle controls how much late fill demand we expect vs 2025.
 const SCENARIOS = {
-  cons: { label:'Conservative', cancel:0.11, lfAdj:0.85 },
-  base: { label:'Base case',    cancel:0.09, lfAdj:1.00 },
-  opt:  { label:'Optimistic',   cancel:0.07, lfAdj:1.05 },
+  cons: { label:'Conservative', demandMult:0.85 },
+  base: { label:'Base case',    demandMult:1.00 },
+  opt:  { label:'Optimistic',   demandMult:1.15 },
 };
 let currentScenario = 'cons';
 
 function computeProjection(scenKey) {
   const s = SCENARIOS[scenKey];
-  const cap97 = BASE.days.map(d => Math.round(BASE.SITES * d * 0.97));
+  const snapDate = STATE.snapshotDate || new Date().toISOString().slice(0,10);
+  const cap100 = BASE.days.map(d => BASE.SITES * d);
+
   return BASE.months.map((m, i) => {
     const lf25 = BASE.lateFill25[i];
-    // Subtract nights already landed since Mar 27 2026 to avoid double-counting.
-    // As the season progresses, late fill shrinks because those bookings are
-    // already captured in onBooks26. Floor at 0.
     const alreadyLanded = Math.max(0, STATE.onBooks26[i] - BASE.onBooks26_mar27[i]);
     const remainingLF   = Math.max(0, lf25 - alreadyLanded);
-    const locked = Math.round(STATE.onBooks26[i] * (1 - s.cancel));
-    const lf = Math.round(remainingLF * s.lfAdj);
-    const proj = Math.min(locked + lf, cap97[i]);
-    const rev = proj * STATE.rate26;
-    const occ = proj / (BASE.SITES * BASE.days[i]) * 100;
-    return { month:m, onBooks:STATE.onBooks26[i], locked, lf25, remainingLF, adjLf:lf, alreadyLanded, proj, cap:cap97[i], occ, rev, final25:BASE.final25[i], cancel:Math.round(STATE.onBooks26[i]*s.cancel) };
+
+    // Split cancel rates: both dynamic based on days to arrival
+    const lockedCancelRate = calcLockedCancelRate(snapDate, m);
+    const lfCancelRate     = calcLFCancelRate(snapDate, m);
+    const locked    = Math.round(STATE.onBooks26[i] * (1 - lockedCancelRate));
+    const lfGross   = Math.round(remainingLF * s.demandMult);
+    const lfNet     = Math.round(lfGross * (1 - lfCancelRate));
+    const proj      = Math.min(locked + lfNet, cap100[i]);
+    const rev       = proj * STATE.rate26;
+    const occ       = proj / cap100[i] * 100;
+    const cancelEst = Math.round(STATE.onBooks26[i] * lockedCancelRate);
+
+    return {
+      month:m, onBooks:STATE.onBooks26[i], locked, lf25, remainingLF,
+      lfGross, lfNet, lfCancelRate, lockedCancelRate, alreadyLanded,
+      proj, cap:cap100[i], occ, rev, final25:BASE.final25[i],
+      cancel: cancelEst,
+    };
   });
 }
 
@@ -971,12 +1057,12 @@ function renderForecastTab() {
     return `<tr>
       <td>${r.month}</td>
       <td>${fmtComma(r.onBooks)}</td>
-      <td>${fmtComma(r.cancel)}</td>
+      <td>${fmtComma(r.cancel)} <span style="font-size:10px;color:var(--text3);">${(r.lockedCancelRate*100).toFixed(1)}%</span></td>
       <td>${fmtComma(r.locked)}</td>
       <td><span class="neu">+${fmtComma(r.alreadyLanded)}</span></td>
       <td>${fmtComma(r.remainingLF)} <span style="font-size:10px;color:var(--text3);">of ${fmtComma(r.lf25)}</span></td>
+      <td>${fmtComma(r.lfGross)} → ${fmtComma(r.lfNet)} <span style="font-size:10px;color:var(--text3);">${(r.lfCancelRate*100).toFixed(1)}%</span></td>
       <td>${fmtComma(r.proj)}</td>
-      <td>${fmtComma(r.cap)}</td>
       <td>${r.occ.toFixed(1)}%</td>
       <td>$${(r.rev/1000).toFixed(0)}K</td>
       <td><span class="${parseFloat(vs)>=0?'pos':'neg'}">${sign(parseFloat(vs))}${vs}%</span></td>
@@ -985,8 +1071,8 @@ function renderForecastTab() {
   document.getElementById('forecastTableBody').innerHTML = rows;
   document.getElementById('forecastTableFoot').innerHTML = `<tr>
     <td>Total</td><td>${fmtComma(STATE.onBooks26.reduce((a,b)=>a+b,0))}</td>
-    <td>—</td><td>—</td><td>—</td><td>—</td>
-    <td>${fmtComma(totalNights)}</td><td>—</td><td>—</td>
+    <td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
+    <td>${fmtComma(totalNights)}</td><td>—</td>
     <td>${fmtN(totalRev)}</td>
     <td><span class="${pct(totalRev,BASE.totalRev25)>=0?'pos':'neg'}">${sign(parseFloat(pct(totalRev,BASE.totalRev25)))}${pct(totalRev,BASE.totalRev25)}%</span></td>
   </tr>`;
@@ -1063,7 +1149,7 @@ function renderProjectionsTab() {
   document.getElementById('projMonthCards').innerHTML = cards;
 
   // Chart
-  const cap97 = BASE.days.map(d => Math.round(BASE.SITES*d*0.97));
+  const cap97 = BASE.days.map(d => BASE.SITES*d);  // 100% capacity
   mkChart('chartProjScen', {
     type:'bar',
     data:{
@@ -1076,7 +1162,8 @@ function renderProjectionsTab() {
     },
     options:{ ...baseOpts(), plugins:{legend:{display:false}} }
   });
-  document.getElementById('projChartSub').textContent = `${s.label}: ${s.cancel*100}% cancels · ${s.lfAdj*100}% of 2025 late-fill pace — ${fmtComma(totalNights)} projected nights · ${fmtN(totalRev)} revenue`;
+  const snapDate = STATE.snapshotDate || new Date().toISOString().slice(0,10);
+  document.getElementById('projChartSub').textContent = `${s.label}: ${(s.demandMult*100).toFixed(0)}% of 2025 gross demand · cancel rates dynamic by days-to-arrival — ${fmtComma(totalNights)} projected nights · ${fmtN(totalRev)} revenue`;
 
   // Table
   const rows = proj.map(r => {
@@ -1084,10 +1171,10 @@ function renderProjectionsTab() {
     return `<tr>
       <td>${r.month}</td>
       <td>${fmtComma(r.onBooks)}</td>
-      <td>${fmtComma(r.cancel)}</td>
+      <td>${fmtComma(r.cancel)} <span style="font-size:10px;color:var(--text3);">${(r.lockedCancelRate*100).toFixed(1)}%</span></td>
       <td>${fmtComma(r.locked)}</td>
       <td>${fmtComma(r.remainingLF)} <span style="font-size:10px;color:var(--text3);">of ${fmtComma(r.lf25)}</span></td>
-      <td>${fmtComma(r.adjLf)}</td>
+      <td>${fmtComma(r.lfGross)} → ${fmtComma(r.lfNet)} <span style="font-size:10px;color:var(--text3);">${(r.lfCancelRate*100).toFixed(1)}%</span></td>
       <td>${fmtComma(r.proj)}</td>
       <td>${fmtComma(r.cap)}</td>
       <td>${r.occ.toFixed(1)}%</td>
