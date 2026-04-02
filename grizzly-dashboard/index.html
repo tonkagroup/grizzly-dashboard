@@ -190,6 +190,7 @@ input[type=file] { display: none; }
     <button class="tab-btn" onclick="switchTab('forecast')">Forecast</button>
     <button class="tab-btn" onclick="switchTab('sitetype')">Site mix</button>
     <button class="tab-btn" onclick="switchTab('projections')">Projections</button>
+    <button class="tab-btn" onclick="switchTab('october')">October</button>
   </div>
 
   <!-- ══ OVERVIEW ══════════════════════════════════════════════════════════ -->
@@ -332,7 +333,7 @@ input[type=file] { display: none; }
       </div>
       <div class="chart-card">
         <h3>Projected revenue by month — base case</h3>
-        <div class="sub" id="forecastRevSub">2026 base case vs 2025 actual. Rate premium vs $145.13 partially offsets volume softness.</div>
+        <div class="sub" id="forecastRevSub">2026 base case vs 2025 actual. Rate premium vs $143.22 (res charges only) partially offsets volume softness.</div>
         <div class="legend">
           <div class="leg"><div class="leg-sq" style="background:var(--text3);opacity:0.5"></div>2025 actual rev</div>
           <div class="leg"><div class="leg-sq" style="background:var(--amber)"></div>2026 base case rev</div>
@@ -368,7 +369,7 @@ input[type=file] { display: none; }
       <strong>Remaining late fill</strong> = 2025 total late fill − nights already landed since Mar 27 2026. As bookings accumulate through the season, the late fill bucket shrinks to avoid double-counting.<br>
       <strong>Cancel rates:</strong> Conservative 11% · Base 9% · Optimistic 7% — policy-aware Year 2 assumptions (structural floor ~6%)<br>
       <strong>Late fill basis:</strong> Toggle between Snapshot (measured net from 114 snapshots) and Demand-Adjusted (gross bookings − gross cancels from origination + cancellation reports) in the Projections tab.<br>
-      <strong>Revenue:</strong> Projected nights × current blended rate vs 2025 actual $145.13
+      <strong>Revenue:</strong> Projected nights × current blended rate vs 2025 actual $143.22 (res charges only)
     </div>
   </div>
 
@@ -483,6 +484,49 @@ input[type=file] { display: none; }
     </div>
   </div>
 
+  <!-- ══ OCTOBER ════════════════════════════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-october">
+    <div class="section-head"><h2>October — shoulder season</h2></div>
+    <div class="alert-banner info" style="margin-bottom:16px;">
+      <span>ℹ</span>
+      <span>October is excluded from all main season projections and YoY comparisons (May–Sep only). This tab tracks it separately so it doesn't add noise to the core model.</span>
+    </div>
+
+    <div class="grid-4">
+      <div class="kpi">
+        <div class="kpi-label">2026 on books</div>
+        <div class="kpi-value" id="oct-ob26">—</div>
+        <div class="kpi-delta" id="oct-ob26-delta">—</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">2025 final actual</div>
+        <div class="kpi-value">1,225</div>
+        <div class="kpi-delta neu">$155,082 revenue · $126.60 ADR</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">2025 on books Mar 27</div>
+        <div class="kpi-value">0</div>
+        <div class="kpi-delta neu">All Oct booked after Mar 27</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">2026 rev on books</div>
+        <div class="kpi-value" id="oct-rev26">—</div>
+        <div class="kpi-delta" id="oct-rev26-delta">—</div>
+      </div>
+    </div>
+
+    <div class="section-head" style="margin-top:8px;"><h2>2025 October fill curve</h2></div>
+    <div class="chart-card" style="margin-bottom:14px;">
+      <h3>How October 2025 filled in — nights on books by snapshot date</h3>
+      <div class="sub">October bookings don't appear until late June 2025. All 1,225 nights booked after Mar 27.</div>
+      <div style="height:200px"><canvas id="chartOctFill"></canvas></div>
+    </div>
+
+    <div class="method-box">
+      <strong>Why October is separate:</strong> Oct is a shoulder month (season closes Oct 15). In 2025, zero Oct nights were on books at Mar 27 — all 1,225 booked after that date, mostly in-season. Including Oct in the main model would distort the late fill calculation and make YoY comparisons misleading since 2026 Oct bookings are still early. Watch this tab from July onward when Oct 2026 bookings start to accumulate meaningfully.
+    </div>
+  </div>
+
 </div><!-- /main -->
 
 <script>
@@ -496,8 +540,9 @@ const BASE = {
   onBooks25: [2377, 5700, 4407, 2788, 2478],
   // 2025 final actuals (rent roll, nights by stay date)
   final25:   [3577, 6724, 6931, 6333, 6212],
-  // 2025 revenue by stay month (rent roll distributed)
-  rev25:     [433771, 978078, 1093913, 916590, 922014],
+  // 2025 revenue by stay month — RESERVATION CHARGES ONLY (excludes locked site fees, pet fees)
+  // Source: rent roll distributed by stay date. Matches what daily snapshot revenue captures.
+  rev25:     [430616, 960993, 1076128, 893223, 903735],
   // 2025 late fill — SNAPSHOT basis: net nights added after Mar 27 (fill curve ground truth)
   // May includes +391 walk-up adder for same-week bookings invisible to forward-looking snapshots
   lateFill25_snapshot:[1591, 1024, 2524, 3545, 3734],
@@ -509,9 +554,9 @@ const BASE = {
   lateFill25:[1591, 1024, 2524, 3545, 3734],
   // 2026 on-books at Mar 27 (booking cycle start — fixed anchor for late fill calc)
   // Source: fill_curve_2025_updated.json → baseline_2026_mar27.by_month
-  onBooks26_mar27: [2252, 5077, 3834, 2729, 1968],
-  // 2025 rate per night (revenue / final nights)
-  rate25:    [121.27, 145.46, 157.83, 144.73, 148.42],
+  onBooks26_mar27: [2266, 5110, 3858, 2746, 1981],  // corrected to match Campspot Mar 27 2026 report (15,961 total)
+  // 2025 rate per night — reservation charges only ÷ final nights
+  rate25:    [120.38, 142.92, 155.26, 141.04, 145.48],
   // Plateau dates
   plateaus: {
     May: { date:'2025-06-25', peak:3186, actual:3577, gap:391, note:'Walk-up adder ~391 nights not in snapshots' },
@@ -541,8 +586,8 @@ const BASE = {
   },
   days:  [31, 30, 31, 31, 30],
   SITES: 238,
-  totalRev25: 4499449,
-  totalNights25: 31002,
+  totalRev25: 4264695,     // May–Sep reservation charges only (excl Oct, excl locked site/pet fees)
+  totalNights25: 29777,    // May–Sep only (excludes Oct 1,225)
 };
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -573,6 +618,7 @@ let STATE = {
     ],
   },
   snapshotDate: null,
+  oct26: 107,       // October nights on books — updated from snapshot, seeded from Apr 2 report
   // Cancellation data — seeded with full season-to-date baseline (Oct 2024–Mar 2026)
   // Updated daily by pipeline; pipeline deduplicates so no double-counting
   cancels: {
@@ -742,13 +788,13 @@ function renderKPIs() {
   document.getElementById('kpi-nights').className = `kpi ${diff < -1000 ? 'warn' : diff < 0 ? '' : 'good'}`;
 
   document.getElementById('kv-revenue').textContent = fmtN(rev26);
-  document.getElementById('kd-revenue').innerHTML = `<span class="neu">2025 final: $4.50M · rate +${pct(STATE.rate26,145.13)}% YoY</span>`;
+  document.getElementById('kd-revenue').innerHTML = `<span class="neu">2025 final: $4.26M (res charges) · rate +${pct(STATE.rate26,143.22)}% YoY</span>`;
 
   document.getElementById('kv-rate').textContent = `$${STATE.rate26.toFixed(2)}`;
-  document.getElementById('kd-rate').innerHTML = `<span class="pos">▲ +${pct(STATE.rate26,145.13)}% vs 2025 ($145.13)</span>`;
+  document.getElementById('kd-rate').innerHTML = `<span class="pos">▲ +${pct(STATE.rate26,143.22)}% vs 2025 ($143.22)</span>`;
   document.getElementById('kpi-rate').className = 'kpi good';
   const forecastSub = document.getElementById('forecastRevSub');
-  if (forecastSub) forecastSub.textContent = `2026 base case vs 2025 actual. Rate premium $${STATE.rate26.toFixed(2)} vs $145.13 (+${pct(STATE.rate26,145.13)}%) partially offsets volume softness.`;
+  if (forecastSub) forecastSub.textContent = `2026 base case vs 2025 actual. Rate premium $${STATE.rate26.toFixed(2)} vs $143.22 (+${pct(STATE.rate26,143.22)}%) partially offsets volume softness.`;
 
   document.getElementById('kv-proj').textContent = fmtN(projRev);
   const vs25r = pct(projRev, BASE.totalRev25);
@@ -768,7 +814,7 @@ function renderAlert() {
   const d25 = new Date(snapDate); d25.setFullYear(d25.getFullYear()-1);
   const d25label = d25.toLocaleDateString('en-US',{month:'short',day:'numeric'});
 
-  const txt = `2026 total on books is ${sign(parseFloat(diffPct))}${diffPct}% vs 2025 at same date (${fmtComma(ob26)} vs ${fmtComma(ob25)} nights · '25 measured ${d25label}). Weakest month: ${worst.m} (${worst.r.toFixed(1)}%). Rate premium +${pct(STATE.rate26,145.13)}% partially offsets volume softness.`;
+  const txt = `2026 total on books is ${sign(parseFloat(diffPct))}${diffPct}% vs 2025 at same date (${fmtComma(ob26)} vs ${fmtComma(ob25)} nights · '25 measured ${d25label}). Weakest month: ${worst.m} (${worst.r.toFixed(1)}%). Rate premium +${pct(STATE.rate26,143.22)}% partially offsets volume softness.`;
   document.getElementById('alertText').textContent = txt;
   document.getElementById('alertBanner').className = `alert-banner ${parseFloat(diffPct) < -10 ? 'warn' : 'info'}`;
 }
@@ -826,7 +872,7 @@ function renderRevRangeBars() {
       <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-top:2px;">${fmtComma(nights)} projected nights</div>
     </div>`;
   }).join('');
-  document.getElementById('revRangeBars').innerHTML = html + `<div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-top:4px;">Gray bar = 2025 actual ($4.50M)</div>`;
+  document.getElementById('revRangeBars').innerHTML = html + `<div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-top:4px;">Gray bar = 2025 actual ($4.26M res charges)</div>`;
 }
 
 function renderFillPctBars() {
@@ -1201,9 +1247,10 @@ function switchTab(name) {
   document.getElementById('tab-'+name).classList.add('active');
   document.querySelector(`[onclick="switchTab('${name}')"]`).classList.add('active');
   // Render on demand
-  if (name==='forecast')  renderForecastTab();
-  if (name==='sitetype')  renderSiteTypeTab();
+  if (name==='forecast')    renderForecastTab();
+  if (name==='sitetype')    renderSiteTypeTab();
   if (name==='projections') renderProjectionsTab();
+  if (name==='october')     renderOctober();
 }
 
 let lateFillMode = 'snapshot';
@@ -1298,7 +1345,7 @@ function lookupFC25(isoDate) {
 // Returns { nights, revenue, actualDays, label, clamped }
 // Uses $145.59 blended pre-season ADR for 2025 revenue.
 function calc2025Momentum(snapshotDate2026, windowDays) {
-  const ADR_2025 = 145.59;
+  const ADR_2025 = 143.22;  // pre-season blended ADR — reservation charges only, weighted by Mar-27 mix
   const FLOOR    = FC25_EARLIEST; // 2025-03-27
 
   // Equivalent 2025 date = snapshot date minus 1 year
@@ -1575,6 +1622,55 @@ function renderCancels() {
     `Season-to-date cancellations through <strong style="color:var(--text2)">${c.report_date}</strong> · ${fmtComma(c.row_count)} total cancel records accumulated · Cancel rate = cancelled nights ÷ current nights on books · Fee recovery = cancel fees ÷ lost revenue`;
 }
 
+function renderOctober() {
+  // 2026 Oct on books — comes from snapshot by_site_type totals for Oct
+  // For now use STATE.oct26 if set, otherwise show placeholder
+  const ob26 = STATE.oct26 || 107; // seeded from Apr 2 report
+  const rate26 = STATE.rate26;
+  const rev26 = Math.round(ob26 * rate26);
+  const vs25 = ((ob26 / 1225 - 1) * 100).toFixed(1);
+  const vsColor = parseFloat(vs25) >= 0 ? C.green : C.red;
+
+  document.getElementById('oct-ob26').textContent = ob26.toLocaleString();
+  document.getElementById('oct-ob26-delta').innerHTML =
+    `<span style="color:${vsColor}">${parseFloat(vs25)>=0?'+':''}${vs25}% vs 2025 final (1,225)</span>`;
+  document.getElementById('oct-rev26').textContent = '$' + Math.round(rev26/1000) + 'K';
+  document.getElementById('oct-rev26-delta').innerHTML =
+    `<span class="neu">@ $${rate26.toFixed(2)}/night blended rate</span>`;
+
+  // 2025 Oct fill curve chart
+  const octDates = [
+    ['Jun 24',356],['Jun 25',359],['Jun 28',359],['Jul 3',362],['Jul 6',362],
+    ['Jul 9',363],['Jul 14',363],['Jul 17',365],['Jul 20',371],['Jul 23',379],
+    ['Jul 26',387],['Jul 29',403],['Aug 1',397],['Aug 4',406],['Aug 7',414],
+    ['Aug 11',430],['Aug 14',436],['Aug 17',446],['Aug 20',453],['Aug 23',476],
+    ['Aug 24',478],['Aug 27',488],['Aug 30',498],['Sep 2',522],['Sep 4',539],
+    ['Sep 7',573],['Sep 16',647],['Sep 18',654],['Sep 21',713],['Sep 25',773],
+    ['Sep 28',830],['Oct 1',926],['Oct 5',1053],['Oct 8',1139],['Oct 11',1205],
+    ['Oct 14',1223],['Oct 16',1225],
+  ];
+  mkChart('chartOctFill', {
+    type: 'line',
+    data: {
+      labels: octDates.map(([d]) => d),
+      datasets: [{
+        label: 'Oct 2025 on books',
+        data: octDates.map(([,v]) => v),
+        borderColor: C.amber, backgroundColor: 'rgba(232,160,48,0.08)',
+        tension: 0.3, pointRadius: 2, borderWidth: 2, fill: true,
+      }]
+    },
+    options: {
+      ...baseOpts(),
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'#5a5856',font:{size:9,family:'DM Mono'},maxRotation:40} },
+        y: { grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'#5a5856',font:{size:10,family:'DM Mono'}} }
+      }
+    }
+  });
+}
+
 function refreshAll() {
   renderKPIs();
   renderAlert();
@@ -1635,6 +1731,7 @@ async function loadFromDrive() {
       STATE.onBooks26    = newNights;
       STATE.rate26       = snap.blended_rate > 0 ? snap.blended_rate : STATE.rate26;
       STATE.snapshotDate = snap.snapshot_date;
+      STATE.oct26        = snap.totals?.Oct || STATE.oct26;  // Oct nights if snapshot includes them
       document.getElementById('lastUpdated').textContent = 'Snapshot: ' + snap.snapshot_date;
       setDriveStatus('ok', 'Live · ' + snap.snapshot_date);
 
