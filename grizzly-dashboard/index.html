@@ -238,8 +238,7 @@ input[type=file] { display: none; }
           <div class="sub" style="margin:0;">Conservative / Base / Optimistic vs 2025 actuals.</div>
           <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
             <span style="font-family:var(--font-mono);font-size:10px;color:var(--text3);">LATE FILL</span>
-            <button class="scen-btn active" id="ov-lf-snapshot" onclick="setLateFill('snapshot')" style="padding:3px 9px;font-size:10px;">Measured</button>
-            <button class="scen-btn" id="ov-lf-demand" onclick="setLateFill('demand')" style="padding:3px 9px;font-size:10px;">Demand-adj</button>
+
           </div>
         </div>
         <div style="padding: 4px 0;" id="revRangeBars"></div>
@@ -351,7 +350,7 @@ input[type=file] { display: none; }
             <th>On books</th>
             <th>Locked cancel</th>
             <th>Locked</th>
-            <th>Already landed</th>
+            <th>2025 fwd demand</th>
             <th>Remaining late fill</th>
             <th>Projected</th>
             <th>Capacity</th>
@@ -365,10 +364,10 @@ input[type=file] { display: none; }
       </table>
     </div>
     <div class="method-box">
-      <strong>Formula:</strong> Projected = min((locked × 11% cancel) + (remaining late fill × demand mult × dynamic cancel rate), 100% capacity)<br>
+      <strong>Formula:</strong> Projected = min((on-books × (1 − locked cancel rate)) + (2025 fwd demand × demand mult × (1 − LF cancel rate)), 100% capacity)<br>
       <strong>Remaining late fill</strong> = 2025 total late fill − nights already landed since Mar 27 2026. As bookings accumulate through the season, the late fill bucket shrinks to avoid double-counting.<br>
       <strong>Cancel rates:</strong> Conservative 11% · Base 9% · Optimistic 7% — policy-aware Year 2 assumptions (structural floor ~6%)<br>
-      <strong>Late fill basis:</strong> Toggle between Snapshot (measured net from 114 snapshots) and Demand-Adjusted (gross bookings − gross cancels from origination + cancellation reports) in the Projections tab.<br>
+      <strong>Forward demand:</strong> 2025 fwd demand = gross nights booked from today's equivalent date through month end in 2025 (booking errors excluded). Updates daily as snapshot date advances — no Mar 27 anchor.<br>
       <strong>Revenue:</strong> Projected nights × current blended rate vs 2025 actual $143.22 (res charges only)
     </div>
   </div>
@@ -433,14 +432,8 @@ input[type=file] { display: none; }
         <button class="scen-btn" id="scen-base" onclick="setScenario('base')">Base (100% demand)</button>
         <button class="scen-btn" id="scen-opt" onclick="setScenario('opt')">Optimistic (115% demand)</button>
       </div>
-      <div style="width:1px;height:24px;background:var(--border);flex-shrink:0;"></div>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span style="font-family:var(--font-mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;">Late fill basis</span>
-        <button class="scen-btn active" id="lf-snapshot" onclick="setLateFill('snapshot')">Snapshot (measured)</button>
-        <button class="scen-btn" id="lf-demand" onclick="setLateFill('demand')">Demand-adjusted</button>
-      </div>
+
     </div>
-    <div id="lfExplainer" style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-bottom:12px;padding:8px 12px;background:var(--surface2);border-radius:4px;line-height:1.6;"></div>
 
     <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:16px;" id="projMonthCards"></div>
 
@@ -463,8 +456,8 @@ input[type=file] { display: none; }
             <th>On books</th>
             <th>Locked cancel</th>
             <th>Locked</th>
-            <th>Remaining LF</th>
-            <th>Adj. late fill</th>
+            <th>2025 fwd demand</th>
+            <th>LF gross → net</th>
             <th>Projected</th>
             <th>Capacity</th>
             <th>Occ %</th>
@@ -476,7 +469,7 @@ input[type=file] { display: none; }
       </table>
     </div>
     <div class="method-box">
-      <strong>How this is calculated:</strong> Projected = min((on-books × (1−11%)) + (remaining late fill × demand mult × (1 − dynamic LF cancel rate)), 100% capacity)<br>
+      <strong>How this is calculated:</strong> Projected = min((on-books × (1 − locked cancel rate)) + (2025 fwd demand × demand mult × (1 − LF cancel rate)), 100% capacity)<br>
       <strong>Remaining late fill</strong> = 2025 total late fill − nights already landed since Mar 27 2026. Shrinks automatically as bookings accumulate, preventing double-counting.<br>
       2025 late fill = actual nights added after Mar 27 per month (measured from 114 daily snapshots + rent roll).<br>
       May includes +391 walk-up adder not captured in snapshots.<br>
@@ -621,6 +614,20 @@ let STATE = {
     ],
   },
   snapshotDate: null,
+  // Rolling snapshot history — seeded from Mar 20-29 2026 CSVs, extended daily by pipeline
+  // Each entry: {date, total (May-Sep nights), May, Jun, Jul, Aug, Sep, Oct}
+  snapshotHistory: [
+    {"date":"2026-03-20","total":15317,"Oct":99,"May":2149,"Jun":4883,"Jul":3692,"Aug":2656,"Sep":1937},
+    {"date":"2026-03-21","total":15339,"Oct":99,"May":2170,"Jun":4874,"Jul":3695,"Aug":2663,"Sep":1937},
+    {"date":"2026-03-22","total":15425,"Oct":99,"May":2186,"Jun":4897,"Jul":3717,"Aug":2685,"Sep":1940},
+    {"date":"2026-03-23","total":15520,"Oct":99,"May":2203,"Jun":4925,"Jul":3747,"Aug":2696,"Sep":1949},
+    {"date":"2026-03-24","total":15580,"Oct":99,"May":2223,"Jun":4949,"Jul":3760,"Aug":2698,"Sep":1950},
+    {"date":"2026-03-25","total":15701,"Oct":99,"May":2231,"Jun":5028,"Jul":3783,"Aug":2712,"Sep":1947},
+    {"date":"2026-03-26","total":15753,"Oct":99,"May":2242,"Jun":5056,"Jul":3792,"Aug":2713,"Sep":1950},
+    {"date":"2026-03-27","total":15860,"Oct":101,"May":2252,"Jun":5077,"Jul":3834,"Aug":2729,"Sep":1968},
+    {"date":"2026-03-28","total":15946,"Oct":101,"May":2269,"Jun":5120,"Jul":3849,"Aug":2734,"Sep":1974},
+    {"date":"2026-03-29","total":16043,"Oct":101,"May":2299,"Jun":5139,"Jul":3870,"Aug":2754,"Sep":1981},
+  ],
   oct26: 107,       // October nights on books — updated from snapshot, seeded from Apr 2 report
   // Cancellation data — seeded with full season-to-date baseline (Oct 2024–Mar 2026)
   // Updated daily by pipeline; pipeline deduplicates so no double-counting
@@ -722,21 +729,37 @@ const SCENARIOS = {
 };
 let currentScenario = 'cons';
 
+const FWD_DEMAND_2025 = {"2026-03-27": {"May": 1660, "Jun": 2052, "Jul": 3782, "Aug": 4155, "Sep": 4586}, "2026-03-28": {"May": 1650, "Jun": 2019, "Jul": 3743, "Aug": 4154, "Sep": 4575}, "2026-03-29": {"May": 1643, "Jun": 1997, "Jul": 3727, "Aug": 4151, "Sep": 4548}, "2026-03-30": {"May": 1628, "Jun": 1984, "Jul": 3708, "Aug": 4124, "Sep": 4523}, "2026-03-31": {"May": 1623, "Jun": 1960, "Jul": 3661, "Aug": 4112, "Sep": 4502}, "2026-04-01": {"May": 1610, "Jun": 1914, "Jul": 3615, "Aug": 4111, "Sep": 4476}, "2026-04-02": {"May": 1590, "Jun": 1892, "Jul": 3591, "Aug": 4091, "Sep": 4464}, "2026-04-03": {"May": 1580, "Jun": 1886, "Jul": 3557, "Aug": 4065, "Sep": 4449}, "2026-04-04": {"May": 1552, "Jun": 1855, "Jul": 3533, "Aug": 4051, "Sep": 4412}, "2026-04-05": {"May": 1541, "Jun": 1828, "Jul": 3522, "Aug": 4043, "Sep": 4390}, "2026-04-06": {"May": 1530, "Jun": 1799, "Jul": 3504, "Aug": 4016, "Sep": 4382}, "2026-04-07": {"May": 1523, "Jun": 1771, "Jul": 3477, "Aug": 3986, "Sep": 4356}, "2026-04-08": {"May": 1516, "Jun": 1746, "Jul": 3454, "Aug": 3977, "Sep": 4347}, "2026-04-09": {"May": 1505, "Jun": 1737, "Jul": 3389, "Aug": 3976, "Sep": 4337}, "2026-04-10": {"May": 1491, "Jun": 1714, "Jul": 3379, "Aug": 3969, "Sep": 4334}, "2026-04-11": {"May": 1481, "Jun": 1695, "Jul": 3363, "Aug": 3946, "Sep": 4312}, "2026-04-12": {"May": 1467, "Jun": 1688, "Jul": 3345, "Aug": 3923, "Sep": 4309}, "2026-04-13": {"May": 1454, "Jun": 1679, "Jul": 3330, "Aug": 3918, "Sep": 4305}, "2026-04-14": {"May": 1452, "Jun": 1669, "Jul": 3277, "Aug": 3906, "Sep": 4298}, "2026-04-15": {"May": 1434, "Jun": 1647, "Jul": 3246, "Aug": 3899, "Sep": 4288}, "2026-04-16": {"May": 1430, "Jun": 1625, "Jul": 3246, "Aug": 3876, "Sep": 4284}, "2026-04-17": {"May": 1420, "Jun": 1605, "Jul": 3225, "Aug": 3865, "Sep": 4279}, "2026-04-18": {"May": 1415, "Jun": 1595, "Jul": 3211, "Aug": 3861, "Sep": 4273}, "2026-04-19": {"May": 1401, "Jun": 1585, "Jul": 3198, "Aug": 3857, "Sep": 4267}, "2026-04-20": {"May": 1384, "Jun": 1567, "Jul": 3181, "Aug": 3836, "Sep": 4258}, "2026-04-21": {"May": 1364, "Jun": 1562, "Jul": 3157, "Aug": 3814, "Sep": 4240}, "2026-04-22": {"May": 1364, "Jun": 1549, "Jul": 3137, "Aug": 3811, "Sep": 4235}, "2026-04-23": {"May": 1338, "Jun": 1529, "Jul": 3128, "Aug": 3798, "Sep": 4213}, "2026-04-24": {"May": 1307, "Jun": 1517, "Jul": 3120, "Aug": 3763, "Sep": 4198}, "2026-04-25": {"May": 1278, "Jun": 1500, "Jul": 3091, "Aug": 3756, "Sep": 4183}, "2026-04-26": {"May": 1246, "Jun": 1472, "Jul": 3061, "Aug": 3751, "Sep": 4168}, "2026-04-27": {"May": 1213, "Jun": 1453, "Jul": 3020, "Aug": 3737, "Sep": 4160}, "2026-04-28": {"May": 1201, "Jun": 1438, "Jul": 2985, "Aug": 3721, "Sep": 4148}, "2026-04-29": {"May": 1171, "Jun": 1429, "Jul": 2972, "Aug": 3701, "Sep": 4131}, "2026-04-30": {"May": 1133, "Jun": 1415, "Jul": 2936, "Aug": 3689, "Sep": 4100}, "2026-05-01": {"May": 1100, "Jun": 1385, "Jul": 2917, "Aug": 3666, "Sep": 4074}, "2026-05-02": {"May": 1073, "Jun": 1349, "Jul": 2883, "Aug": 3646, "Sep": 4060}, "2026-05-03": {"May": 1015, "Jun": 1330, "Jul": 2856, "Aug": 3622, "Sep": 4000}, "2026-05-04": {"May": 964, "Jun": 1312, "Jul": 2824, "Aug": 3597, "Sep": 3944}, "2026-05-05": {"May": 918, "Jun": 1288, "Jul": 2786, "Aug": 3566, "Sep": 3920}, "2026-05-06": {"May": 869, "Jun": 1260, "Jul": 2751, "Aug": 3538, "Sep": 3894}, "2026-05-07": {"May": 844, "Jun": 1238, "Jul": 2720, "Aug": 3522, "Sep": 3881}, "2026-05-08": {"May": 800, "Jun": 1208, "Jul": 2714, "Aug": 3511, "Sep": 3859}, "2026-05-09": {"May": 744, "Jun": 1183, "Jul": 2697, "Aug": 3485, "Sep": 3845}, "2026-05-10": {"May": 712, "Jun": 1151, "Jul": 2676, "Aug": 3484, "Sep": 3814}, "2026-05-11": {"May": 696, "Jun": 1132, "Jul": 2669, "Aug": 3471, "Sep": 3806}, "2026-05-12": {"May": 657, "Jun": 1114, "Jul": 2647, "Aug": 3462, "Sep": 3779}, "2026-05-13": {"May": 596, "Jun": 1083, "Jul": 2620, "Aug": 3452, "Sep": 3754}, "2026-05-14": {"May": 548, "Jun": 1056, "Jul": 2608, "Aug": 3434, "Sep": 3710}, "2026-05-15": {"May": 518, "Jun": 1049, "Jul": 2580, "Aug": 3405, "Sep": 3695}, "2026-05-16": {"May": 469, "Jun": 1044, "Jul": 2550, "Aug": 3383, "Sep": 3688}, "2026-05-17": {"May": 447, "Jun": 1027, "Jul": 2533, "Aug": 3360, "Sep": 3660}, "2026-05-18": {"May": 403, "Jun": 1000, "Jul": 2503, "Aug": 3332, "Sep": 3652}, "2026-05-19": {"May": 328, "Jun": 984, "Jul": 2456, "Aug": 3311, "Sep": 3634}, "2026-05-20": {"May": 299, "Jun": 959, "Jul": 2430, "Aug": 3295, "Sep": 3613}, "2026-05-21": {"May": 252, "Jun": 943, "Jul": 2401, "Aug": 3283, "Sep": 3602}, "2026-05-22": {"May": 232, "Jun": 932, "Jul": 2390, "Aug": 3276, "Sep": 3582}, "2026-05-23": {"May": 194, "Jun": 915, "Jul": 2344, "Aug": 3264, "Sep": 3574}, "2026-05-24": {"May": 151, "Jun": 899, "Jul": 2329, "Aug": 3250, "Sep": 3563}, "2026-05-25": {"May": 117, "Jun": 870, "Jul": 2306, "Aug": 3238, "Sep": 3553}, "2026-05-26": {"May": 101, "Jun": 849, "Jul": 2280, "Aug": 3209, "Sep": 3542}, "2026-05-27": {"May": 73, "Jun": 821, "Jul": 2241, "Aug": 3193, "Sep": 3514}, "2026-05-28": {"May": 52, "Jun": 791, "Jul": 2227, "Aug": 3176, "Sep": 3493}, "2026-05-29": {"May": 33, "Jun": 761, "Jul": 2194, "Aug": 3152, "Sep": 3482}, "2026-05-30": {"May": 15, "Jun": 740, "Jul": 2178, "Aug": 3148, "Sep": 3451}, "2026-05-31": {"May": 2, "Jun": 703, "Jul": 2154, "Aug": 3131, "Sep": 3444}, "2026-06-01": {"May": 0, "Jun": 671, "Jul": 2113, "Aug": 3111, "Sep": 3424}, "2026-06-02": {"May": 0, "Jun": 634, "Jul": 2055, "Aug": 3093, "Sep": 3396}, "2026-06-03": {"May": 0, "Jun": 576, "Jul": 2006, "Aug": 3078, "Sep": 3386}, "2026-06-04": {"May": 0, "Jun": 529, "Jul": 1979, "Aug": 3062, "Sep": 3358}, "2026-06-05": {"May": 0, "Jun": 477, "Jul": 1955, "Aug": 3028, "Sep": 3333}, "2026-06-06": {"May": 0, "Jun": 433, "Jul": 1935, "Aug": 3013, "Sep": 3324}, "2026-06-07": {"May": 0, "Jun": 412, "Jul": 1912, "Aug": 3008, "Sep": 3308}, "2026-06-08": {"May": 0, "Jun": 383, "Jul": 1878, "Aug": 2982, "Sep": 3301}, "2026-06-09": {"May": 0, "Jun": 368, "Jul": 1854, "Aug": 2957, "Sep": 3285}, "2026-06-10": {"May": 0, "Jun": 345, "Jul": 1817, "Aug": 2931, "Sep": 3270}, "2026-06-11": {"May": 0, "Jun": 310, "Jul": 1764, "Aug": 2886, "Sep": 3251}, "2026-06-12": {"May": 0, "Jun": 295, "Jul": 1709, "Aug": 2866, "Sep": 3215}, "2026-06-13": {"May": 0, "Jun": 259, "Jul": 1669, "Aug": 2837, "Sep": 3201}, "2026-06-14": {"May": 0, "Jun": 234, "Jul": 1647, "Aug": 2830, "Sep": 3190}, "2026-06-15": {"May": 0, "Jun": 210, "Jul": 1622, "Aug": 2816, "Sep": 3164}, "2026-06-16": {"May": 0, "Jun": 201, "Jul": 1602, "Aug": 2804, "Sep": 3154}, "2026-06-17": {"May": 0, "Jun": 182, "Jul": 1560, "Aug": 2783, "Sep": 3133}, "2026-06-18": {"May": 0, "Jun": 167, "Jul": 1516, "Aug": 2773, "Sep": 3114}, "2026-06-19": {"May": 0, "Jun": 159, "Jul": 1467, "Aug": 2761, "Sep": 3092}, "2026-06-20": {"May": 0, "Jun": 133, "Jul": 1428, "Aug": 2754, "Sep": 3075}, "2026-06-21": {"May": 0, "Jun": 91, "Jul": 1380, "Aug": 2720, "Sep": 3058}, "2026-06-22": {"May": 0, "Jun": 79, "Jul": 1358, "Aug": 2691, "Sep": 3046}, "2026-06-23": {"May": 0, "Jun": 70, "Jul": 1293, "Aug": 2657, "Sep": 3021}, "2026-06-24": {"May": 0, "Jun": 54, "Jul": 1257, "Aug": 2644, "Sep": 3000}, "2026-06-25": {"May": 0, "Jun": 46, "Jul": 1242, "Aug": 2621, "Sep": 2974}, "2026-06-26": {"May": 0, "Jun": 35, "Jul": 1173, "Aug": 2596, "Sep": 2961}, "2026-06-27": {"May": 0, "Jun": 29, "Jul": 1159, "Aug": 2590, "Sep": 2918}, "2026-06-28": {"May": 0, "Jun": 18, "Jul": 1144, "Aug": 2573, "Sep": 2897}, "2026-06-29": {"May": 0, "Jun": 14, "Jul": 1119, "Aug": 2548, "Sep": 2883}, "2026-06-30": {"May": 0, "Jun": 7, "Jul": 1097, "Aug": 2521, "Sep": 2856}, "2026-07-01": {"May": 0, "Jun": 0, "Jul": 1049, "Aug": 2486, "Sep": 2842}, "2026-07-02": {"May": 0, "Jun": 0, "Jul": 994, "Aug": 2437, "Sep": 2835}, "2026-07-03": {"May": 0, "Jun": 0, "Jul": 948, "Aug": 2417, "Sep": 2828}, "2026-07-04": {"May": 0, "Jun": 0, "Jul": 908, "Aug": 2394, "Sep": 2810}, "2026-07-05": {"May": 0, "Jun": 0, "Jul": 879, "Aug": 2371, "Sep": 2807}, "2026-07-06": {"May": 0, "Jun": 0, "Jul": 850, "Aug": 2342, "Sep": 2800}, "2026-07-07": {"May": 0, "Jun": 0, "Jul": 802, "Aug": 2319, "Sep": 2776}, "2026-07-08": {"May": 0, "Jun": 0, "Jul": 764, "Aug": 2290, "Sep": 2744}, "2026-07-09": {"May": 0, "Jun": 0, "Jul": 691, "Aug": 2245, "Sep": 2717}, "2026-07-10": {"May": 0, "Jun": 0, "Jul": 646, "Aug": 2214, "Sep": 2686}, "2026-07-11": {"May": 0, "Jun": 0, "Jul": 613, "Aug": 2196, "Sep": 2649}, "2026-07-12": {"May": 0, "Jun": 0, "Jul": 552, "Aug": 2165, "Sep": 2628}, "2026-07-13": {"May": 0, "Jun": 0, "Jul": 500, "Aug": 2121, "Sep": 2606}, "2026-07-14": {"May": 0, "Jun": 0, "Jul": 451, "Aug": 2051, "Sep": 2593}, "2026-07-15": {"May": 0, "Jun": 0, "Jul": 404, "Aug": 2008, "Sep": 2557}, "2026-07-16": {"May": 0, "Jun": 0, "Jul": 373, "Aug": 1976, "Sep": 2533}, "2026-07-17": {"May": 0, "Jun": 0, "Jul": 345, "Aug": 1944, "Sep": 2513}, "2026-07-18": {"May": 0, "Jun": 0, "Jul": 311, "Aug": 1918, "Sep": 2492}, "2026-07-19": {"May": 0, "Jun": 0, "Jul": 282, "Aug": 1893, "Sep": 2473}, "2026-07-20": {"May": 0, "Jun": 0, "Jul": 269, "Aug": 1860, "Sep": 2465}, "2026-07-21": {"May": 0, "Jun": 0, "Jul": 250, "Aug": 1819, "Sep": 2441}, "2026-07-22": {"May": 0, "Jun": 0, "Jul": 211, "Aug": 1794, "Sep": 2426}, "2026-07-23": {"May": 0, "Jun": 0, "Jul": 176, "Aug": 1765, "Sep": 2399}, "2026-07-24": {"May": 0, "Jun": 0, "Jul": 149, "Aug": 1708, "Sep": 2371}, "2026-07-25": {"May": 0, "Jun": 0, "Jul": 110, "Aug": 1690, "Sep": 2356}, "2026-07-26": {"May": 0, "Jun": 0, "Jul": 74, "Aug": 1664, "Sep": 2352}, "2026-07-27": {"May": 0, "Jun": 0, "Jul": 62, "Aug": 1622, "Sep": 2324}, "2026-07-28": {"May": 0, "Jun": 0, "Jul": 39, "Aug": 1569, "Sep": 2299}, "2026-07-29": {"May": 0, "Jun": 0, "Jul": 21, "Aug": 1515, "Sep": 2281}, "2026-07-30": {"May": 0, "Jun": 0, "Jul": 11, "Aug": 1463, "Sep": 2265}, "2026-07-31": {"May": 0, "Jun": 0, "Jul": 6, "Aug": 1424, "Sep": 2247}, "2026-08-01": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 1400, "Sep": 2236}, "2026-08-02": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 1337, "Sep": 2222}, "2026-08-03": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 1254, "Sep": 2203}, "2026-08-04": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 1194, "Sep": 2190}, "2026-08-05": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 1129, "Sep": 2161}, "2026-08-06": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 1061, "Sep": 2130}, "2026-08-07": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 998, "Sep": 2091}, "2026-08-08": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 944, "Sep": 2066}, "2026-08-09": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 859, "Sep": 2028}, "2026-08-10": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 833, "Sep": 2005}, "2026-08-11": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 782, "Sep": 1986}, "2026-08-12": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 748, "Sep": 1954}, "2026-08-13": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 677, "Sep": 1929}, "2026-08-14": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 616, "Sep": 1892}, "2026-08-15": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 548, "Sep": 1878}, "2026-08-16": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 510, "Sep": 1852}, "2026-08-17": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 440, "Sep": 1816}, "2026-08-18": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 373, "Sep": 1792}, "2026-08-19": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 331, "Sep": 1773}, "2026-08-20": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 310, "Sep": 1759}, "2026-08-21": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 287, "Sep": 1716}, "2026-08-22": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 260, "Sep": 1687}, "2026-08-23": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 216, "Sep": 1659}, "2026-08-24": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 182, "Sep": 1645}, "2026-08-25": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 168, "Sep": 1604}, "2026-08-26": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 148, "Sep": 1587}, "2026-08-27": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 122, "Sep": 1532}, "2026-08-28": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 99, "Sep": 1470}, "2026-08-29": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 75, "Sep": 1449}, "2026-08-30": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 42, "Sep": 1426}, "2026-08-31": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 22, "Sep": 1396}, "2026-09-01": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 1332}, "2026-09-02": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 1291}, "2026-09-03": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 1233}, "2026-09-04": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 1173}, "2026-09-05": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 1102}, "2026-09-06": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 1048}, "2026-09-07": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 991}, "2026-09-08": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 947}, "2026-09-09": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 887}, "2026-09-10": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 865}, "2026-09-11": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 822}, "2026-09-12": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 785}, "2026-09-13": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 713}, "2026-09-14": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 676}, "2026-09-15": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 624}, "2026-09-16": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 579}, "2026-09-17": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 542}, "2026-09-18": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 516}, "2026-09-19": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 468}, "2026-09-20": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 410}, "2026-09-21": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 376}, "2026-09-22": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 321}, "2026-09-23": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 236}, "2026-09-24": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 181}, "2026-09-25": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 126}, "2026-09-26": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 101}, "2026-09-27": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 71}, "2026-09-28": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 53}, "2026-09-29": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 24}, "2026-09-30": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 6}};
+
+// Nearest-neighbor lookup for forward demand table
+function getFwdDemand(snapDate, monthName) {
+  if (FWD_DEMAND_2025[snapDate]) return FWD_DEMAND_2025[snapDate][monthName] || 0;
+  // Find nearest date
+  const dates = Object.keys(FWD_DEMAND_2025).sort();
+  let best = dates[0];
+  for (const d of dates) {
+    if (d <= snapDate) best = d;
+    else break;
+  }
+  return FWD_DEMAND_2025[best]?.[monthName] || 0;
+}
+
 function computeProjection(scenKey) {
   const s = SCENARIOS[scenKey];
   const snapDate = STATE.snapshotDate || new Date().toISOString().slice(0,10);
   const cap100 = BASE.days.map(d => BASE.SITES * d);
 
   return BASE.months.map((m, i) => {
-    const lf25 = BASE.lateFill25[i];
-    const alreadyLanded = Math.max(0, STATE.onBooks26[i] - BASE.onBooks26_mar27[i]);
-    const remainingLF   = Math.max(0, lf25 - alreadyLanded);
+    // Forward demand: how many nights were booked from today forward through month end in 2025
+    // This replaces the alreadyLanded/remainingLF mechanic — no Mar 27 anchor needed
+    const fwdDemand25 = getFwdDemand(snapDate, m);
 
-    // Split cancel rates: both dynamic based on days to arrival
+    // Cancel rates: both dynamic based on days to arrival
     const lockedCancelRate = calcLockedCancelRate(snapDate, m);
     const lfCancelRate     = calcLFCancelRate(snapDate, m);
+
     const locked    = Math.round(STATE.onBooks26[i] * (1 - lockedCancelRate));
-    const lfGross   = Math.round(remainingLF * s.demandMult);
+    const lfGross   = Math.round(fwdDemand25 * s.demandMult);
     const lfNet     = Math.round(lfGross * (1 - lfCancelRate));
     const proj      = Math.min(locked + lfNet, cap100[i]);
     const rev       = proj * STATE.rate26;
@@ -744,8 +767,8 @@ function computeProjection(scenKey) {
     const cancelEst = Math.round(STATE.onBooks26[i] * lockedCancelRate);
 
     return {
-      month:m, onBooks:STATE.onBooks26[i], locked, lf25, remainingLF,
-      lfGross, lfNet, lfCancelRate, lockedCancelRate, alreadyLanded,
+      month:m, onBooks:STATE.onBooks26[i], locked,
+      fwdDemand25, lfGross, lfNet, lfCancelRate, lockedCancelRate,
       proj, cap:cap100[i], occ, rev, final25:BASE.final25[i],
       cancel: cancelEst,
     };
@@ -1059,8 +1082,7 @@ function renderForecastTab() {
       <td>${fmtComma(r.onBooks)}</td>
       <td>${fmtComma(r.cancel)} <span style="font-size:10px;color:var(--text3);">${(r.lockedCancelRate*100).toFixed(1)}%</span></td>
       <td>${fmtComma(r.locked)}</td>
-      <td><span class="neu">+${fmtComma(r.alreadyLanded)}</span></td>
-      <td>${fmtComma(r.remainingLF)} <span style="font-size:10px;color:var(--text3);">of ${fmtComma(r.lf25)}</span></td>
+      <td>${fmtComma(r.fwdDemand25)}</td>
       <td>${fmtComma(r.lfGross)} → ${fmtComma(r.lfNet)} <span style="font-size:10px;color:var(--text3);">${(r.lfCancelRate*100).toFixed(1)}%</span></td>
       <td>${fmtComma(r.proj)}</td>
       <td>${r.occ.toFixed(1)}%</td>
@@ -1071,7 +1093,7 @@ function renderForecastTab() {
   document.getElementById('forecastTableBody').innerHTML = rows;
   document.getElementById('forecastTableFoot').innerHTML = `<tr>
     <td>Total</td><td>${fmtComma(STATE.onBooks26.reduce((a,b)=>a+b,0))}</td>
-    <td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
+    <td>—</td><td>—</td><td>—</td><td>—</td>
     <td>${fmtComma(totalNights)}</td><td>—</td>
     <td>${fmtN(totalRev)}</td>
     <td><span class="${pct(totalRev,BASE.totalRev25)>=0?'pos':'neg'}">${sign(parseFloat(pct(totalRev,BASE.totalRev25)))}${pct(totalRev,BASE.totalRev25)}%</span></td>
@@ -1173,7 +1195,7 @@ function renderProjectionsTab() {
       <td>${fmtComma(r.onBooks)}</td>
       <td>${fmtComma(r.cancel)} <span style="font-size:10px;color:var(--text3);">${(r.lockedCancelRate*100).toFixed(1)}%</span></td>
       <td>${fmtComma(r.locked)}</td>
-      <td>${fmtComma(r.remainingLF)} <span style="font-size:10px;color:var(--text3);">of ${fmtComma(r.lf25)}</span></td>
+      <td>${fmtComma(r.fwdDemand25)}</td>
       <td>${fmtComma(r.lfGross)} → ${fmtComma(r.lfNet)} <span style="font-size:10px;color:var(--text3);">${(r.lfCancelRate*100).toFixed(1)}%</span></td>
       <td>${fmtComma(r.proj)}</td>
       <td>${fmtComma(r.cap)}</td>
@@ -1466,25 +1488,48 @@ function calc2025Momentum(snapshotDate2026, windowDays) {
 }
 
 function renderMomentum() {
-  // ── Determine current snapshot date ──────────────────────────────────────
-  // STATE.snapshotDate is set from Drive JSON ("2026-04-01" etc).
-  // Fall back to today if not yet set.
   const snapDate = STATE.snapshotDate || new Date().toISOString().slice(0, 10);
+  const hist = STATE.snapshotHistory;
 
-  // ── 2026 actuals — nights added in last 7 and 30 days ────────────────────
-  // The 2026 fill curve is sparse (interval snapshots, not daily).
-  // We compute from the 2026 velocity data baked into the JSON via STATE.
-  // For now, use the same hardcoded interval values from the handoff but
-  // wire them to update when new snapshots arrive via STATE.onBooks26 deltas.
-  // TODO: when Drive returns a full 2026 daily series, replace with live lookup.
-  const nights7d_26  = 623;
-  const nights30d_26 = 2713;
-  const rev7d_26     = Math.round(nights7d_26  * STATE.rate26);
-  const rev30d_26    = Math.round(nights30d_26 * STATE.rate26);
+  // ── Look up 2026 snapshot from N days ago ─────────────────────────────────
+  // Finds the nearest entry at or before the target date (fallback if day missed)
+  function hist26(targetDate) {
+    const target = targetDate.toISOString().slice(0,10);
+    // Find closest entry on or before target
+    let best = null;
+    for (const h of hist) {
+      if (h.date <= target) best = h;
+      else break;
+    }
+    return best;
+  }
 
-  // ── 2025 comparison — from fill curve (real data) ─────────────────────────
-  const mom7  = calc2025Momentum(snapDate, 7);
-  const mom30 = calc2025Momentum(snapDate, 30);
+  const today     = new Date(snapDate);
+  const date7ago  = new Date(today); date7ago.setDate(date7ago.getDate() - 7);
+  const date30ago = new Date(today); date30ago.setDate(date30ago.getDate() - 30);
+
+  const snap_7d   = hist26(date7ago);
+  const snap_30d  = hist26(date30ago);
+
+  // Use live on-books as today's total — don't look up from history
+  // (history may not have today yet; STATE.onBooks26 is always current)
+  const now_total = STATE.onBooks26.reduce((a,b)=>a+b,0);
+
+  // 7-day 2026 delta
+  const has7d = snap_7d !== null;
+  const nights7d_26  = has7d ? Math.max(0, now_total - snap_7d.total) : null;
+  const rev7d_26     = nights7d_26 !== null ? Math.round(nights7d_26 * STATE.rate26) : null;
+  const actual7dDays = has7d ? Math.round((today - new Date(snap_7d.date)) / 86400000) : 7;
+
+  // 30-day 2026 delta
+  const has30d = snap_30d !== null;
+  const nights30d_26 = has30d ? Math.max(0, now_total - snap_30d.total) : null;
+  const rev30d_26    = nights30d_26 !== null ? Math.round(nights30d_26 * STATE.rate26) : null;
+  const actual30dDays = has30d ? Math.round((today - new Date(snap_30d.date)) / 86400000) : 30;
+
+  // ── 2025 comparison — from fill curve ─────────────────────────────────────
+  const mom7  = calc2025Momentum(snapDate, actual7dDays);
+  const mom30 = calc2025Momentum(snapDate, actual30dDays);
 
   const nights7d_25  = mom7.nights;
   const rev7d_25     = mom7.revenue;
@@ -1497,11 +1542,6 @@ function renderMomentum() {
 
   // 30-day 2025 comparison isn't meaningful until Apr 26 2026 (when the
   // look-back window clears the Mar 27 2025 fill curve floor).
-  const snap26Date = new Date(snapDate);
-  const availableDate30d = new Date('2026-04-26');
-  const thirtyDayReady = snap26Date >= availableDate30d;
-  const daysUntil30d = thirtyDayReady ? 0 : Math.ceil((availableDate30d - snap26Date) / 86400000);
-
   function card(label, windowDays, n26, r26, n25, r25, mom, greyOut) {
     const dn = n26 - n25;
     const dr = r26 - r25;
@@ -1515,7 +1555,7 @@ function renderMomentum() {
         <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;z-index:2;border-radius:7px;background:rgba(15,15,13,0.55);">
           <div style="font-family:var(--font-mono);font-size:11px;color:var(--text2);">30-day comparison available</div>
           <div style="font-family:var(--font-mono);font-size:13px;font-weight:500;color:var(--amber);">Apr 26</div>
-          <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);">${daysUntil30d} day${daysUntil30d !== 1 ? 's' : ''} from now</div>
+          <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);">${daysUntil30d2} day${daysUntil30d2 !== 1 ? 's' : ''} from now</div>
         </div>
         <div class="kpi-label" style="margin-bottom:10px;">${label}</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">
@@ -1557,9 +1597,18 @@ function renderMomentum() {
     </div>`;
   }
 
+  // 30-day ready once we have 30 days of history
+  const thirtyDayReady2 = has30d && actual30dDays >= 28;
+  // Days until 30d unlocks = max of (days until we have 30d of 2026 history, days until Apr 26 for 2025 fill curve)
+  const apr26 = new Date('2026-04-26');
+  const daysTo2025Floor = Math.max(0, Math.ceil((apr26 - today) / 86400000));
+  const oldest = hist.length > 0 ? new Date(hist[0].date) : today;
+  const daysTo30dHistory = Math.max(0, 30 - Math.round((today - oldest) / 86400000));
+  const daysUntil30d2 = thirtyDayReady2 ? 0 : Math.max(daysTo2025Floor, daysTo30dHistory);
+
   document.getElementById('momentumCards').innerHTML =
-    card('Added — last 7 days',  7,  nights7d_26,  rev7d_26,  nights7d_25,  rev7d_25,  mom7,  false) +
-    card('Added — last 30 days', 30, nights30d_26, rev30d_26, nights30d_25, rev30d_25, mom30, !thirtyDayReady);
+    card('Added — last 7 days',  actual7dDays,  nights7d_26 ?? 0,  rev7d_26 ?? 0,  nights7d_25,  rev7d_25,  mom7,  false) +
+    card('Added — last 30 days', actual30dDays, nights30d_26 ?? 0, rev30d_26 ?? 0, nights30d_25, rev30d_25, mom30, !thirtyDayReady2);
 
   document.getElementById('momentumCards').style.gridTemplateColumns = '1fr 1fr';
 }
@@ -1818,9 +1867,26 @@ async function loadFromDrive() {
       STATE.onBooks26    = newNights;
       STATE.rate26       = snap.blended_rate > 0 ? snap.blended_rate : STATE.rate26;
       STATE.snapshotDate = snap.snapshot_date;
-      STATE.oct26        = snap.totals?.Oct || STATE.oct26;  // Oct nights if snapshot includes them
+      STATE.oct26        = snap.totals?.Oct || STATE.oct26;
       document.getElementById('lastUpdated').textContent = 'Snapshot: ' + snap.snapshot_date;
       setDriveStatus('ok', 'Live · ' + snap.snapshot_date);
+
+      // Merge Drive history into STATE.snapshotHistory (Drive overrides seed for same dates)
+      if (snap.history && snap.history.length) {
+        const merged = {};
+        STATE.snapshotHistory.forEach(h => merged[h.date] = h);
+        snap.history.forEach(h => merged[h.date] = h);
+        STATE.snapshotHistory = Object.values(merged).sort((a,b) => a.date.localeCompare(b.date));
+      }
+      // Always ensure today's live data is in history
+      const todayEntry = {
+        date: snap.snapshot_date, total: snap.total_nights,
+        May: snap.totals?.May||0, Jun: snap.totals?.Jun||0, Jul: snap.totals?.Jul||0,
+        Aug: snap.totals?.Aug||0, Sep: snap.totals?.Sep||0, Oct: snap.totals?.Oct||0,
+      };
+      STATE.snapshotHistory = STATE.snapshotHistory.filter(h => h.date !== snap.snapshot_date);
+      STATE.snapshotHistory.push(todayEntry);
+      STATE.snapshotHistory.sort((a,b) => a.date.localeCompare(b.date));
 
       // Update per-site-type nights from snapshot by_site_type
       // Apps Script classifier keys match STATE.siteTypes.labels exactly after Code.gs fix:
