@@ -187,7 +187,6 @@ input[type=file] { display: none; }
 
   <div class="tab-row">
     <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
-    <button class="tab-btn" onclick="switchTab('forecast')">Forecast</button>
     <button class="tab-btn" onclick="switchTab('sitetype')">Site mix</button>
     <button class="tab-btn" onclick="switchTab('projections')">Projections</button>
     <button class="tab-btn" onclick="switchTab('october')">October</button>
@@ -297,81 +296,6 @@ input[type=file] { display: none; }
 
   </div>
 
-  <!-- ══ FORECAST ═══════════════════════════════════════════════════════════ -->
-  <div class="tab-panel" id="tab-forecast">
-    <div class="section-head"><h2>Revenue forecast — 2026 season</h2></div>
-    <div class="grid-3">
-      <div class="kpi" id="fcst-cons">
-        <div class="kpi-label">Conservative</div>
-        <div class="kpi-value amb" id="fcst-cons-rev">—</div>
-        <div class="kpi-delta" id="fcst-cons-nights">—</div>
-      </div>
-      <div class="kpi good" id="fcst-base">
-        <div class="kpi-label">Base case</div>
-        <div class="kpi-value pos" id="fcst-base-rev">—</div>
-        <div class="kpi-delta" id="fcst-base-nights">—</div>
-      </div>
-      <div class="kpi" id="fcst-opt">
-        <div class="kpi-label">Optimistic</div>
-        <div class="kpi-value pos" id="fcst-opt-rev">—</div>
-        <div class="kpi-delta" id="fcst-opt-nights">—</div>
-      </div>
-    </div>
-
-    <div class="grid-2">
-      <div class="chart-card">
-        <h3>Projected nights by month — all scenarios</h3>
-        <div class="sub">Grouped by month. Conservative / Base / Optimistic vs 2025 actual.</div>
-        <div class="legend">
-          <div class="leg"><div class="leg-sq" style="background:var(--text3);opacity:0.5"></div>2025 actual</div>
-          <div class="leg"><div class="leg-sq" style="background:var(--red)"></div>Conservative</div>
-          <div class="leg"><div class="leg-sq" style="background:var(--amber)"></div>Base</div>
-          <div class="leg"><div class="leg-sq" style="background:var(--green)"></div>Optimistic</div>
-        </div>
-        <div style="height:220px"><canvas id="chartForecastNights"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <h3>Projected revenue by month — base case</h3>
-        <div class="sub" id="forecastRevSub">2026 base case vs 2025 actual. Rate premium vs $143.22 (res charges only) partially offsets volume softness.</div>
-        <div class="legend">
-          <div class="leg"><div class="leg-sq" style="background:var(--text3);opacity:0.5"></div>2025 actual rev</div>
-          <div class="leg"><div class="leg-sq" style="background:var(--amber)"></div>2026 base case rev</div>
-        </div>
-        <div style="height:220px"><canvas id="chartForecastRev"></canvas></div>
-      </div>
-    </div>
-
-    <div class="section-head"><h2>Forecast detail table — base case</h2></div>
-    <div class="table-card">
-      <table>
-        <thead>
-          <tr>
-            <th>Month</th>
-            <th>On books</th>
-            <th>Locked cancel</th>
-            <th>Locked</th>
-            <th>2025 fwd demand</th>
-            <th>Remaining late fill</th>
-            <th>Projected</th>
-            <th>Capacity</th>
-            <th>Occ %</th>
-            <th>Rev (proj)</th>
-            <th>vs 2025</th>
-          </tr>
-        </thead>
-        <tbody id="forecastTableBody"></tbody>
-        <tfoot id="forecastTableFoot"></tfoot>
-      </table>
-    </div>
-    <div class="method-box">
-      <strong>Formula:</strong> Projected = min((on-books × (1 − locked cancel rate)) + (2025 fwd demand × demand mult × (1 − LF cancel rate)), 100% capacity)<br>
-      <strong>Remaining late fill</strong> = 2025 total late fill − nights already landed since Mar 27 2026. As bookings accumulate through the season, the late fill bucket shrinks to avoid double-counting.<br>
-      <strong>Cancel rates:</strong> Conservative 11% · Base 9% · Optimistic 7% — policy-aware Year 2 assumptions (structural floor ~6%)<br>
-      <strong>Forward demand:</strong> 2025 fwd demand = gross nights booked from today's equivalent date through month end in 2025 (booking errors excluded). Updates daily as snapshot date advances — no Mar 27 anchor.<br>
-      <strong>Revenue:</strong> Projected nights × current blended rate vs 2025 actual $143.22 (res charges only)
-    </div>
-  </div>
-
   <!-- ══ SITE MIX ══════════════════════════════════════════════════════════ -->
   <div class="tab-panel" id="tab-sitetype">
     <div class="section-head"><h2>Site type pacing — demand analysis</h2></div>
@@ -425,28 +349,36 @@ input[type=file] { display: none; }
 
   <!-- ══ PROJECTIONS ════════════════════════════════════════════════════════ -->
   <div class="tab-panel" id="tab-projections">
-    <div class="section-head"><h2>Night projections — scenario model</h2></div>
-    <div style="display:flex;align-items:center;gap:20px;margin-bottom:14px;flex-wrap:wrap;">
-      <div style="display:flex;gap:4px;">
-        <button class="scen-btn active" id="scen-cons" onclick="setScenario('cons')">Conservative (85% demand)</button>
-        <button class="scen-btn" id="scen-base" onclick="setScenario('base')">Base (100% demand)</button>
-        <button class="scen-btn" id="scen-opt" onclick="setScenario('opt')">Optimistic (115% demand)</button>
-      </div>
+    <div class="section-head"><h2>Season projections — scenario model</h2></div>
 
+    <!-- Scenario toggle -->
+    <div style="display:flex;align-items:center;gap:4px;margin-bottom:16px;flex-wrap:wrap;">
+      <button class="scen-btn active" id="scen-cons" onclick="setScenario('cons')">Conservative (85% demand)</button>
+      <button class="scen-btn" id="scen-base" onclick="setScenario('base')">Base (100% demand)</button>
+      <button class="scen-btn" id="scen-opt" onclick="setScenario('opt')">Optimistic (115% demand)</button>
     </div>
 
+    <!-- Season summary KPIs — all 3 scenarios -->
+    <div class="grid-3" style="margin-bottom:16px;" id="scenarioKPIs">
+      <div class="kpi" id="fcst-cons">
+        <div class="kpi-label">Conservative</div>
+        <div class="kpi-value amb" id="fcst-cons-rev">—</div>
+        <div class="kpi-delta" id="fcst-cons-nights">—</div>
+      </div>
+      <div class="kpi good" id="fcst-base">
+        <div class="kpi-label">Base case</div>
+        <div class="kpi-value pos" id="fcst-base-rev">—</div>
+        <div class="kpi-delta" id="fcst-base-nights">—</div>
+      </div>
+      <div class="kpi" id="fcst-opt">
+        <div class="kpi-label">Optimistic</div>
+        <div class="kpi-value pos" id="fcst-opt-rev">—</div>
+        <div class="kpi-delta" id="fcst-opt-nights">—</div>
+      </div>
+    </div>
+
+    <!-- Monthly breakdown cards — selected scenario -->
     <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:16px;" id="projMonthCards"></div>
-
-    <div class="chart-card" style="margin-bottom:14px;">
-      <h3>Projected vs 2025 actual — selected scenario</h3>
-      <div class="sub" id="projChartSub">—</div>
-      <div class="legend">
-        <div class="leg"><div class="leg-sq" style="background:var(--text3);opacity:0.5"></div>2025 actual</div>
-        <div class="leg"><div class="leg-sq" style="background:var(--amber)"></div>2026 projected</div>
-        <div class="leg"><div class="leg-sq" style="background:var(--border2)"></div>100% capacity</div>
-      </div>
-      <div style="height:220px"><canvas id="chartProjScen"></canvas></div>
-    </div>
 
     <div class="table-card">
       <table>
@@ -470,9 +402,10 @@ input[type=file] { display: none; }
     </div>
     <div class="method-box">
       <strong>How this is calculated:</strong> Projected = min((on-books × (1 − locked cancel rate)) + (2025 fwd demand × demand mult × (1 − LF cancel rate)), 100% capacity)<br>
-      <strong>Remaining late fill</strong> = 2025 total late fill − nights already landed since Mar 27 2026. Shrinks automatically as bookings accumulate, preventing double-counting.<br>
-      2025 late fill = actual nights added after Mar 27 per month (measured from 114 daily snapshots + rent roll).<br>
-      May includes +391 walk-up adder not captured in snapshots.<br>
+      <strong>Locked cancel rate:</strong> Dynamic by days-to-arrival per month. Today: May ~7.5% · Jun ~11.3% · Jul ~14.0% · Aug ~15.9% · Sep ~17.4%. Declines daily as arrival approaches.<br>
+      <strong>2025 fwd demand:</strong> Gross nights booked from today's equivalent 2025 date through month end. Booking errors (cancelled within 1 day) excluded. Drains naturally to zero as each month passes.<br>
+      <strong>LF cancel rate:</strong> Dynamic by days-to-arrival. Lower than locked — short-window bookers are more committed. Today: May ~6.2% · Jun ~7.8% · Jul ~9.0% · Aug ~9.6% · Sep ~9.9%.<br>
+      <strong>Scenario toggle:</strong> Scales 2025 fwd demand by 85% / 100% / 115%. Cancel rates are fixed — not scenario levers.<br>
       Revenue = projected nights × current blended rate (2026 on books).
     </div>
   </div>
@@ -902,8 +835,6 @@ function renderKPIs() {
   document.getElementById('kv-rate').textContent = `$${STATE.rate26.toFixed(2)}`;
   document.getElementById('kd-rate').innerHTML = `<span class="pos">▲ +${pct(STATE.rate26,143.22)}% vs 2025 ($143.22)</span>`;
   document.getElementById('kpi-rate').className = 'kpi good';
-  const forecastSub = document.getElementById('forecastRevSub');
-  if (forecastSub) forecastSub.textContent = `2026 base case vs 2025 actual. Rate premium $${STATE.rate26.toFixed(2)} vs $143.22 (+${pct(STATE.rate26,143.22)}%) partially offsets volume softness.`;
 
   document.getElementById('kv-proj').textContent = fmtN(projRev);
   const vs25r = pct(projRev, BASE.totalRev25);
@@ -1030,76 +961,6 @@ function renderSiteRatioChart() {
   });
 }
 
-function renderForecastTab() {
-  const proj = computeProjection('base');
-  const totalNights = proj.reduce((a,r)=>a+r.proj,0);
-  const totalRev = totalNights * STATE.rate26;
-
-  // Scenario KPIs
-  ['cons','base','opt'].forEach(s => {
-    const p = computeProjection(s);
-    const tn = p.reduce((a,r)=>a+r.proj,0);
-    const tr = tn * STATE.rate26;
-    const vsR = pct(tr, BASE.totalRev25);
-    const vsN = pct(tn, BASE.totalNights25);
-    document.getElementById(`fcst-${s}-rev`).textContent = fmtN(tr);
-    document.getElementById(`fcst-${s}-nights`).innerHTML = `${fmtComma(tn)} nights &nbsp;<span class="${parseFloat(vsR)>=0?'pos':'neg'}">${sign(parseFloat(vsR))}${vsR}% revenue vs 2025</span>`;
-  });
-
-  // Forecast nights chart
-  mkChart('chartForecastNights', {
-    type:'bar',
-    data:{
-      labels:BASE.months,
-      datasets:[
-        { label:'2025 actual', data:BASE.final25, backgroundColor:C.dGray, borderColor:C.gray, borderWidth:1 },
-        { label:'Conservative', data:computeProjection('cons').map(r=>r.proj), backgroundColor:C.dRed, borderColor:C.red, borderWidth:1 },
-        { label:'Base', data:computeProjection('base').map(r=>r.proj), backgroundColor:C.dAmber, borderColor:C.amber, borderWidth:1 },
-        { label:'Optimistic', data:computeProjection('opt').map(r=>r.proj), backgroundColor:C.dGreen, borderColor:C.green, borderWidth:1 },
-      ]
-    },
-    options:{ ...baseOpts(), plugins:{legend:{display:false}} }
-  });
-
-  // Revenue chart
-  mkChart('chartForecastRev', {
-    type:'bar',
-    data:{
-      labels:BASE.months,
-      datasets:[
-        { label:'2025 actual', data:BASE.rev25, backgroundColor:C.dGray, borderColor:C.gray, borderWidth:1 },
-        { label:'2026 base', data:proj.map(r=>r.rev), backgroundColor:C.dAmber, borderColor:C.amber, borderWidth:1 },
-      ]
-    },
-    options:{ ...baseOpts(v=>'$'+(v/1000).toFixed(0)+'K'), plugins:{legend:{display:false}} }
-  });
-
-  // Detail table
-  const rows = proj.map(r => {
-    const vs = pct(r.proj, r.final25);
-    return `<tr>
-      <td>${r.month}</td>
-      <td>${fmtComma(r.onBooks)}</td>
-      <td>${fmtComma(r.cancel)} <span style="font-size:10px;color:var(--text3);">${(r.lockedCancelRate*100).toFixed(1)}%</span></td>
-      <td>${fmtComma(r.locked)}</td>
-      <td>${fmtComma(r.fwdDemand25)}</td>
-      <td>${fmtComma(r.lfGross)} → ${fmtComma(r.lfNet)} <span style="font-size:10px;color:var(--text3);">${(r.lfCancelRate*100).toFixed(1)}%</span></td>
-      <td>${fmtComma(r.proj)}</td>
-      <td>${r.occ.toFixed(1)}%</td>
-      <td>$${(r.rev/1000).toFixed(0)}K</td>
-      <td><span class="${parseFloat(vs)>=0?'pos':'neg'}">${sign(parseFloat(vs))}${vs}%</span></td>
-    </tr>`;
-  }).join('');
-  document.getElementById('forecastTableBody').innerHTML = rows;
-  document.getElementById('forecastTableFoot').innerHTML = `<tr>
-    <td>Total</td><td>${fmtComma(STATE.onBooks26.reduce((a,b)=>a+b,0))}</td>
-    <td>—</td><td>—</td><td>—</td><td>—</td>
-    <td>${fmtComma(totalNights)}</td><td>—</td>
-    <td>${fmtN(totalRev)}</td>
-    <td><span class="${pct(totalRev,BASE.totalRev25)>=0?'pos':'neg'}">${sign(parseFloat(pct(totalRev,BASE.totalRev25)))}${pct(totalRev,BASE.totalRev25)}%</span></td>
-  </tr>`;
-}
-
 function renderSiteTypeTab() {
   const st = STATE.siteTypes;
   const rows = st.labels.map((lbl,i) => {
@@ -1157,35 +1018,37 @@ function renderProjectionsTab() {
   const totalNights = proj.reduce((a,r)=>a+r.proj,0);
   const totalRev = totalNights * STATE.rate26;
 
-  // Month cards
+  // Season summary KPIs — all 3 scenarios
+  ['cons','base','opt'].forEach(scenKey => {
+    const p = computeProjection(scenKey);
+    const tn = p.reduce((a,r)=>a+r.proj,0);
+    const tr = tn * STATE.rate26;
+    const vsR = pct(tr, BASE.totalRev25);
+    const vsN = pct(tn, BASE.totalNights25);
+    document.getElementById(`fcst-${scenKey}-rev`).textContent = fmtN(tr);
+    document.getElementById(`fcst-${scenKey}-nights`).innerHTML =
+      `${fmtComma(tn)} nights &nbsp;<span class="${parseFloat(vsR)>=0?'pos':'neg'}">${sign(parseFloat(vsR))}${vsR}% rev vs 2025</span>`;
+  });
+
+  // Month cards — nights + revenue + occ
   const cards = proj.map(r => {
     const vs = pct(r.proj, r.final25);
+    const vsRev = pct(r.rev, BASE.rev25[BASE.months.indexOf(r.month)]);
     const cls = parseFloat(vs) >= 0 ? 'pos' : parseFloat(vs) >= -10 ? 'amb' : 'neg';
+    const clsR = parseFloat(vsRev) >= 0 ? 'pos' : 'neg';
     return `<div class="kpi">
       <div class="kpi-label">${r.month}</div>
-      <div class="kpi-value ${cls}" style="font-size:20px;">${fmtComma(r.proj)}</div>
-      <div class="kpi-delta"><span class="${cls}">${sign(parseFloat(vs))}${vs}%</span> vs 2025</div>
-      <div class="kpi-delta" style="margin-top:2px;color:var(--text3);">${r.occ.toFixed(1)}% occ</div>
+      <div class="kpi-value ${cls}" style="font-size:18px;">${fmtComma(r.proj)}<span style="font-size:11px;font-weight:400;color:var(--text3);margin-left:4px;">nts</span></div>
+      <div class="kpi-delta"><span class="${cls}">${sign(parseFloat(vs))}${vs}%</span> vs '25 · ${r.occ.toFixed(1)}% occ</div>
+      <div class="kpi-value ${clsR}" style="font-size:16px;margin-top:6px;">$${(r.rev/1000).toFixed(0)}K</div>
+      <div class="kpi-delta"><span class="${clsR}">${sign(parseFloat(vsRev))}${vsRev}%</span> vs '25 rev</div>
     </div>`;
   }).join('');
   document.getElementById('projMonthCards').innerHTML = cards;
 
   // Chart
   const cap97 = BASE.days.map(d => BASE.SITES*d);  // 100% capacity
-  mkChart('chartProjScen', {
-    type:'bar',
-    data:{
-      labels:BASE.months,
-      datasets:[
-        { label:'2025 actual', data:BASE.final25, backgroundColor:C.dGray, borderColor:C.gray, borderWidth:1 },
-        { label:'2026 projected', data:proj.map(r=>r.proj), backgroundColor:C.dAmber, borderColor:C.amber, borderWidth:1 },
-        { type:'line', label:'97% cap', data:cap97, borderColor:'rgba(255,255,255,0.15)', borderWidth:1.5, borderDash:[4,3], pointRadius:0, fill:false },
-      ]
-    },
-    options:{ ...baseOpts(), plugins:{legend:{display:false}} }
-  });
   const snapDate = STATE.snapshotDate || new Date().toISOString().slice(0,10);
-  document.getElementById('projChartSub').textContent = `${s.label}: ${(s.demandMult*100).toFixed(0)}% of 2025 gross demand · cancel rates dynamic by days-to-arrival — ${fmtComma(totalNights)} projected nights · ${fmtN(totalRev)} revenue`;
 
   // Table
   const rows = proj.map(r => {
@@ -1356,7 +1219,6 @@ function switchTab(name) {
   document.getElementById('tab-'+name).classList.add('active');
   document.querySelector(`[onclick="switchTab('${name}')"]`).classList.add('active');
   // Render on demand
-  if (name==='forecast')    renderForecastTab();
   if (name==='sitetype')    renderSiteTypeTab();
   if (name==='projections') renderProjectionsTab();
   if (name==='october')     renderOctober();
@@ -1391,8 +1253,7 @@ function setLateFill(mode) {
   renderRevRangeBars();
   renderProjectionsTab();
   // Re-render forecast tab if it's active or has been rendered
-  if (document.getElementById('tab-forecast').classList.contains('active')) {
-    renderForecastTab();
+  if (false) {
   }
 }
 
