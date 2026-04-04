@@ -219,7 +219,7 @@ input[type=file] { display: none; }
     </div>
 
     <div class="section-head"><h2>Recent momentum</h2></div>
-    <div class="grid-2" id="momentumCards"></div>
+    <div class="grid-3" id="momentumCards"></div>
 
     <div class="grid-2">
       <div class="chart-card">
@@ -255,18 +255,6 @@ input[type=file] { display: none; }
         <div class="sub">2026 nights ÷ 2025 nights at same date, supply-adjusted for site count changes.</div>
         <div style="height:190px"><canvas id="chartSiteRatio"></canvas></div>
       </div>
-    </div>
-
-    <div class="section-head"><h2>Booking velocity — nights/day</h2></div>
-    <div class="chart-card" style="margin-bottom:14px;">
-      <h3>Weekly booking pace — 2026 vs 2025 equivalent weeks</h3>
-      <div class="sub" id="velocityChartSub">Nights added per day, by week. Gray = 2025 fill curve equivalent period. Amber = 2026 actual.</div>
-      <div class="legend">
-        <div class="leg"><div class="leg-sq" style="background:var(--text3);opacity:0.6"></div>2025 pace (fill curve)</div>
-        <div class="leg"><div class="leg-sq" style="background:var(--amber)"></div>2026 pace</div>
-        <div class="leg"><div class="leg-sq" style="background:var(--text3);opacity:0.3;width:2px;height:14px;border-radius:0;"></div>99.7 avg</div>
-      </div>
-      <div style="height:200px"><canvas id="chartVelocity"></canvas></div>
     </div>
 
     <div class="section-head"><h2>Cancellation activity — season to date</h2></div>
@@ -533,8 +521,8 @@ let STATE = {
     nights26:     [850,  2524, 4283, 1410, 3197, 1580, 1262, 335],
     sites25:      [5,    39,   64,   23,   51,   24,   12,   9],
     sites26:      [8,    32,   70,   21,   51,   24,   12,   9],   // cabin: 6 standard + 3 luxury = 9
-    rate25:       [183,  166,  154,  140,  107,  118,  135,  130],
-    rate26:       [222,  197,  171,  160,  118,  143,  158,  155],
+    rate25:       [184.54, 166.25, 154.78, 135.97, 107.30, 118.44, 147.25, 269.78],  // from 2025 rent roll May-Sep actuals
+    rate26:       [null, null, null, null, null, null, null, null],  // computed dynamically from snapshot revenue ÷ nights
     notes: [
       '+3 from Prem Pull-Thru',
       '−7 net (−3→Pres, −6→Pull-Thru, +2 from Prem Back-In)',
@@ -709,64 +697,6 @@ function computeProjection(scenKey) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// 2026 BOOKING VELOCITY DATA (from 39 snapshots Oct 2025 → Mar 27 2026)
-// ══════════════════════════════════════════════════════════════════════════
-const VELOCITY_2026 = [
-  { to:'2025-10-07', per_day:109.2, net:546,  days:5  },
-  { to:'2025-10-12', per_day:83.4,  net:417,  days:5  },
-  { to:'2025-10-16', per_day:47.0,  net:188,  days:4  },
-  { to:'2025-10-20', per_day:40.8,  net:163,  days:4  },
-  { to:'2025-10-26', per_day:54.2,  net:325,  days:6  },
-  { to:'2025-11-03', per_day:26.2,  net:210,  days:8  },
-  { to:'2025-11-08', per_day:40.2,  net:201,  days:5  },
-  { to:'2025-11-12', per_day:31.2,  net:125,  days:4  },
-  { to:'2025-11-17', per_day:28.0,  net:140,  days:5  },
-  { to:'2025-11-21', per_day:27.0,  net:108,  days:4  },
-  { to:'2025-11-25', per_day:40.8,  net:163,  days:4  },
-  { to:'2025-11-29', per_day:24.8,  net:99,   days:4  },
-  { to:'2025-12-03', per_day:54.2,  net:217,  days:4  },
-  { to:'2025-12-08', per_day:54.0,  net:270,  days:5  },
-  { to:'2025-12-12', per_day:35.0,  net:140,  days:4  },
-  { to:'2025-12-15', per_day:37.7,  net:113,  days:3  },
-  { to:'2025-12-19', per_day:44.5,  net:178,  days:4  },
-  { to:'2025-12-24', per_day:61.0,  net:305,  days:5  },
-  { to:'2025-12-30', per_day:43.7,  net:262,  days:6  },
-  { to:'2026-01-04', per_day:75.2,  net:376,  days:5  },
-  { to:'2026-01-08', per_day:103.2, net:413,  days:4  },
-  { to:'2026-01-13', per_day:117.2, net:586,  days:5  },
-  { to:'2026-01-18', per_day:100.8, net:504,  days:5  },
-  { to:'2026-01-24', per_day:99.5,  net:597,  days:6  },
-  { to:'2026-01-29', per_day:108.2, net:541,  days:5  },
-  { to:'2026-02-02', per_day:88.2,  net:353,  days:4  },
-  { to:'2026-02-07', per_day:84.4,  net:422,  days:5  },
-  { to:'2026-02-12', per_day:102.0, net:510,  days:5  },
-  { to:'2026-02-16', per_day:98.2,  net:393,  days:4  },
-  { to:'2026-02-21', per_day:78.4,  net:392,  days:5  },
-  { to:'2026-02-25', per_day:113.2, net:453,  days:4  },
-  { to:'2026-03-02', per_day:101.8, net:509,  days:5  },
-  { to:'2026-03-06', per_day:112.2, net:449,  days:4  },
-  { to:'2026-03-10', per_day:117.0, net:468,  days:4  },
-  { to:'2026-03-14', per_day:85.2,  net:341,  days:4  },
-  { to:'2026-03-27', per_day:81.2,  net:1055, days:13 },
-  { to:'2026-03-30', per_day:99.3,  net:298,  days:3  },
-];
-
-// Cumulative on-books trajectory for chart
-const CUMUL_2026 = [
-  ['Oct 2',3328],['Oct 7',3874],['Oct 12',4291],['Oct 16',4479],['Oct 20',4642],
-  ['Oct 26',4967],['Nov 3',5177],['Nov 8',5378],['Nov 12',5503],['Nov 17',5643],
-  ['Nov 21',5751],['Nov 25',5914],['Nov 29',6013],['Dec 3',6230],['Dec 8',6500],
-  ['Dec 12',6640],['Dec 15',6753],['Dec 19',6931],['Dec 24',7236],['Dec 30',7498],
-  ['Jan 4',7874],['Jan 8',8287],['Jan 13',8873],['Jan 18',9377],['Jan 24',9974],
-  ['Jan 29',10515],['Feb 2',10868],['Feb 7',11290],['Feb 12',11800],['Feb 16',12193],
-  ['Feb 21',12585],['Feb 25',13038],['Mar 2',13547],['Mar 6',13996],['Mar 10',14464],
-  ['Mar 14',14805],['Mar 27',15860],['Mar 30',16158],
-];
-// 2025 approximate trajectory (estimated from HANDOFF phase data)
-const CUMUL_2025_EST = [
-  ['Oct 1',0],['Dec 31',6407],['Feb 14',11566],['Mar 25',16477],['Mar 27',17750],
-];
-const PACE_2025_AVG = 99.7; // nights/day pre-season average
 // ══════════════════════════════════════════════════════════════════════════
 let charts = {};
 const C = {
@@ -975,8 +905,8 @@ function renderSiteTypeTab() {
       <td>${fmtComma(st.nights26[i])}</td>
       <td>${(raw*100).toFixed(0)}%</td>
       <td>${ratioPill(dem)}</td>
-      <td>$${st.rate25[i]}</td>
-      <td>$${st.rate26[i]}</td>
+      <td>$${st.rate25[i].toFixed(2)}</td>
+      <td>${st.rate26[i] != null ? '$'+st.rate26[i].toFixed(2) : '<span style="color:var(--text3)">—</span>'}</td>
       <td><span class="${sigCls}">${signal}</span></td>
       <td style="color:var(--text3);font-size:11px;">${st.notes[i]}</td>
     </tr>`;
@@ -1366,15 +1296,22 @@ function renderMomentum() {
   }
 
   const today     = new Date(snapDate);
+  const date1ago  = new Date(today); date1ago.setDate(date1ago.getDate() - 1);
   const date7ago  = new Date(today); date7ago.setDate(date7ago.getDate() - 7);
   const date30ago = new Date(today); date30ago.setDate(date30ago.getDate() - 30);
 
+  const snap_1d   = hist26(date1ago);
   const snap_7d   = hist26(date7ago);
   const snap_30d  = hist26(date30ago);
 
-  // Use live on-books as today's total — don't look up from history
-  // (history may not have today yet; STATE.onBooks26 is always current)
+  // Use live on-books as today's total
   const now_total = STATE.onBooks26.reduce((a,b)=>a+b,0);
+
+  // 1-day 2026 delta
+  const has1d = snap_1d !== null;
+  const nights1d_26  = has1d ? Math.max(0, now_total - snap_1d.total) : null;
+  const rev1d_26     = nights1d_26 !== null ? Math.round(nights1d_26 * STATE.rate26) : null;
+  const actual1dDays = has1d ? Math.max(1, Math.round((today - new Date(snap_1d.date)) / 86400000)) : 1;
 
   // 7-day 2026 delta
   const has7d = snap_7d !== null;
@@ -1388,10 +1325,13 @@ function renderMomentum() {
   const rev30d_26    = nights30d_26 !== null ? Math.round(nights30d_26 * STATE.rate26) : null;
   const actual30dDays = has30d ? Math.round((today - new Date(snap_30d.date)) / 86400000) : 30;
 
-  // ── 2025 comparison — from fill curve ─────────────────────────────────────
+  // 2025 comparison from fill curve
+  const mom1  = calc2025Momentum(snapDate, actual1dDays);
   const mom7  = calc2025Momentum(snapDate, actual7dDays);
   const mom30 = calc2025Momentum(snapDate, actual30dDays);
 
+  const nights1d_25  = mom1.nights;
+  const rev1d_25     = mom1.revenue;
   const nights7d_25  = mom7.nights;
   const rev7d_25     = mom7.revenue;
   const nights30d_25 = mom30.nights;
@@ -1468,82 +1408,13 @@ function renderMomentum() {
   const daysUntil30d2 = thirtyDayReady2 ? 0 : Math.max(daysTo2025Floor, daysTo30dHistory);
 
   document.getElementById('momentumCards').innerHTML =
-    card('Added — last 7 days',  actual7dDays,  nights7d_26 ?? 0,  rev7d_26 ?? 0,  nights7d_25,  rev7d_25,  mom7,  false) +
-    card('Added — last 30 days', actual30dDays, nights30d_26 ?? 0, rev30d_26 ?? 0, nights30d_25, rev30d_25, mom30, !thirtyDayReady2);
+    card('Added — yesterday',     actual1dDays,  nights1d_26 ?? 0,  rev1d_26 ?? 0,  nights1d_25,  rev1d_25,  mom1,  false) +
+    card('Added — last 7 days',   actual7dDays,  nights7d_26 ?? 0,  rev7d_26 ?? 0,  nights7d_25,  rev7d_25,  mom7,  false) +
+    card('Added — last 30 days',  actual30dDays, nights30d_26 ?? 0, rev30d_26 ?? 0, nights30d_25, rev30d_25, mom30, !thirtyDayReady2);
 
-  document.getElementById('momentumCards').style.gridTemplateColumns = '1fr 1fr';
+  document.getElementById('momentumCards').style.gridTemplateColumns = '1fr 1fr 1fr';
 }
 
-function renderVelocity() {
-  // Interpolate CUMUL_2026 onto consistent 7-day week boundaries
-  // so the chart shows true weekly pace rather than sporadic snapshot intervals
-  const cumulDates = CUMUL_2026.map(([d]) => new Date(d));
-  const cumulVals  = CUMUL_2026.map(([,v]) => v);
-
-  function interpCumul(target) {
-    const t = new Date(target);
-    if (t <= cumulDates[0]) return cumulVals[0];
-    if (t >= cumulDates[cumulDates.length-1]) return cumulVals[cumulVals.length-1];
-    for (let i = 1; i < cumulDates.length; i++) {
-      if (t <= cumulDates[i]) {
-        const span = cumulDates[i] - cumulDates[i-1];
-        const frac = (t - cumulDates[i-1]) / span;
-        return cumulVals[i-1] + frac * (cumulVals[i] - cumulVals[i-1]);
-      }
-    }
-    return cumulVals[cumulVals.length-1];
-  }
-
-  // Anchor end date to latest snapshot, build 12 weekly buckets back from there
-  const snapDate = STATE.snapshotDate || '2026-03-30';
-  const endDate  = new Date(snapDate);
-  const NUM_WEEKS = 12;
-
-  const labels26 = [], pace26 = [], pace25 = [];
-
-  for (let w = NUM_WEEKS - 1; w >= 0; w--) {
-    const wEnd   = new Date(endDate); wEnd.setDate(wEnd.getDate()   - w * 7);
-    const wStart = new Date(wEnd);    wStart.setDate(wStart.getDate() - 7);
-
-    // 2026 pace
-    const v26end   = interpCumul(wEnd);
-    const v26start = interpCumul(wStart);
-    pace26.push(Math.round((v26end - v26start) / 7 * 10) / 10);
-
-    // 2025 equivalent pace from fill curve (same calendar week -1yr)
-    const w25end   = new Date(wEnd);   w25end.setFullYear(w25end.getFullYear()   - 1);
-    const w25start = new Date(wStart); w25start.setFullYear(w25start.getFullYear() - 1);
-    const e25 = lookupFC25(w25end.toISOString().slice(0,10));
-    const s25 = lookupFC25(w25start.toISOString().slice(0,10));
-    const days25 = Math.max(1, Math.round((new Date(e25.date) - new Date(s25.date)) / 86400000));
-    pace25.push(Math.round(Math.max(0, e25.val - s25.val) / days25 * 10) / 10);
-
-    // Label: month/day of week end
-    labels26.push(`${wEnd.getMonth()+1}/${wEnd.getDate()}`);
-  }
-
-  const avgLine = pace26.map(() => PACE_2025_AVG);
-
-  mkChart('chartVelocity', {
-    type: 'bar',
-    data: {
-      labels: labels26,
-      datasets: [
-        { label:'2025 pace', data:pace25, backgroundColor:'rgba(90,88,86,0.45)', borderColor:'rgba(90,88,86,0.7)', borderWidth:1 },
-        { label:'2026 pace', data:pace26, backgroundColor:C.dAmber, borderColor:C.amber, borderWidth:1 },
-        { label:'2025 avg',  data:avgLine, type:'line', borderColor:'rgba(255,255,255,0.2)', borderWidth:1.5, borderDash:[4,3], pointRadius:0, fill:false },
-      ]
-    },
-    options: {
-      ...baseOpts(),
-      plugins: { legend:{ display:false } },
-      scales: {
-        x: { grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'#5a5856',font:{size:9,family:'DM Mono'}} },
-        y: { grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'#5a5856',font:{size:10,family:'DM Mono'},callback:v=>v+'/d'} }
-      }
-    }
-  });
-}
 
 // 2025 cancellation cumulative lookup — keyed by equivalent 2026 date
 // n=nights, c=count, r=cancel rate vs 2025 on-books at that date
@@ -1886,7 +1757,6 @@ function refreshAll() {
   renderFillPctBars();
   renderSiteRatioChart();
   renderMomentum();
-  renderVelocity();
   renderCancels();
 }
 
@@ -1959,41 +1829,35 @@ async function loadFromDrive() {
       STATE.snapshotHistory.push(todayEntry);
       STATE.snapshotHistory.sort((a,b) => a.date.localeCompare(b.date));
 
-      // Update per-site-type nights from snapshot by_site_type
-      // Apps Script classifier keys match STATE.siteTypes.labels exactly after Code.gs fix:
-      //   'Forest Back-In' → 'Gallatin' (different name, same sites)
-      //   'Cabin' → all cabin variants merged (Luxury + standard)
+      // Update per-site-type nights and rates from snapshot by_site_type
+      // New Code.gs structure: by_site_type[cls][month] = {nights, rev}
+      // Falls back gracefully to old structure (plain number) if pipeline hasn't updated yet
       const bst = snap.by_site_type || {};
-      const sumMonths = obj => obj ? months.reduce((a,m) => a + (obj[m]||0), 0) : 0;
 
-      STATE.siteTypes.nights26 = [
-        sumMonths(bst['Presidential']),
-        sumMonths(bst['Prem Pull-Thru']),
-        sumMonths(bst['Pull-Thru']),
-        sumMonths(bst['Prem Back-In']),
-        sumMonths(bst['Back-In']),
-        sumMonths(bst['Forest Back-In']),   // Gallatin
-        sumMonths(bst['Prem Forest']),
-        sumMonths(bst['Cabin']),            // all cabin types merged
-      ];
+      const sumNights = obj => {
+        if (!obj) return 0;
+        return months.reduce((a,m) => {
+          const v = obj[m];
+          return a + (v && typeof v === 'object' ? (v.nights||0) : (v||0));
+        }, 0);
+      };
+      const sumRev = obj => {
+        if (!obj) return 0;
+        return months.reduce((a,m) => {
+          const v = obj[m];
+          return a + (v && typeof v === 'object' ? (v.rev||0) : 0);
+        }, 0);
+      };
+      const calcRate = (obj, fallback) => {
+        const n = sumNights(obj), r = sumRev(obj);
+        return (n > 0 && r > 0) ? Math.round(r / n * 100) / 100 : fallback;
+      };
 
-      // Append today's total to velocity data if not already present
-      const lastVel = VELOCITY_2026[VELOCITY_2026.length - 1];
-      if (lastVel.to < snap.snapshot_date) {
-        const prevTotal = lastVel.to === '2026-03-30' ? 16158 : null;
-        if (prevTotal !== null) {
-          const newTotal = snap.total_nights;
-          const daysDiff = Math.round((new Date(snap.snapshot_date) - new Date(lastVel.to)) / 86400000);
-          if (daysDiff > 0 && newTotal > prevTotal) {
-            VELOCITY_2026.push({
-              to: snap.snapshot_date,
-              per_day: Math.round((newTotal - prevTotal) / daysDiff * 10) / 10,
-              net: newTotal - prevTotal,
-              days: daysDiff,
-            });
-          }
-        }
-      }
+      const keys = ['Presidential','Prem Pull-Thru','Pull-Thru','Prem Back-In','Back-In','Forest Back-In','Prem Forest','Cabin'];
+      const rate25fallback = STATE.siteTypes.rate25;
+
+      STATE.siteTypes.nights26 = keys.map(k => sumNights(bst[k]));
+      STATE.siteTypes.rate26   = keys.map((k,i) => calcRate(bst[k], rate25fallback[i]));
     } else {
       setDriveStatus('warn', 'Snapshot empty — using baseline');
     }
