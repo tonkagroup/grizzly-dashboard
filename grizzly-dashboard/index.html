@@ -1279,7 +1279,11 @@ function calc2025Momentum(snapshotDate2026, windowDays) {
 }
 
 function renderMomentum() {
+  // snapDate = Campspot report date — used only for 2025 fill curve comparison
+  // today    = wall-clock date — used for all history lookbacks so the window
+  //            always anchors to right now regardless of when Campspot emailed
   const snapDate = STATE.snapshotDate || new Date().toISOString().slice(0, 10);
+  const today    = new Date().toISOString().slice(0, 10);
   const hist = STATE.snapshotHistory;
 
   // ── Look up 2026 snapshot from N days ago ─────────────────────────────────
@@ -1295,10 +1299,10 @@ function renderMomentum() {
     return best;
   }
 
-  const today     = new Date(snapDate);
-  const date1ago  = new Date(today); date1ago.setDate(date1ago.getDate() - 1);
-  const date7ago  = new Date(today); date7ago.setDate(date7ago.getDate() - 7);
-  const date30ago = new Date(today); date30ago.setDate(date30ago.getDate() - 30);
+  const todayDate = new Date(today);
+  const date1ago  = new Date(todayDate); date1ago.setDate(date1ago.getDate() - 1);
+  const date7ago  = new Date(todayDate); date7ago.setDate(date7ago.getDate() - 7);
+  const date30ago = new Date(todayDate); date30ago.setDate(date30ago.getDate() - 30);
 
   const snap_1d   = hist26(date1ago);
   const snap_7d   = hist26(date7ago);
@@ -1308,7 +1312,7 @@ function renderMomentum() {
   const now_total = STATE.onBooks26.reduce((a,b)=>a+b,0);
 
   // 1-day 2026 delta — only valid if the snapshot found is actually from yesterday (within 2 days)
-  const snap_1d_age  = snap_1d ? Math.round((today - new Date(snap_1d.date)) / 86400000) : 99;
+  const snap_1d_age  = snap_1d ? Math.round((todayDate - new Date(snap_1d.date)) / 86400000) : 99;
   const has1d = snap_1d !== null && snap_1d_age <= 2;
   const nights1d_26  = has1d ? Math.max(0, now_total - snap_1d.total) : null;
   const rev1d_26     = nights1d_26 !== null ? Math.round(nights1d_26 * STATE.rate26) : null;
@@ -1318,13 +1322,13 @@ function renderMomentum() {
   const has7d = snap_7d !== null;
   const nights7d_26  = has7d ? Math.max(0, now_total - snap_7d.total) : null;
   const rev7d_26     = nights7d_26 !== null ? Math.round(nights7d_26 * STATE.rate26) : null;
-  const actual7dDays = has7d ? Math.round((today - new Date(snap_7d.date)) / 86400000) : 7;
+  const actual7dDays = has7d ? Math.round((todayDate - new Date(snap_7d.date)) / 86400000) : 7;
 
   // 30-day 2026 delta
   const has30d = snap_30d !== null;
   const nights30d_26 = has30d ? Math.max(0, now_total - snap_30d.total) : null;
   const rev30d_26    = nights30d_26 !== null ? Math.round(nights30d_26 * STATE.rate26) : null;
-  const actual30dDays = has30d ? Math.round((today - new Date(snap_30d.date)) / 86400000) : 30;
+  const actual30dDays = has30d ? Math.round((todayDate - new Date(snap_30d.date)) / 86400000) : 30;
 
   // 2025 comparison from fill curve
   const mom1  = calc2025Momentum(snapDate, actual1dDays);
@@ -1405,9 +1409,9 @@ function renderMomentum() {
   const thirtyDayReady2 = has30d && actual30dDays >= 28;
   // Days until 30d unlocks = max of (days until we have 30d of 2026 history, days until Apr 26 for 2025 fill curve)
   const apr26 = new Date('2026-04-26');
-  const daysTo2025Floor = Math.max(0, Math.ceil((apr26 - today) / 86400000));
-  const oldest = hist.length > 0 ? new Date(hist[0].date) : today;
-  const daysTo30dHistory = Math.max(0, 30 - Math.round((today - oldest) / 86400000));
+  const daysTo2025Floor = Math.max(0, Math.ceil((apr26 - todayDate) / 86400000));
+  const oldest = hist.length > 0 ? new Date(hist[0].date) : todayDate;
+  const daysTo30dHistory = Math.max(0, 30 - Math.round((todayDate - oldest) / 86400000));
   const daysUntil30d2 = thirtyDayReady2 ? 0 : Math.max(daysTo2025Floor, daysTo30dHistory);
 
   document.getElementById('momentumCards').innerHTML =
