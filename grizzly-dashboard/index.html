@@ -394,7 +394,7 @@ input[type=file] { display: none; }
       <strong>2025 fwd demand:</strong> Gross nights booked from today's equivalent 2025 date through month end. Booking errors (cancelled within 1 day) excluded. Drains naturally to zero as each month passes.<br>
       <strong>LF cancel rate:</strong> Dynamic by days-to-arrival. Lower than locked — short-window bookers are more committed. Today: May ~6.2% · Jun ~7.8% · Jul ~9.0% · Aug ~9.6% · Sep ~9.9%.<br>
       <strong>Scenario toggle:</strong> Scales 2025 fwd demand by 85% / 100% / 115%. Cancel rates are fixed — not scenario levers.<br>
-      Revenue = projected nights × current blended rate (2026 on books).
+      Revenue = projected nights × per-month blended rate (derived from 2026 reservation revenue ÷ nights on books for that month). Falls back to 2025 actual ADR if pipeline data unavailable.
     </div>
   </div>
 
@@ -534,6 +534,9 @@ let STATE = {
       '6 standard + 3 luxury cabins merged; 9 sites vs 9 in 2025',
     ],
   },
+  // Per-month blended rate — computed from snapshot revenue ÷ nights per month
+  // Falls back to BASE.rate25 per month if pipeline data unavailable
+  rate26ByMonth: [120.38, 142.92, 155.26, 141.04, 145.48],  // seeded with 2025 rates until pipeline loads
   snapshotDate: null,
   // Rolling snapshot history — seeded from Mar 20-29 2026 CSVs, extended daily by pipeline
   // Each entry: {date, total (May-Sep nights), May, Jun, Jul, Aug, Sep, Oct}
@@ -683,7 +686,8 @@ function computeProjection(scenKey) {
     const lfGross   = Math.round(fwdDemand25 * s.demandMult);
     const lfNet     = Math.round(lfGross * (1 - lfCancelRate));
     const proj      = Math.min(locked + lfNet, cap100[i]);
-    const rev       = proj * STATE.rate26;
+    const monthRate = STATE.rate26ByMonth[i] || STATE.rate26;
+    const rev       = proj * monthRate;
     const occ       = proj / cap100[i] * 100;
     const cancelEst = Math.round(STATE.onBooks26[i] * lockedCancelRate);
 
@@ -691,7 +695,7 @@ function computeProjection(scenKey) {
       month:m, onBooks:STATE.onBooks26[i], locked,
       fwdDemand25, lfGross, lfNet, lfCancelRate, lockedCancelRate,
       proj, cap:cap100[i], occ, rev, final25:BASE.final25[i],
-      cancel: cancelEst,
+      cancel: cancelEst, monthRate,
     };
   });
 }
@@ -751,7 +755,7 @@ function renderKPIs() {
   const rev26 = ob26 * STATE.rate26;
   const proj = computeProjection('base');
   const projTotal = proj.reduce((a,r)=>a+r.proj,0);
-  const projRev = projTotal * STATE.rate26;
+  const projRev = proj.reduce((a,r)=>a+r.rev,0);
   const d25 = new Date(snapDate); d25.setFullYear(d25.getFullYear()-1);
   const d25label = d25.toLocaleDateString('en-US',{month:'short',day:'numeric'});
 
@@ -825,7 +829,7 @@ function renderRevRangeBars() {
   const html = scenDefs.map(s => {
     const proj = computeProjection(s.key);
     const nights = proj.reduce((a,r)=>a+r.proj,0);
-    const rev = nights * STATE.rate26;
+    const rev = proj.reduce((a,r)=>a+r.rev,0);
     const barW = (rev/max*100).toFixed(1);
     const act25W = (actual25/max*100).toFixed(1);
     const vsAct = pct(rev, actual25);
@@ -946,13 +950,13 @@ function renderProjectionsTab() {
   const s = SCENARIOS[currentScenario];
   const proj = computeProjection(currentScenario);
   const totalNights = proj.reduce((a,r)=>a+r.proj,0);
-  const totalRev = totalNights * STATE.rate26;
+  const totalRev = proj.reduce((a,r)=>a+r.rev,0);
 
   // Season summary KPIs — all 3 scenarios
   ['cons','base','opt'].forEach(scenKey => {
     const p = computeProjection(scenKey);
     const tn = p.reduce((a,r)=>a+r.proj,0);
-    const tr = tn * STATE.rate26;
+    const tr = p.reduce((a,r)=>a+r.rev,0);
     const vsR = pct(tr, BASE.totalRev25);
     const vsN = pct(tn, BASE.totalNights25);
     document.getElementById(`fcst-${scenKey}-rev`).textContent = fmtN(tr);
@@ -1816,6 +1820,16 @@ async function loadFromDrive() {
       STATE.rate26       = snap.blended_rate > 0 ? snap.blended_rate : STATE.rate26;
       STATE.snapshotDate = snap.snapshot_date;
       STATE.oct26        = snap.totals?.Oct || STATE.oct26;
+
+      // Compute per-month blended rate from snapshot revenue ÷ nights
+      // Falls back to 2025 rate for that month if data missing
+      if (snap.revenue) {
+        STATE.rate26ByMonth = months.map((m, i) => {
+          const n = snap.totals?.[m] || 0;
+          const r = snap.revenue?.[m] || 0;
+          return (n > 0 && r > 0) ? Math.round(r / n * 100) / 100 : BASE.rate25[i];
+        });
+      }
       document.getElementById('lastUpdated').textContent = 'Snapshot: ' + snap.snapshot_date;
       setDriveStatus('ok', 'Live · ' + snap.snapshot_date);
 
