@@ -538,6 +538,7 @@ let STATE = {
   // Falls back to BASE.rate25 per month if pipeline data unavailable
   rate26ByMonth: [120.38, 142.92, 155.26, 141.04, 145.48],  // seeded with 2025 rates until pipeline loads
   snapshotDate: null,
+  totalRevenue26: 0,
   // Rolling snapshot history — seeded from Mar 20-29 2026 CSVs, extended daily by pipeline
   // Each entry: {date, total (May-Sep nights), May, Jun, Jul, Aug, Sep, Oct}
   snapshotHistory: [
@@ -1330,15 +1331,27 @@ function renderMomentum() {
     return `${MONTHS[+m]} ${+dy}`;
   }
 
-  // Look up 2025 nights added in a window ending at snapDate, going back windowDays
-  // Returns { nights, startDate, endDate } — no revenue (not available for 2025)
-  function get2025nights(snapDate, windowDays) {
-    const end25   = dateMinus(snapDate, 365);   // equivalent 2025 end date
-    const start25 = dateMinus(end25, windowDays); // go back same number of days
+  // Look up 2025 nights and revenue added in a window ending at snapDate, going back windowDays
+  // Uses FC25_BY_MONTH for per-month breakdown × BASE.rate25 for accurate revenue
+  function get2025data(snapDate, windowDays) {
+    const end25     = dateMinus(snapDate, 365);
+    const start25   = dateMinus(end25, windowDays);
     const endLookup   = lookupFC25(end25);
     const startLookup = lookupFC25(start25);
+
+    // Total nights from FC25_TOTALS
     const nights = Math.max(0, endLookup.val - startLookup.val);
-    return { nights, startDate: startLookup.date, endDate: endLookup.date };
+
+    // Per-month nights from FC25_BY_MONTH × 2025 ADR per month
+    const endByMonth   = FC25_BY_MONTH[endLookup.date]   || [0,0,0,0,0];
+    const startByMonth = FC25_BY_MONTH[startLookup.date] || [0,0,0,0,0];
+    let revenue = 0;
+    for (let i = 0; i < 5; i++) {
+      const monthNights = Math.max(0, (endByMonth[i] || 0) - (startByMonth[i] || 0));
+      revenue += monthNights * BASE.rate25[i];
+    }
+
+    return { nights, revenue: Math.round(revenue), startDate: startLookup.date, endDate: endLookup.date };
   }
 
   // Build the three lookback entries
@@ -1362,13 +1375,20 @@ function renderMomentum() {
   // Live card — shown when history entry exists
   function liveCard(label, priorEntry, windowDays, prior25) {
     const nights26 = nowTotal - priorEntry.total;
-    const rev26    = Math.round(nights26 * STATE.rate26);
+    const nowRev   = STATE.totalRevenue26 || (nowTotal * STATE.rate26);
+    const priorRev = priorEntry.revenue != null ? priorEntry.revenue : null;
+    const rev26    = priorRev != null ? Math.round(nowRev - priorRev) : Math.round(nights26 * STATE.rate26);
+    const revNote  = priorRev != null ? '' : ' (est.)';
     const nights25 = prior25.nights;
+    const rev25    = prior25.revenue;
     const dn       = nights26 - nights25;
+    const dr       = rev26 - rev25;
     const nightsColor = nights26 >= 0 ? C.amber : C.red;
     const revColor    = rev26 >= 0 ? C.green : C.red;
     const dnClass     = dn >= 0 ? 'pos' : 'neg';
     const dnSign      = dn >= 0 ? '+' : '';
+    const drClass     = dr >= 0 ? 'pos' : 'neg';
+    const drSign      = dr >= 0 ? '+' : '';
 
     return `<div class="kpi" style="padding:14px 16px;">
       <div class="kpi-label" style="margin-bottom:6px;">${label}</div>
@@ -1377,22 +1397,25 @@ function renderMomentum() {
         <div>
           <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:3px;letter-spacing:0.06em;">NIGHTS</div>
           <div style="font-family:var(--font-mono);font-size:22px;font-weight:500;color:${nightsColor};line-height:1;">${nights26 >= 0 ? '+' : ''}${nights26.toLocaleString()}</div>
+          <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-top:3px;">vs '25: +${nights25.toLocaleString()}</div>
+          <div style="font-family:var(--font-mono);font-size:10px;margin-top:1px;" class="${dnClass}">${dnSign}${dn.toLocaleString()} YoY</div>
         </div>
         <div>
-          <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:3px;letter-spacing:0.06em;">REVENUE EST.</div>
+          <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:3px;letter-spacing:0.06em;">REVENUE${revNote}</div>
           <div style="font-family:var(--font-mono);font-size:22px;font-weight:500;color:${revColor};line-height:1;">${rev26 >= 0 ? '+' : ''}$${Math.abs(Math.round(rev26/1000))}K</div>
+          <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-top:3px;">vs '25: +$${Math.round(rev25/1000)}K</div>
+          <div style="font-family:var(--font-mono);font-size:10px;margin-top:1px;" class="${drClass}">${drSign}$${Math.abs(Math.round(dr/1000))}K YoY</div>
         </div>
       </div>
       <div style="font-family:var(--font-mono);font-size:10px;border-top:1px solid var(--border);padding-top:6px;color:var(--text3);">
-        vs '25 same window: <span class="${dnClass}">${dnSign}${dn.toLocaleString()} nights YoY</span>
-        &nbsp;·&nbsp; '25: +${nights25.toLocaleString()} (${fmt(prior25.startDate)}→${fmt(prior25.endDate)})
+        '25 window: ${fmt(prior25.startDate)} → ${fmt(prior25.endDate)}
       </div>
     </div>`;
   }
 
-  const mom1  = get2025nights(snapDate, 1);
-  const mom7  = get2025nights(snapDate, 7);
-  const mom30 = get2025nights(snapDate, 30);
+  const mom1  = get2025data(snapDate, 1);
+  const mom7  = get2025data(snapDate, 7);
+  const mom30 = get2025data(snapDate, 30);
 
   document.getElementById('momentumCards').innerHTML =
     (entry1d  ? liveCard('Added — yesterday',    entry1d,  1,  mom1)  : pendingCard('Added — yesterday',    'Need report from ' + date1ago)) +
@@ -1792,10 +1815,11 @@ async function loadFromDrive() {
     const months = ['May','Jun','Jul','Aug','Sep'];
     const newNights = months.map(m => snap.totals?.[m] || 0);
     if (newNights.some(v => v > 0)) {
-      STATE.onBooks26    = newNights;
-      STATE.rate26       = snap.blended_rate > 0 ? snap.blended_rate : STATE.rate26;
-      STATE.snapshotDate = snap.snapshot_date;
-      STATE.oct26        = snap.totals?.Oct || STATE.oct26;
+      STATE.onBooks26       = newNights;
+      STATE.rate26          = snap.blended_rate > 0 ? snap.blended_rate : STATE.rate26;
+      STATE.totalRevenue26  = snap.total_revenue || 0;
+      STATE.snapshotDate    = snap.snapshot_date;
+      STATE.oct26           = snap.totals?.Oct || STATE.oct26;
 
       // Compute per-month blended rate from snapshot revenue ÷ nights
       // Falls back to 2025 rate for that month if data missing
