@@ -1283,145 +1283,121 @@ function calc2025Momentum(snapshotDate2026, windowDays) {
 }
 
 function renderMomentum() {
-  // snapDate = Campspot report date — used only for 2025 fill curve comparison
-  // today    = wall-clock date — used for all history lookbacks so the window
-  //            always anchors to right now regardless of when Campspot emailed
-  const snapDate = STATE.snapshotDate || new Date().toISOString().slice(0, 10);
-  const today    = new Date().toISOString().slice(0, 10);
-  const hist = STATE.snapshotHistory;
+  // ── How this works ────────────────────────────────────────────────────────
+  // Each card compares today's report total against a prior report in history:
+  //   Yesterday  : today's total − report from 1 day ago  (history entry dated snapDate − 1)
+  //   Last 7 days: today's total − report from 8 days ago (history entry dated snapDate − 8)
+  //   Last 30 days: today's total − report from 31 days ago (history entry dated snapDate − 31)
+  //
+  // "Today's total" = STATE.onBooks26 sum, which is the live snapshot loaded from Drive.
+  // snapDate = the date of that snapshot (the Campspot report date).
+  // We look backwards from snapDate — not wall-clock — so the window always
+  // aligns with the actual report dates in history.
+  //
+  // 2025 comparison: FC25_TOTALS lookup at the equivalent dates one year prior.
+  // Revenue: 2026 nights × blended rate. No 2025 revenue (data not available).
+  // ─────────────────────────────────────────────────────────────────────────
 
-  // ── Look up 2026 snapshot from N days ago ─────────────────────────────────
-  // Finds the nearest entry at or before the target date (fallback if day missed)
-  function hist26(targetDate) {
-    const target = targetDate.toISOString().slice(0,10);
-    // Find closest entry on or before target
-    let best = null;
-    for (const h of hist) {
-      if (h.date <= target) best = h;
-      else break;
-    }
-    return best;
+  const snapDate = STATE.snapshotDate;
+  const hist     = STATE.snapshotHistory;
+  const nowTotal = STATE.onBooks26.reduce((a, b) => a + b, 0);
+
+  // If no snapshot date yet (pipeline hasn't loaded), show pending state
+  if (!snapDate) {
+    document.getElementById('momentumCards').innerHTML =
+      ['Added — yesterday', 'Added — last 7 days', 'Added — last 30 days'].map(lbl =>
+        pendingCard(lbl, 'Waiting for pipeline data')
+      ).join('');
+    return;
   }
 
-  const todayDate = new Date(today);
-  const date1ago  = new Date(todayDate); date1ago.setDate(date1ago.getDate() - 1);
-  const date7ago  = new Date(todayDate); date7ago.setDate(date7ago.getDate() - 7);
-  const date30ago = new Date(todayDate); date30ago.setDate(date30ago.getDate() - 30);
+  // Look up exact history entry by date string
+  function histEntry(dateStr) {
+    return hist.find(h => h.date === dateStr) || null;
+  }
 
-  const snap_1d   = hist26(date1ago);
-  const snap_7d   = hist26(date7ago);
-  const snap_30d  = hist26(date30ago);
+  // Compute a date string N days before a given date string
+  function dateMinus(dateStr, n) {
+    const d = new Date(dateStr + 'T12:00:00');
+    d.setDate(d.getDate() - n);
+    return d.toISOString().slice(0, 10);
+  }
 
-  // Use live on-books as today's total
-  const now_total = STATE.onBooks26.reduce((a,b)=>a+b,0);
+  // Format date string as "Apr 6"
+  const MONTHS = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function fmt(dateStr) {
+    const [, m, dy] = dateStr.split('-');
+    return `${MONTHS[+m]} ${+dy}`;
+  }
 
-  // 1-day 2026 delta — only valid if the snapshot found is actually from yesterday (within 2 days)
-  const snap_1d_age  = snap_1d ? Math.round((todayDate - new Date(snap_1d.date)) / 86400000) : 99;
-  const has1d = snap_1d !== null && snap_1d_age <= 2;
-  const nights1d_26  = has1d ? Math.max(0, now_total - snap_1d.total) : null;
-  const rev1d_26     = nights1d_26 !== null ? Math.round(nights1d_26 * STATE.rate26) : null;
-  const actual1dDays = has1d ? Math.max(1, snap_1d_age) : 1;
+  // Look up 2025 nights added in a window ending at snapDate, going back windowDays
+  // Returns { nights, startDate, endDate } — no revenue (not available for 2025)
+  function get2025nights(snapDate, windowDays) {
+    const end25   = dateMinus(snapDate, 365);   // equivalent 2025 end date
+    const start25 = dateMinus(end25, windowDays); // go back same number of days
+    const endLookup   = lookupFC25(end25);
+    const startLookup = lookupFC25(start25);
+    const nights = Math.max(0, endLookup.val - startLookup.val);
+    return { nights, startDate: startLookup.date, endDate: endLookup.date };
+  }
 
-  // 7-day 2026 delta
-  const has7d = snap_7d !== null;
-  const nights7d_26  = has7d ? Math.max(0, now_total - snap_7d.total) : null;
-  const rev7d_26     = nights7d_26 !== null ? Math.round(nights7d_26 * STATE.rate26) : null;
-  const actual7dDays = has7d ? Math.round((todayDate - new Date(snap_7d.date)) / 86400000) : 7;
+  // Build the three lookback entries
+  const date1ago  = dateMinus(snapDate, 1);
+  const date8ago  = dateMinus(snapDate, 8);
+  const date31ago = dateMinus(snapDate, 31);
 
-  // 30-day 2026 delta
-  const has30d = snap_30d !== null;
-  const nights30d_26 = has30d ? Math.max(0, now_total - snap_30d.total) : null;
-  const rev30d_26    = nights30d_26 !== null ? Math.round(nights30d_26 * STATE.rate26) : null;
-  const actual30dDays = has30d ? Math.round((todayDate - new Date(snap_30d.date)) / 86400000) : 30;
+  const entry1d  = histEntry(date1ago);
+  const entry8d  = histEntry(date8ago);
+  const entry31d = histEntry(date31ago);
 
-  // 2025 comparison from fill curve
-  const mom1  = calc2025Momentum(snapDate, actual1dDays);
-  const mom7  = calc2025Momentum(snapDate, actual7dDays);
-  const mom30 = calc2025Momentum(snapDate, actual30dDays);
+  // Pending card — shown when history entry not available yet
+  function pendingCard(label, reason) {
+    return `<div class="kpi" style="padding:14px 16px;opacity:0.5;">
+      <div class="kpi-label" style="margin-bottom:10px;">${label}</div>
+      <div style="font-family:var(--font-mono);font-size:11px;color:var(--text2);margin-bottom:6px;">${reason}</div>
+      <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);">Available once history accumulates</div>
+    </div>`;
+  }
 
-  const nights1d_25  = mom1.nights;
-  const rev1d_25     = mom1.revenue;
-  const nights7d_25  = mom7.nights;
-  const rev7d_25     = mom7.revenue;
-  const nights30d_25 = mom30.nights;
-  const rev30d_25    = mom30.revenue;
-
-  // ── Delta helpers ─────────────────────────────────────────────────────────
-  function deltaClass(val) { return val >= 0 ? 'pos' : 'neg'; }
-  function deltaSign(val)  { return val >= 0 ? '+' : ''; }
-
-  // 30-day 2025 comparison isn't meaningful until Apr 26 2026 (when the
-  // look-back window clears the Mar 27 2025 fill curve floor).
-  function card(label, windowDays, n26, r26, n25, r25, mom, greyOut) {
-    const dn = n26 - n25;
-    const dr = r26 - r25;
-    const pace26 = (n26 / windowDays).toFixed(1);
-    const pace25 = mom.actualDays > 0 ? (n25 / mom.actualDays).toFixed(1) : '—';
-    const paceColor = parseFloat(pace26) >= parseFloat(pace25) * 1.05 ? C.green
-                    : parseFloat(pace26) >= parseFloat(pace25) * 0.85 ? C.amber : C.red;
-
-    if (greyOut) {
-      const isYesterday = label.includes('yesterday');
-      const greyMsg    = isYesterday
-        ? '<div style="font-family:var(--font-mono);font-size:11px;color:var(--text2);">Available once pipeline runs</div><div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-top:4px;">Updates daily at 7am MT</div>'
-        : `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text2);">30-day comparison available</div><div style="font-family:var(--font-mono);font-size:13px;font-weight:500;color:var(--amber);">Apr 26</div><div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);">${daysUntil30d2} day${daysUntil30d2 !== 1 ? 's' : ''} from now</div>`;
-      return `<div class="kpi" style="padding:14px 16px;opacity:0.45;position:relative;">
-        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;z-index:2;border-radius:7px;background:rgba(15,15,13,0.55);">
-          ${greyMsg}
-        </div>
-        <div class="kpi-label" style="margin-bottom:10px;">${label}</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">
-          <div>
-            <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:3px;letter-spacing:0.06em;">NIGHTS</div>
-            <div style="font-family:var(--font-mono);font-size:20px;font-weight:500;color:var(--amber);line-height:1;">—</div>
-          </div>
-          <div>
-            <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:3px;letter-spacing:0.06em;">REVENUE</div>
-            <div style="font-family:var(--font-mono);font-size:20px;font-weight:500;color:var(--green);line-height:1;">—</div>
-          </div>
-        </div>
-        <div style="font-family:var(--font-mono);font-size:10px;border-top:1px solid var(--border);padding-top:6px;color:var(--text3);">
-          ${isYesterday ? 'Needs prior-day snapshot in history' : 'Fill curve floor: Mar 27 2025 · needs 30-day lookback window'}
-        </div>
-      </div>`;
-    }
+  // Live card — shown when history entry exists
+  function liveCard(label, priorEntry, windowDays, prior25) {
+    const nights26 = nowTotal - priorEntry.total;
+    const rev26    = Math.round(nights26 * STATE.rate26);
+    const nights25 = prior25.nights;
+    const dn       = nights26 - nights25;
+    const nightsColor = nights26 >= 0 ? C.amber : C.red;
+    const revColor    = rev26 >= 0 ? C.green : C.red;
+    const dnClass     = dn >= 0 ? 'pos' : 'neg';
+    const dnSign      = dn >= 0 ? '+' : '';
 
     return `<div class="kpi" style="padding:14px 16px;">
-      <div class="kpi-label" style="margin-bottom:10px;">${label}</div>
+      <div class="kpi-label" style="margin-bottom:6px;">${label}</div>
+      <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-bottom:10px;">${fmt(priorEntry.date)} → ${fmt(snapDate)}</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">
         <div>
           <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:3px;letter-spacing:0.06em;">NIGHTS</div>
-          <div style="font-family:var(--font-mono);font-size:20px;font-weight:500;color:var(--amber);line-height:1;">+${n26.toLocaleString()}</div>
-          <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-top:2px;">vs '25: +${n25.toLocaleString()}</div>
-          <div style="font-family:var(--font-mono);font-size:10px;margin-top:1px;" class="${deltaClass(dn)}">${deltaSign(dn)}${dn.toLocaleString()} YoY</div>
+          <div style="font-family:var(--font-mono);font-size:22px;font-weight:500;color:${nightsColor};line-height:1;">${nights26 >= 0 ? '+' : ''}${nights26.toLocaleString()}</div>
         </div>
         <div>
-          <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:3px;letter-spacing:0.06em;">REVENUE</div>
-          <div style="font-family:var(--font-mono);font-size:20px;font-weight:500;color:var(--green);line-height:1;">+$${(r26/1000).toFixed(0)}K</div>
-          <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-top:2px;">vs '25: +$${(r25/1000).toFixed(0)}K</div>
-          <div style="font-family:var(--font-mono);font-size:10px;margin-top:1px;" class="${deltaClass(dr)}">${deltaSign(dr)}$${Math.abs(Math.round(dr/1000))}K YoY</div>
+          <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:3px;letter-spacing:0.06em;">REVENUE EST.</div>
+          <div style="font-family:var(--font-mono);font-size:22px;font-weight:500;color:${revColor};line-height:1;">${rev26 >= 0 ? '+' : ''}$${Math.abs(Math.round(rev26/1000))}K</div>
         </div>
       </div>
       <div style="font-family:var(--font-mono);font-size:10px;border-top:1px solid var(--border);padding-top:6px;color:var(--text3);">
-        <span style="color:${paceColor}">${pace26}/day (2026)</span> vs <span>${pace25}/day in '25</span>
-        &nbsp;·&nbsp; <span style="color:var(--text3);">'25 window: ${mom.label}</span>
+        vs '25 same window: <span class="${dnClass}">${dnSign}${dn.toLocaleString()} nights YoY</span>
+        &nbsp;·&nbsp; '25: +${nights25.toLocaleString()} (${fmt(prior25.startDate)}→${fmt(prior25.endDate)})
       </div>
     </div>`;
   }
 
-  // 30-day ready once we have 30 days of history
-  const thirtyDayReady2 = has30d && actual30dDays >= 28;
-  // Days until 30d unlocks = max of (days until we have 30d of 2026 history, days until Apr 26 for 2025 fill curve)
-  const apr26 = new Date('2026-04-26');
-  const daysTo2025Floor = Math.max(0, Math.ceil((apr26 - todayDate) / 86400000));
-  const oldest = hist.length > 0 ? new Date(hist[0].date) : todayDate;
-  const daysTo30dHistory = Math.max(0, 30 - Math.round((todayDate - oldest) / 86400000));
-  const daysUntil30d2 = thirtyDayReady2 ? 0 : Math.max(daysTo2025Floor, daysTo30dHistory);
+  const mom1  = get2025nights(snapDate, 1);
+  const mom7  = get2025nights(snapDate, 7);
+  const mom30 = get2025nights(snapDate, 30);
 
   document.getElementById('momentumCards').innerHTML =
-    card('Added — yesterday',     actual1dDays,  nights1d_26 ?? 0,  rev1d_26 ?? 0,  nights1d_25,  rev1d_25,  mom1,  !has1d) +
-    card('Added — last 7 days',   actual7dDays,  nights7d_26 ?? 0,  rev7d_26 ?? 0,  nights7d_25,  rev7d_25,  mom7,  false) +
-    card('Added — last 30 days',  actual30dDays, nights30d_26 ?? 0, rev30d_26 ?? 0, nights30d_25, rev30d_25, mom30, !thirtyDayReady2);
+    (entry1d  ? liveCard('Added — yesterday',    entry1d,  1,  mom1)  : pendingCard('Added — yesterday',    'Need report from ' + date1ago)) +
+    (entry8d  ? liveCard('Added — last 7 days',  entry8d,  7,  mom7)  : pendingCard('Added — last 7 days',  'Need report from ' + date8ago)) +
+    (entry31d ? liveCard('Added — last 30 days', entry31d, 30, mom30) : pendingCard('Added — last 30 days', 'Need report from ' + date31ago));
 
   document.getElementById('momentumCards').style.gridTemplateColumns = '1fr 1fr 1fr';
 }
