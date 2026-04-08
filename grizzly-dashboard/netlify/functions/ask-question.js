@@ -94,12 +94,11 @@ Cabin: 581→335 | 9→6 sites | 0.86x
 Payment taken upfront at booking.
 `;
 
-// Fetch a single Drive file by env var ID, return parsed JSON or null
 async function fetchDriveFile(envKey) {
   const id = process.env[envKey];
   if (!id) return null;
   try {
-     const resp = await fetch(`https://drive.google.com/uc?export=download&id=${id}&t=${Date.now()}`);
+    const resp = await fetch(`https://drive.google.com/uc?export=download&id=${id}&t=${Date.now()}`);
     if (!resp.ok) return null;
     return await resp.json();
   } catch(e) {
@@ -107,57 +106,35 @@ async function fetchDriveFile(envKey) {
   }
 }
 
-// Summarize origination data into readable context for Claude
 function summarizeOrigination(data) {
   if (!data || !data.raw_rows || !data.raw_rows.length) return null;
 
   const rows = data.raw_rows;
   const reportDate = data.report_date || 'unknown';
-
-  // The date field Campspot uses
   const DATE_KEY = 'Origination/Claimed (Park TZ) Date';
 
-  // Count by origination date
   const byDate = {};
-  // Count by arrival month
   const byArrivalMonth = {};
-  // Count by source
   const bySource = {};
-  // Count by site type (classified)
   const bySiteType = {};
-  // Count online vs offline
   let online = 0, offline = 0;
-  // Lead time buckets
   const leadBuckets = { same_day: 0, one_to_7: 0, eight_to_30: 0, thirty1_to_90: 0, over_90: 0 };
-  // Unique confirmation numbers (deduplicate multi-site reservations)
   const uniqueConfs = new Set();
 
   rows.forEach(r => {
-    // Date booked
     const d = r[DATE_KEY] || '';
     if (d) byDate[d] = (byDate[d] || 0) + 1;
-
-    // Unique reservations
     const conf = r['Confirmation'] || '';
     uniqueConfs.add(conf);
-
-    // Arrival month
     const arrival = r['Arrival Date'] || '';
     if (arrival) {
-      const month = arrival.substring(0, 7); // e.g. "2026-06"
+      const month = arrival.substring(0, 7);
       byArrivalMonth[month] = (byArrivalMonth[month] || 0) + 1;
     }
-
-    // Source
     const src = r['Reservation Source'] || 'Unknown';
     bySource[src] = (bySource[src] || 0) + 1;
-
-    // Online vs offline
     const origin = (r['Request Origin'] || '').toUpperCase();
-    if (origin === 'ONLINE') online++;
-    else offline++;
-
-    // Site type (simplified)
+    if (origin === 'ONLINE') online++; else offline++;
     const siteType = r['Site/Add-on Type'] || '';
     const st = siteType.toUpperCase();
     let cls = 'Other';
@@ -172,8 +149,6 @@ function summarizeOrigination(data) {
     else if (st.includes('LUXURY')) cls = 'Lux Cabin';
     else if (st.includes('CABIN')) cls = 'Cabin';
     bySiteType[cls] = (bySiteType[cls] || 0) + 1;
-
-    // Lead time
     if (d && arrival) {
       const booked = new Date(d);
       const arr = new Date(arrival);
@@ -186,24 +161,13 @@ function summarizeOrigination(data) {
     }
   });
 
-  // Format date breakdown (sorted)
-  const dateLines = Object.entries(byDate).sort()
-    .map(([d, n]) => `${d}: ${n} line items`).join(' | ');
-
-  // Format arrival month breakdown
-  const arrivalLines = Object.entries(byArrivalMonth).sort()
-    .map(([m, n]) => `${m}: ${n}`).join(' | ');
-
-  // Format source breakdown
-  const sourceLines = Object.entries(bySource).sort((a,b) => b[1]-a[1])
-    .map(([s, n]) => `${s}: ${n}`).join(' | ');
-
-  // Format site type breakdown
-  const siteLines = Object.entries(bySiteType).sort((a,b) => b[1]-a[1])
-    .map(([s, n]) => `${s}: ${n}`).join(' | ');
+  const dateLines = Object.entries(byDate).sort().map(([d, n]) => `${d}: ${n} line items`).join(' | ');
+  const arrivalLines = Object.entries(byArrivalMonth).sort().map(([m, n]) => `${m}: ${n}`).join(' | ');
+  const sourceLines = Object.entries(bySource).sort((a,b) => b[1]-a[1]).map(([s, n]) => `${s}: ${n}`).join(' | ');
+  const siteLines = Object.entries(bySiteType).sort((a,b) => b[1]-a[1]).map(([s, n]) => `${s}: ${n}`).join(' | ');
 
   return `== LIVE ORIGINATION DATA (report date: ${reportDate}) ==
-Total line items in report: ${rows.length} (note: one reservation may have multiple line items if multiple sites booked)
+Total line items in report: ${rows.length}
 Unique reservation confirmations: ${uniqueConfs.size}
 Line items by booking date: ${dateLines || 'none'}
 Online bookings: ${online} | Offline/phone bookings: ${offline}
@@ -214,23 +178,17 @@ Lead time: same-day=${leadBuckets.same_day} | 1-7days=${leadBuckets.one_to_7} | 
 IMPORTANT: This report covers only the most recent email batch (last 2 days). It is NOT a cumulative total of all 2026 bookings.`;
 }
 
-// Summarize cancellation data into readable context for Claude
 function summarizeCancellation(data) {
   if (!data || !data.raw_rows || !data.raw_rows.length) return null;
-  
   const rows = data.raw_rows;
   const reportDate = data.report_date || 'unknown';
-  
-  // Count cancellations by date
   const byDate = {};
   rows.forEach(r => {
     const d = r['Cancelation Date'] || r['cancellation_date'] || '';
     if (d) byDate[d] = (byDate[d] || 0) + 1;
   });
-  
   const dates = Object.keys(byDate).sort().slice(-14);
   const recentActivity = dates.map(d => `${d}: ${byDate[d]} cancels`).join(' | ');
-
   return `== LIVE CANCELLATION DATA (report date: ${reportDate}) ==
 Total cancellations in report: ${rows.length}
 Total cancel fees collected: $${data.total_cancel_fees?.toLocaleString() || 0}
@@ -251,7 +209,14 @@ exports.handler = async function(event, context) {
 
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        // Tell Netlify and all browsers never to cache this response
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Surrogate-Control': 'no-store',
+      },
       body: JSON.stringify({ snapshot, status, cancellation, origination }),
     };
   }
@@ -278,16 +243,13 @@ exports.handler = async function(event, context) {
     return { statusCode: 400, body: JSON.stringify({ error: 'messages array required' }) };
   }
 
-  // Fetch live data to include as context for this question
   const [origination, cancellation, snapshot] = await Promise.all([
     fetchDriveFile('DRIVE_ORIGINATION_ID'),
     fetchDriveFile('DRIVE_CANCELLATION_ID'),
     fetchDriveFile('DRIVE_SNAPSHOT_ID'),
   ]);
 
-  // Build dynamic context additions
   let liveContext = '';
-
   if (snapshot) {
     liveContext += `\n== LIVE SNAPSHOT (${snapshot.snapshot_date}) ==\n`;
     liveContext += `Total nights on books: ${snapshot.total_nights?.toLocaleString()}\n`;
@@ -333,7 +295,13 @@ exports.handler = async function(event, context) {
 
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Surrogate-Control': 'no-store',
+      },
       body: JSON.stringify({ reply: text }),
     };
   } catch(err) {
