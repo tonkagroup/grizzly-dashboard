@@ -98,7 +98,9 @@ async function fetchDriveFile(envKey) {
   const id = process.env[envKey];
   if (!id) return null;
   try {
-    const resp = await fetch(`https://drive.google.com/uc?export=download&id=${id}&t=${Date.now()}`);
+   const resp = await fetch(`https://drive.google.com/uc?export=download&id=${id}&cachebust=${Date.now()}`, {
+  headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+});
     if (!resp.ok) return null;
     return await resp.json();
   } catch(e) {
