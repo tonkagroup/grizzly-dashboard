@@ -440,7 +440,22 @@ input[type=file] { display: none; }
       <strong>Why October is separate:</strong> Oct is a shoulder month (season closes Oct 15). In 2025, zero Oct nights were on books at Mar 27 — all 1,225 booked after that date, mostly in-season. Including Oct in the main model would distort the late fill calculation and make YoY comparisons misleading since 2026 Oct bookings are still early. Watch this tab from July onward when Oct 2026 bookings start to accumulate meaningfully.
     </div>
   </div>
-
+<!-- ══ ASK ══════════════════════════════════════════════════════════════ -->
+  <div style="margin-top:28px;">
+    <div class="section-head"><h2>Ask a question</h2></div>
+    <div class="chart-card" style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;gap:10px;">
+        <input id="askInput" type="text" placeholder="e.g. How is July pacing vs last year?"
+          style="flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:5px;padding:9px 13px;color:var(--text);font-family:var(--font-mono);font-size:12px;outline:none;"
+          onkeydown="if(event.key==='Enter')askQuestion()">
+        <button onclick="askQuestion()"
+          style="background:var(--amber);color:var(--bg);border:none;border-radius:5px;padding:9px 18px;font-family:var(--font-mono);font-size:11px;font-weight:500;cursor:pointer;letter-spacing:0.06em;white-space:nowrap;">
+          Ask
+        </button>
+      </div>
+      <div id="askAnswer" style="font-family:var(--font-mono);font-size:12px;color:var(--text2);line-height:1.7;min-height:20px;"></div>
+    </div>
+  </div>
 </div><!-- /main -->
 
 <script>
@@ -1907,7 +1922,28 @@ const lfEl = document.getElementById('lfExplainer');
 if (lfEl) lfEl.textContent = LF_EXPLAINER['snapshot'];
 const ovSnap = document.getElementById('ov-lf-snapshot');
 if (ovSnap) ovSnap.classList.add('active');
-
+async function askQuestion() {
+  const input = document.getElementById('askInput');
+  const answer = document.getElementById('askAnswer');
+  const q = input.value.trim();
+  if (!q) return;
+  answer.style.color = 'var(--text3)';
+  answer.textContent = 'Thinking…';
+  try {
+    const resp = await fetch('/.netlify/functions/ask-question', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: [{ role: 'user', content: q }] }),
+    });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    answer.style.color = 'var(--text2)';
+    answer.textContent = data.reply || 'No response received.';
+  } catch (err) {
+    answer.style.color = 'var(--red)';
+    answer.textContent = 'Error: ' + err.message;
+  }
+}
 // Kick off Drive fetch on load (replaces bare refreshAll() call)
 loadFromDrive();
 </script>
