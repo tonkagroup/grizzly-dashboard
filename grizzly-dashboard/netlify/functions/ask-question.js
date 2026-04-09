@@ -2,7 +2,7 @@
 // GET  → fetches fresh data via Apps Script web app
 // POST → multi-turn chat via Claude with full data context
 
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyrFKRzmw6_N91tFYoxfDzPmSvsyjnVUL1T5aLWXPzcxy7_ko1PlYNPThx6P3l_Su-WCQ/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyd30AWruVwz2njET7D27BxmQKh_6fAS8-VZLMAU2CIqPXYtCHsGUzmP_yJuevEJPkw5w/exec';
 
 const STATIC_DATA = `
 == PARK BASICS ==
