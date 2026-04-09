@@ -36,18 +36,16 @@ Sep: 271 cancels | 1,047 nights | $42,418 fees | $157,134 lost | 16.9% cancel ra
 Presidential: $184.54 | Prem Pull-Thru: $166.25 | Pull-Thru: $154.78 | Prem Back-In: $135.97
 Back-In: $107.30 | Forest Back-In: $118.44 | Prem Forest: $147.25 | Cabin: $269.78
 
-== SITE COUNT CHANGES 2025→2026 ==
-Presidential: 5→8 (+3) | Prem Pull-Thru: 39→32 (-7) | Pull-Thru: 64→70 (+6)
-Prem Back-In: 23→21 (-2) | Back-In: 51→51 | Gallatin: 24→24 | Prem Forest: 12→12 | Cabin: 9→9
+== SITE COUNT CHANGES 2025->2026 ==
+Presidential: 5->8 (+3) | Prem Pull-Thru: 39->32 (-7) | Pull-Thru: 64->70 (+6)
+Prem Back-In: 23->21 (-2) | Back-In: 51->51 | Gallatin: 24->24 | Prem Forest: 12->12 | Cabin: 9->9
 
 == PROJECTION MODEL ==
-Projected = min((on-books × (1 - locked_cancel_rate)) + (fwd_demand_2025 × demand_mult × (1 - lf_cancel_rate)), capacity)
+Projected = min((on-books x (1 - locked_cancel_rate)) + (fwd_demand_2025 x demand_mult x (1 - lf_cancel_rate)), capacity)
 Scenarios: Conservative=85% demand | Base=100% | Optimistic=115%
-Capacity: 238 sites × days in month (May=7,378 | Jun=7,140 | Jul=7,378 | Aug=7,378 | Sep=7,140)
+Capacity: 238 sites x days in month (May=7,378 | Jun=7,140 | Jul=7,378 | Aug=7,378 | Sep=7,140)
 
 == 2025 FORWARD DEMAND (gross nights bookable from each date through month end) ==
-This table shows how many nights were booked in 2025 AFTER each date through season end.
-Use this to answer "how much late-fill demand is left" and "how many nights were added in 2025 between date X and Y".
 Date       | May  | Jun  | Jul  | Aug  | Sep
 2026-03-27 | 1660 | 2052 | 3782 | 4155 | 4586
 2026-03-31 | 1623 | 1960 | 3661 | 4112 | 4502
@@ -69,12 +67,10 @@ Date       | May  | Jun  | Jul  | Aug  | Sep
 2026-09-30 | 0    | 0    | 0    | 0    | 6
 
 NIGHTS ADDED IN 2025 BETWEEN TWO DATES: subtract FWD_DEMAND values.
-Example: Jun nights added between Apr 1 and Apr 9 in 2025 = 1914 - 1737 = 177 nights.
-For a 5-day window ending today (Apr 9): Jun = 1828 - 1737 = 91 nights (Apr 5 to Apr 9).
+Example: Jun nights added between Apr 1 and Apr 9 = 1914 - 1737 = 177 nights.
+For a 5-day window ending Apr 9: Jun = 1828 - 1737 = 91 nights (Apr 5 to Apr 9).
 
-== 2025 DAILY FILL CURVE — TOTAL ON BOOKS (May-Sep, all months combined) ==
-Use this to compute how many total nights were added between any two dates in 2025.
-To find nights added between date A and date B: lookup(B) - lookup(A).
+== 2025 DAILY FILL CURVE - TOTAL ON BOOKS (May-Sep combined) ==
 2025-03-27:17750 | 2025-03-28:17833 | 2025-03-29:17884 | 2025-03-30:17975 | 2025-03-31:18079
 2025-04-01:18159 | 2025-04-02:18242 | 2025-04-03:18279 | 2025-04-04:18355 | 2025-04-05:18420
 2025-04-06:18502 | 2025-04-07:18600 | 2025-04-08:18629 | 2025-04-09:18679 | 2025-04-10:18716
@@ -87,8 +83,7 @@ To find nights added between date A and date B: lookup(B) - lookup(A).
 2025-08-20:28156 | 2025-08-25:28386 | 2025-08-31:28687 | 2025-09-04:28921 | 2025-09-10:28631
 2025-09-16:26980 | 2025-09-21:27225 | 2025-09-28:27620 | 2025-10-01:27757 | 2025-10-16:28056
 
-== 2025 PER-MONTH FILL CURVE (May, Jun, Jul, Aug, Sep on-books at key dates) ==
-Use this for month-specific "how many nights were added" questions.
+== 2025 PER-MONTH FILL CURVE ==
 Format: date | [May, Jun, Jul, Aug, Sep]
 2025-03-27 | [2377, 5700, 4407, 2788, 2478]
 2025-04-01 | [2406, 5809, 4572, 2809, 2563]
@@ -114,13 +109,11 @@ Format: date | [May, Jun, Jul, Aug, Sep]
 2025-10-01 | [631,  6724, 6931, 6333, 6212]
 
 EXAMPLE CALCULATIONS:
-- "Jun nights added Apr 5-9 2025": Jun[Apr-09] - Jun[Apr-05] = 5896 - 5849 = 47 nights
-- "Jun nights added last 5 days (ending Apr 9) 2025": Jun[Apr-09] - Jun[Apr-04 nearest=Apr-05] = 5896 - 5849 = 47 nights
+- "Jun nights added Apr 5-9 2025": 5896 - 5849 = 47 nights
 - "Total nights added Apr 1-9 2025": 18679 - 18159 = 520 nights
-- Always use nearest available date if exact date not listed. Interpolate linearly if needed.
+- Always use nearest available date if exact date not listed.
 
-== 2025 SAME-DATE CANCELLATION RATES (cumulative through each date) ==
-Key dates — format: date | May_rate% | Jun_rate% | Jul_rate% | Aug_rate% | Sep_rate%
+== 2025 SAME-DATE CANCELLATION RATES ==
 2026-04-01 | May:11.3% | Jun:7.2% | Jul:3.1% | Aug:3.6% | Sep:2.0%
 2026-04-05 | May:12.1% | Jun:8.0% | Jul:3.4% | Aug:3.9% | Sep:2.1%
 2026-04-09 | May:12.7% | Jun:8.6% | Jul:4.2% | Aug:4.0% | Sep:2.5%
@@ -129,9 +122,10 @@ Key dates — format: date | May_rate% | Jun_rate% | Jul_rate% | Aug_rate% | Sep
 2026-04-30 | May:16.5% | Jun:11.7% | Jul:6.2% | Aug:4.8% | Sep:2.7%
 `;
 
-async function fetchFromAppsScript(file) {
+// ── Fetch ALL data from Apps Script in one call (no ?file= parameter) ────
+async function fetchAllFromAppsScript() {
   try {
-    const resp = await fetch(`${APPS_SCRIPT_URL}?file=${file}&t=${Date.now()}`);
+    const resp = await fetch(`${APPS_SCRIPT_URL}&t=${Date.now()}`);
     if (!resp.ok) return null;
     return await resp.json();
   } catch(e) { return null; }
@@ -155,22 +149,21 @@ function buildLiveContext(snapshot, cancellation, origination) {
     ctx += `Total nights on books (May-Sep): ${snapshot.total_nights?.toLocaleString()}\n`;
     ctx += `Total revenue on books: $${Math.round(snapshot.total_revenue || 0).toLocaleString()}\n`;
     ctx += `Blended rate: $${(snapshot.blended_rate || 0).toFixed(2)}/night\n`;
-    ctx += '\nBy month — nights | revenue | rate:\n';
+    ctx += '\nBy month -- nights | revenue | rate:\n';
     const months = ['May','Jun','Jul','Aug','Sep'];
     months.forEach(m => {
       const n = snapshot.totals?.[m] || 0;
       const r = snapshot.revenue?.[m] || 0;
-      const adr = n > 0 ? (r/n).toFixed(2) : '—';
+      const adr = n > 0 ? (r/n).toFixed(2) : '--';
       ctx += `  ${m}: ${n.toLocaleString()} nights | $${Math.round(r).toLocaleString()} | $${adr} ADR\n`;
     });
     ctx += `  Oct: ${snapshot.totals?.Oct || 0} nights\n`;
 
-    // By site type
     if (snapshot.by_site_type) {
       ctx += '\nBy site type (May-Sep nights | revenue):\n';
       for (const [type, data] of Object.entries(snapshot.by_site_type)) {
         let nights = 0, rev = 0;
-        months.forEach(m => {
+        ['May','Jun','Jul','Aug','Sep'].forEach(m => {
           nights += data[m]?.nights || 0;
           rev    += data[m]?.rev    || 0;
         });
@@ -180,7 +173,6 @@ function buildLiveContext(snapshot, cancellation, origination) {
       }
     }
 
-    // Full history array
     if (snapshot.history && snapshot.history.length) {
       ctx += '\nSNAPSHOT HISTORY (rolling 35-day, use for momentum calculations):\n';
       ctx += 'Format: date | total(May-Sep) | May | Jun | Jul | Aug | Sep | revenue\n';
@@ -188,11 +180,11 @@ function buildLiveContext(snapshot, cancellation, origination) {
         const rev = h.revenue != null ? `$${Math.round(h.revenue).toLocaleString()}` : 'no rev data';
         ctx += `  ${h.date} | ${h.total} | ${h.May||0} | ${h.Jun||0} | ${h.Jul||0} | ${h.Aug||0} | ${h.Sep||0} | ${rev}\n`;
       });
-      ctx += '\nMOMENTUM CALCULATION GUIDE:\n';
-      ctx += 'To find nights added in last N days: today_total - total_from_(today - N days) in history.\n';
-      ctx += 'To find month-specific nights added: today_May - history_May_(N days ago), etc.\n';
-      ctx += 'Compare to 2025 using the FC25 PER-MONTH FILL CURVE above with equivalent dates.\n';
+      ctx += '\nMOMENTUM GUIDE: nights added in last N days = today_total - total_(N days ago) from history above.\n';
+      ctx += 'For month-specific: use the per-month columns. Compare to 2025 using FC25 fill curve.\n';
     }
+  } else {
+    ctx += '\nNo live snapshot available -- using seeded baseline data only.\n';
   }
 
   if (cancellation) {
@@ -201,34 +193,28 @@ function buildLiveContext(snapshot, cancellation, origination) {
     ctx += `Total fees collected: $${Math.round(cancellation.total_cancel_fees||0).toLocaleString()}\n`;
     ctx += `Total lost revenue: $${Math.round(cancellation.total_lost_revenue||0).toLocaleString()}\n`;
     ctx += 'By month:\n';
-    const months = ['May','Jun','Jul','Aug','Sep'];
-    months.forEach(m => {
+    ['May','Jun','Jul','Aug','Sep'].forEach(m => {
       const mo = cancellation.by_month?.[m];
-      if (mo) {
-        ctx += `  ${m}: ${mo.count} cancels | ${mo.nights} nights | $${Math.round(mo.fees).toLocaleString()} fees | $${Math.round(mo.lost).toLocaleString()} lost\n`;
-      }
+      if (mo) ctx += `  ${m}: ${mo.count} cancels | ${mo.nights} nights | $${Math.round(mo.fees).toLocaleString()} fees | $${Math.round(mo.lost).toLocaleString()} lost\n`;
     });
   }
 
   if (origination && origination.raw_rows && origination.raw_rows.length) {
     ctx += `\nORIGINATION REPORT (report date: ${origination.report_date}):\n`;
     ctx += `Total line items: ${origination.row_count} | Unique reservations: ${new Set(origination.raw_rows.map(r=>r.Confirmation)).size}\n`;
-    const byMonth = {};
-    const bySource = {};
+    const byMonth = {}, bySource = {};
     let online = 0, offline = 0;
     origination.raw_rows.forEach(r => {
-      const arr = r['Arrival Date'] || '';
-      const mo = arr.substring(0,7);
+      const mo = (r['Arrival Date']||'').substring(0,7);
       if (mo) byMonth[mo] = (byMonth[mo]||0) + 1;
       const src = r['Reservation Source'] || 'Unknown';
       bySource[src] = (bySource[src]||0) + 1;
-      const origin = (r['Request Origin']||'').toUpperCase();
-      if (origin === 'ONLINE') online++; else offline++;
+      if ((r['Request Origin']||'').toUpperCase() === 'ONLINE') online++; else offline++;
     });
     ctx += `Online: ${online} | Offline: ${offline}\n`;
     ctx += `By source: ${Object.entries(bySource).map(([s,n])=>`${s}:${n}`).join(' | ')}\n`;
     ctx += `By arrival month: ${Object.entries(byMonth).sort().map(([m,n])=>`${m}:${n}`).join(' | ')}\n`;
-    ctx += 'NOTE: Origination covers last 2 days only — not cumulative 2026 totals.\n';
+    ctx += 'NOTE: Origination covers last 2 days only -- not cumulative 2026 totals.\n';
   }
 
   return ctx;
@@ -246,12 +232,15 @@ exports.handler = async function(event, context) {
 
   // ── GET: fetch fresh data for dashboard ──────────────────────────────
   if (event.httpMethod === 'GET') {
-    const [snapshot, cancellation, status, origination] = await Promise.all([
-      fetchFromAppsScript('snapshot'),
-      fetchFromAppsScript('cancellation'),
-      fetchFromAppsScript('status'),
+    const [appsScriptData, origination] = await Promise.all([
+      fetchAllFromAppsScript(),
       fetchDriveFile('DRIVE_ORIGINATION_ID'),
     ]);
+
+    const snapshot     = appsScriptData?.snapshot     || null;
+    const cancellation = appsScriptData?.cancellation || null;
+    const status       = appsScriptData?.status       || null;
+
     return {
       statusCode: 200,
       headers: NO_CACHE,
@@ -278,28 +267,31 @@ exports.handler = async function(event, context) {
     return { statusCode: 400, body: JSON.stringify({ error: 'messages array required' }) };
   }
 
-  // Fetch fresh live data for every request
-  const [snapshot, cancellation, origination] = await Promise.all([
-    fetchFromAppsScript('snapshot'),
-    fetchFromAppsScript('cancellation'),
+  // Fetch fresh live data for every chat request
+  const [appsScriptData, origination] = await Promise.all([
+    fetchAllFromAppsScript(),
     fetchDriveFile('DRIVE_ORIGINATION_ID'),
   ]);
 
+  const snapshot     = appsScriptData?.snapshot     || null;
+  const cancellation = appsScriptData?.cancellation || null;
+
   const liveContext = buildLiveContext(snapshot, cancellation, origination);
+
   const systemPrompt = `You are a precise data analyst assistant for Yellowstone Grizzly RV Park in West Yellowstone, MT.
 You have access to complete 2025 and 2026 pacing data, fill curves, cancellation history, and live daily pipeline data.
 Answer questions concisely and accurately. Always show your math when doing calculations.
 When answering momentum or "nights added" questions, show which data points you used.
-If you're interpolating between dates, say so.
-Do NOT suggest dashboard changes — your role is answering data questions only.
+If you are interpolating between dates, say so.
+Do NOT suggest dashboard changes -- your role is answering data questions only.
 
 ${STATIC_DATA}
 ${liveContext}
 
 IMPORTANT CALCULATION REMINDERS:
-- For "last N days" questions: use snapshot history to find today's total minus total from N days ago
+- For "last N days" questions: use snapshot history to find today total minus total from N days ago
 - For month-specific "last N days": use the per-month columns in snapshot history
-- For 2025 comparisons: use FC25 PER-MONTH FILL CURVE with the equivalent dates (subtract 1 year)
+- For 2025 comparisons: use the FC25 PER-MONTH FILL CURVE above with equivalent dates (subtract 1 year)
 - Always state the exact dates and values you used in your calculation`;
 
   try {
