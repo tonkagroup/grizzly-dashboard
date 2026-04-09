@@ -32,8 +32,6 @@
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 13px; line-height: 1.5; min-height: 100vh; }
-
-/* HEADER */
 .header { padding: 24px 32px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
 .header-left h1 { font-family: var(--font-display); font-size: 24px; font-weight: 400; font-style: italic; letter-spacing: -0.3px; }
 .header-left p { font-size: 11px; color: var(--text3); margin-top: 2px; font-family: var(--font-mono); letter-spacing: 0.06em; }
@@ -43,19 +41,13 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
 .upload-zone:hover { border-color: var(--amber); color: var(--amber); background: var(--amber-dim); }
 .upload-zone svg { width: 13px; height: 13px; flex-shrink: 0; }
 input[type=file] { display: none; }
-
-/* LAYOUT */
 .main { padding: 20px 32px 40px; max-width: 1440px; }
 .grid-4 { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 10px; margin-bottom: 18px; }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
 .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px; }
-
-/* SECTION HEAD */
 .section-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
 .section-head h2 { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text3); font-weight: 400; white-space: nowrap; }
 .section-head::after { content:''; flex:1; height:1px; background:var(--border); }
-
-/* KPI CARDS */
 .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 7px; padding: 15px 17px; }
 .kpi-label { font-size: 10px; color: var(--text3); font-family: var(--font-mono); letter-spacing: 0.07em; margin-bottom: 7px; text-transform: uppercase; }
 .kpi-value { font-family: var(--font-mono); font-size: 24px; font-weight: 500; line-height: 1; margin-bottom: 6px; }
@@ -67,16 +59,12 @@ input[type=file] { display: none; }
 .neg { color: var(--red); }
 .neu { color: var(--text3); }
 .amb { color: var(--amber); }
-
-/* CHART CARDS */
 .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 7px; padding: 16px 18px; }
 .chart-card h3 { font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
 .chart-card .sub { font-size: 11px; color: var(--text3); margin-bottom: 12px; line-height: 1.4; }
 .legend { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
 .leg { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--text3); font-family: var(--font-mono); }
 .leg-sq { width: 8px; height: 8px; border-radius: 1px; flex-shrink: 0; }
-
-/* TABLES */
 .table-card { background: var(--surface); border: 1px solid var(--border); border-radius: 7px; overflow: hidden; margin-bottom: 14px; }
 .table-card table { width: 100%; border-collapse: collapse; font-size: 12px; font-family: var(--font-mono); }
 .table-card thead th { padding: 9px 13px; text-align: right; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text3); font-weight: 400; border-bottom: 1px solid var(--border); }
@@ -90,39 +78,27 @@ input[type=file] { display: none; }
 .pill-g { background: var(--green-dim); color: var(--green); }
 .pill-r { background: var(--red-dim); color: var(--red); }
 .pill-a { background: var(--amber-dim); color: var(--amber); }
-
-/* ALERT */
 .alert-banner { border-radius: 6px; padding: 9px 14px; margin-bottom: 16px; font-size: 12px; display: flex; align-items: flex-start; gap: 10px; font-family: var(--font-mono); }
 .alert-banner.warn { background: var(--amber-dim); border: 1px solid rgba(232,160,48,0.28); color: var(--amber); }
 .alert-banner.good { background: var(--green-dim); border: 1px solid rgba(76,175,125,0.22); color: var(--green); }
 .alert-banner.info { background: var(--blue-dim); border: 1px solid rgba(91,155,213,0.22); color: var(--blue); }
-
-/* TABS */
 .tab-row { display: flex; gap: 3px; margin-bottom: 16px; flex-wrap: wrap; }
 .tab-btn { font-family: var(--font-mono); font-size: 10px; padding: 6px 13px; border-radius: 4px; border: 1px solid var(--border); cursor: pointer; color: var(--text3); background: transparent; letter-spacing: 0.07em; text-transform: uppercase; transition: all 0.15s; }
 .tab-btn.active { background: var(--amber); color: var(--bg); border-color: var(--amber); font-weight: 500; }
 .tab-btn:hover:not(.active) { border-color: var(--border2); color: var(--text2); }
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
-
-/* SCENARIO BUTTONS */
 .scen-row { display: flex; gap: 6px; margin-bottom: 14px; }
 .scen-btn { font-family: var(--font-mono); font-size: 10px; padding: 5px 12px; border-radius: 4px; border: 1px solid var(--border); cursor: pointer; color: var(--text3); background: transparent; letter-spacing: 0.06em; transition: all 0.15s; }
 .scen-btn.active { background: var(--surface3); border-color: var(--border2); color: var(--text); }
-
-/* FILL CURVE PROGRESS BARS */
 .fill-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-family: var(--font-mono); font-size: 11px; }
 .fill-label { width: 28px; color: var(--text3); flex-shrink: 0; }
 .fill-track { flex: 1; height: 5px; background: var(--surface3); border-radius: 3px; position: relative; overflow: visible; }
 .fill-bar25 { height: 100%; border-radius: 3px; position: absolute; top: 0; left: 0; background: var(--text3); opacity: 0.5; }
 .fill-bar26 { height: 100%; border-radius: 3px; position: absolute; top: 0; left: 0; }
 .fill-pct { width: 40px; text-align: right; color: var(--text2); }
-
-/* METHODOLOGY BOX */
 .method-box { background: var(--surface2); border-radius: 6px; padding: 13px 16px; margin-top: 12px; font-size: 11px; color: var(--text3); line-height: 1.7; font-family: var(--font-mono); }
 .method-box strong { color: var(--text2); }
-
-/* DROP OVERLAY */
 .drop-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.82); z-index: 100; align-items: center; justify-content: center; }
 .drop-overlay.active { display: flex; }
 .drop-box { border: 2px dashed var(--amber); border-radius: 10px; padding: 36px 56px; text-align: center; }
@@ -133,15 +109,37 @@ input[type=file] { display: none; }
 .processing p { font-family: var(--font-mono); font-size: 12px; color: var(--amber); }
 .spinner { width: 28px; height: 28px; border: 2px solid var(--border2); border-top-color: var(--amber); border-radius: 50%; animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
-
-/* PROJ RANGE */
 .proj-range { margin: 10px 0 4px; }
 .proj-track { width: 100%; height: 5px; background: var(--surface3); border-radius: 3px; position: relative; margin: 5px 0; }
 .proj-fill { height: 100%; border-radius: 3px; }
 .proj-labels { display: flex; justify-content: space-between; font-size: 10px; font-family: var(--font-mono); color: var(--text3); }
-
-/* NOTE BADGE */
 .note-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-family: var(--font-mono); color: var(--text3); background: var(--surface2); border: 1px solid var(--border); border-radius: 3px; padding: 2px 8px; }
+/* ASK PANEL */
+.ask-fab { position:fixed; bottom:24px; right:24px; width:52px; height:52px; border-radius:50%; background:var(--amber); border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 16px rgba(0,0,0,0.4); z-index:200; transition:transform 0.2s; }
+.ask-fab:hover { transform:scale(1.08); }
+.ask-fab svg { width:22px; height:22px; }
+.ask-panel { position:fixed; bottom:88px; right:24px; width:420px; max-width:calc(100vw - 48px); height:560px; max-height:calc(100vh - 120px); background:var(--surface); border:1px solid var(--border2); border-radius:10px; display:flex; flex-direction:column; z-index:200; box-shadow:0 8px 32px rgba(0,0,0,0.5); transform:scale(0.95) translateY(8px); opacity:0; pointer-events:none; transition:all 0.18s ease; }
+.ask-panel.open { transform:scale(1) translateY(0); opacity:1; pointer-events:all; }
+.ask-panel-header { padding:13px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+.ask-panel-header h3 { font-family:var(--font-mono); font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text2); font-weight:400; }
+.ask-panel-header button { background:none; border:none; cursor:pointer; color:var(--text3); padding:2px; line-height:1; }
+.ask-panel-header button:hover { color:var(--text2); }
+.ask-messages { flex:1; overflow-y:auto; padding:14px 16px; display:flex; flex-direction:column; gap:10px; }
+.ask-messages::-webkit-scrollbar { width:4px; }
+.ask-messages::-webkit-scrollbar-thumb { background:var(--surface3); border-radius:2px; }
+.ask-msg { max-width:88%; padding:9px 12px; border-radius:8px; font-family:var(--font-mono); font-size:11px; line-height:1.6; white-space:pre-wrap; word-break:break-word; }
+.ask-msg.user { background:var(--amber-dim); border:1px solid rgba(232,160,48,0.2); color:var(--text); align-self:flex-end; border-bottom-right-radius:2px; }
+.ask-msg.assistant { background:var(--surface2); border:1px solid var(--border); color:var(--text2); align-self:flex-start; border-bottom-left-radius:2px; }
+.ask-msg.thinking { color:var(--text3); font-style:italic; }
+.ask-msg.error { background:var(--red-dim); border-color:rgba(224,92,75,0.2); color:var(--red); }
+.ask-input-row { padding:12px 14px; border-top:1px solid var(--border); display:flex; gap:8px; flex-shrink:0; }
+.ask-input-row input { flex:1; background:var(--surface2); border:1px solid var(--border2); border-radius:5px; padding:8px 11px; color:var(--text); font-family:var(--font-mono); font-size:11px; outline:none; }
+.ask-input-row input:focus { border-color:var(--amber); }
+.ask-input-row input::placeholder { color:var(--text3); }
+.ask-input-row button { background:var(--amber); color:var(--bg); border:none; border-radius:5px; padding:8px 14px; font-family:var(--font-mono); font-size:10px; font-weight:500; cursor:pointer; letter-spacing:0.06em; }
+.ask-input-row button:disabled { opacity:0.4; cursor:default; }
+.ask-clear { font-family:var(--font-mono); font-size:9px; color:var(--text3); background:none; border:none; cursor:pointer; letter-spacing:0.06em; text-transform:uppercase; }
+.ask-clear:hover { color:var(--text2); }
 </style>
 </head>
 <body>
@@ -192,35 +190,17 @@ input[type=file] { display: none; }
     <button class="tab-btn" onclick="switchTab('october')">October</button>
   </div>
 
-  <!-- ══ OVERVIEW ══════════════════════════════════════════════════════════ -->
+  <!-- OVERVIEW -->
   <div class="tab-panel active" id="tab-overview">
     <div class="section-head"><h2>Season KPIs — 2026 vs 2025</h2></div>
     <div class="grid-4">
-      <div class="kpi" id="kpi-nights">
-        <div class="kpi-label">Nights on books</div>
-        <div class="kpi-value" id="kv-nights">—</div>
-        <div class="kpi-delta" id="kd-nights">—</div>
-      </div>
-      <div class="kpi" id="kpi-revenue">
-        <div class="kpi-label">Revenue on books</div>
-        <div class="kpi-value" id="kv-revenue">—</div>
-        <div class="kpi-delta" id="kd-revenue">—</div>
-      </div>
-      <div class="kpi" id="kpi-rate">
-        <div class="kpi-label">Rate / site-night</div>
-        <div class="kpi-value" id="kv-rate">—</div>
-        <div class="kpi-delta" id="kd-rate">—</div>
-      </div>
-      <div class="kpi" id="kpi-proj">
-        <div class="kpi-label">Base case projection</div>
-        <div class="kpi-value" id="kv-proj">—</div>
-        <div class="kpi-delta" id="kd-proj">—</div>
-      </div>
+      <div class="kpi" id="kpi-nights"><div class="kpi-label">Nights on books</div><div class="kpi-value" id="kv-nights">—</div><div class="kpi-delta" id="kd-nights">—</div></div>
+      <div class="kpi" id="kpi-revenue"><div class="kpi-label">Revenue on books</div><div class="kpi-value" id="kv-revenue">—</div><div class="kpi-delta" id="kd-revenue">—</div></div>
+      <div class="kpi" id="kpi-rate"><div class="kpi-label">Rate / site-night</div><div class="kpi-value" id="kv-rate">—</div><div class="kpi-delta" id="kd-rate">—</div></div>
+      <div class="kpi" id="kpi-proj"><div class="kpi-label">Base case projection</div><div class="kpi-value" id="kv-proj">—</div><div class="kpi-delta" id="kd-proj">—</div></div>
     </div>
-
     <div class="section-head"><h2>Recent momentum</h2></div>
     <div class="grid-3" id="momentumCards"></div>
-
     <div class="grid-2">
       <div class="chart-card">
         <h3>Nights on books — 2026 vs 2025 at same date</h3>
@@ -235,15 +215,11 @@ input[type=file] { display: none; }
         <h3>Revenue projection range</h3>
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
           <div class="sub" style="margin:0;">Conservative / Base / Optimistic vs 2025 actuals.</div>
-          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
-            <span style="font-family:var(--font-mono);font-size:10px;color:var(--text3);">LATE FILL</span>
-
-          </div>
+          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;"><span style="font-family:var(--font-mono);font-size:10px;color:var(--text3);">LATE FILL</span></div>
         </div>
         <div style="padding: 4px 0;" id="revRangeBars"></div>
       </div>
     </div>
-
     <div class="grid-2">
       <div class="chart-card">
         <h3>2026 fill % of 2025 final (by month)</h3>
@@ -256,50 +232,30 @@ input[type=file] { display: none; }
         <div style="height:190px"><canvas id="chartSiteRatio"></canvas></div>
       </div>
     </div>
-
     <div class="section-head"><h2>Cancellation activity — season to date</h2></div>
     <div class="table-card" id="cancelSection" style="margin-bottom:14px;">
       <table>
-        <thead>
-          <tr>
-            <th>Month</th>
-            <th>2026 nights cancelled</th>
-            <th>Count</th>
-            <th>2026 on books</th>
-            <th>2026 cancel rate</th>
-            <th>'25 rate @ same date</th>
-            <th>'25 final rate</th>
-            <th>Fees collected</th>
-            <th>Lost revenue</th>
-            <th>Fee recovery</th>
-          </tr>
-        </thead>
+        <thead><tr><th>Month</th><th>2026 nights cancelled</th><th>Count</th><th>2026 on books</th><th>2026 cancel rate</th><th>'25 rate @ same date</th><th>'25 final rate</th><th>Fees collected</th><th>Lost revenue</th><th>Fee recovery</th></tr></thead>
         <tbody id="cancelTableBody"></tbody>
         <tfoot id="cancelTableFoot"></tfoot>
       </table>
     </div>
     <div class="method-box" id="cancelMethodBox" style="margin-bottom:18px;">
-      <strong style="color:var(--text2)">'25 rate @ same date</strong> = cumulative 2025 cancels through the equivalent point in the booking cycle, vs 2025 on-books at that date — apples-to-apples operational comparison. <strong style="color:var(--text2)">'25 final rate</strong> = full 2025 season cancelled nights vs final actual nights — projection benchmark. 2026 rate colored vs same-date 2025 (green = running cooler, red = running hotter).
+      <strong style="color:var(--text2)">'25 rate @ same date</strong> = cumulative 2025 cancels through the equivalent point in the booking cycle, vs 2025 on-books at that date. <strong style="color:var(--text2)">'25 final rate</strong> = full 2025 season cancelled nights vs final actual nights. 2026 rate colored vs same-date 2025 (green = running cooler, red = running hotter).
     </div>
-
   </div>
 
-  <!-- ══ SITE MIX ══════════════════════════════════════════════════════════ -->
+  <!-- SITE MIX -->
   <div class="tab-panel" id="tab-sitetype">
     <div class="section-head"><h2>Site type pacing — demand analysis</h2></div>
     <div class="alert-banner warn" style="margin-bottom:14px;" id="siteAlertBanner">
-      <span>⚑</span>
-      <span>Gallatin Back-In shows genuine demand weakness (0.68x supply-adjusted) despite unchanged site count. Prem Pull-Thru also soft (0.81x after accounting for –7 sites).</span>
+      <span>⚑</span><span>Gallatin Back-In shows genuine demand weakness (0.68x supply-adjusted) despite unchanged site count. Prem Pull-Thru also soft (0.81x after accounting for –7 sites).</span>
     </div>
-
     <div class="grid-2" style="margin-bottom:14px;">
       <div class="chart-card">
         <h3>Nights on books Mar 27 — by site type</h3>
         <div class="sub">2025 vs 2026 at same calendar date.</div>
-        <div class="legend">
-          <div class="leg"><div class="leg-sq" style="background:var(--text3);opacity:0.6"></div>2025</div>
-          <div class="leg"><div class="leg-sq" style="background:var(--amber)"></div>2026</div>
-        </div>
+        <div class="legend"><div class="leg"><div class="leg-sq" style="background:var(--text3);opacity:0.6"></div>2025</div><div class="leg"><div class="leg-sq" style="background:var(--amber)"></div>2026</div></div>
         <div style="height:240px"><canvas id="chartSiteNights"></canvas></div>
       </div>
       <div class="chart-card">
@@ -308,188 +264,109 @@ input[type=file] { display: none; }
         <div style="height:240px"><canvas id="chartDemandRatio"></canvas></div>
       </div>
     </div>
-
     <div class="table-card">
       <table>
-        <thead>
-          <tr>
-            <th>Site type</th>
-            <th>Sites 25→26</th>
-            <th>2025 nights</th>
-            <th>2026 nights</th>
-            <th>Raw ratio</th>
-            <th>Demand ratio</th>
-            <th>Rate 2025</th>
-            <th>Rate 2026</th>
-            <th>Signal</th>
-            <th>Notes</th>
-          </tr>
-        </thead>
+        <thead><tr><th>Site type</th><th>Sites 25→26</th><th>2025 nights</th><th>2026 nights</th><th>Raw ratio</th><th>Demand ratio</th><th>Rate 2025</th><th>Rate 2026</th><th>Signal</th><th>Notes</th></tr></thead>
         <tbody id="siteDetailBody"></tbody>
       </table>
     </div>
     <div class="method-box">
-      <strong>Site count changes 2025→2026:</strong> Presidential +3 (from Prem Pull-Thru) · Prem Pull-Thru −7 (−3 →Presidential, −6 →Pull-Thru, +2 from Prem Back-In) ·
-      Pull-Thru +6 · Prem Back-In −2 · Back-In unchanged · Gallatin unchanged · Prem Forest unchanged<br>
+      <strong>Site count changes 2025→2026:</strong> Presidential +3 · Prem Pull-Thru −7 · Pull-Thru +6 · Prem Back-In −2 · Back-In unchanged · Gallatin unchanged · Prem Forest unchanged<br>
       <strong>Cabin merge:</strong> Cabin W/Bath + Kitchenette + Basic → all reported as "Cabin" for YoY comparison.
     </div>
   </div>
 
-  <!-- ══ PROJECTIONS ════════════════════════════════════════════════════════ -->
+  <!-- PROJECTIONS -->
   <div class="tab-panel" id="tab-projections">
     <div class="section-head"><h2>Season projections — scenario model</h2></div>
-
-    <!-- Scenario toggle -->
     <div style="display:flex;align-items:center;gap:4px;margin-bottom:16px;flex-wrap:wrap;">
       <button class="scen-btn active" id="scen-cons" onclick="setScenario('cons')">Conservative (85% demand)</button>
       <button class="scen-btn" id="scen-base" onclick="setScenario('base')">Base (100% demand)</button>
       <button class="scen-btn" id="scen-opt" onclick="setScenario('opt')">Optimistic (115% demand)</button>
     </div>
-
-    <!-- Season summary KPIs — all 3 scenarios -->
     <div class="grid-3" style="margin-bottom:16px;" id="scenarioKPIs">
-      <div class="kpi" id="fcst-cons">
-        <div class="kpi-label">Conservative</div>
-        <div class="kpi-value amb" id="fcst-cons-rev">—</div>
-        <div class="kpi-delta" id="fcst-cons-nights">—</div>
-      </div>
-      <div class="kpi good" id="fcst-base">
-        <div class="kpi-label">Base case</div>
-        <div class="kpi-value pos" id="fcst-base-rev">—</div>
-        <div class="kpi-delta" id="fcst-base-nights">—</div>
-      </div>
-      <div class="kpi" id="fcst-opt">
-        <div class="kpi-label">Optimistic</div>
-        <div class="kpi-value pos" id="fcst-opt-rev">—</div>
-        <div class="kpi-delta" id="fcst-opt-nights">—</div>
-      </div>
+      <div class="kpi" id="fcst-cons"><div class="kpi-label">Conservative</div><div class="kpi-value amb" id="fcst-cons-rev">—</div><div class="kpi-delta" id="fcst-cons-nights">—</div></div>
+      <div class="kpi good" id="fcst-base"><div class="kpi-label">Base case</div><div class="kpi-value pos" id="fcst-base-rev">—</div><div class="kpi-delta" id="fcst-base-nights">—</div></div>
+      <div class="kpi" id="fcst-opt"><div class="kpi-label">Optimistic</div><div class="kpi-value pos" id="fcst-opt-rev">—</div><div class="kpi-delta" id="fcst-opt-nights">—</div></div>
     </div>
-
-    <!-- Monthly breakdown cards — selected scenario -->
     <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:16px;" id="projMonthCards"></div>
-
     <div class="table-card">
       <table>
-        <thead>
-          <tr>
-            <th>Month</th>
-            <th>On books</th>
-            <th>Locked cancel</th>
-            <th>Locked</th>
-            <th>2025 fwd demand</th>
-            <th>LF gross → net</th>
-            <th>Projected</th>
-            <th>Capacity</th>
-            <th>Occ %</th>
-            <th>vs 2025</th>
-          </tr>
-        </thead>
+        <thead><tr><th>Month</th><th>On books</th><th>Locked cancel</th><th>Locked</th><th>2025 fwd demand</th><th>LF gross → net</th><th>Projected</th><th>Capacity</th><th>Occ %</th><th>vs 2025</th></tr></thead>
         <tbody id="projTableBody"></tbody>
         <tfoot id="projTableFoot"></tfoot>
       </table>
     </div>
     <div class="method-box">
       <strong>How this is calculated:</strong> Projected = min((on-books × (1 − locked cancel rate)) + (2025 fwd demand × demand mult × (1 − LF cancel rate)), 100% capacity)<br>
-      <strong>Locked cancel rate:</strong> Dynamic by days-to-arrival per month. Today: May ~7.5% · Jun ~11.3% · Jul ~14.0% · Aug ~15.9% · Sep ~17.4%. Declines daily as arrival approaches.<br>
-      <strong>2025 fwd demand:</strong> Gross nights booked from today's equivalent 2025 date through month end. Booking errors (cancelled within 1 day) excluded. Drains naturally to zero as each month passes.<br>
-      <strong>LF cancel rate:</strong> Dynamic by days-to-arrival. Lower than locked — short-window bookers are more committed. Today: May ~6.2% · Jun ~7.8% · Jul ~9.0% · Aug ~9.6% · Sep ~9.9%.<br>
-      <strong>Scenario toggle:</strong> Scales 2025 fwd demand by 85% / 100% / 115%. Cancel rates are fixed — not scenario levers.<br>
-      Revenue = projected nights × per-month blended rate (derived from 2026 reservation revenue ÷ nights on books for that month). Falls back to 2025 actual ADR if pipeline data unavailable.
+      <strong>Scenario toggle:</strong> Scales 2025 fwd demand by 85% / 100% / 115%. Cancel rates are fixed.<br>
+      Revenue = projected nights × per-month blended rate (derived from 2026 reservation revenue ÷ nights on books).
     </div>
   </div>
 
-  <!-- ══ OCTOBER ════════════════════════════════════════════════════════════ -->
+  <!-- OCTOBER -->
   <div class="tab-panel" id="tab-october">
     <div class="section-head"><h2>October — shoulder season</h2></div>
     <div class="alert-banner info" style="margin-bottom:16px;">
-      <span>ℹ</span>
-      <span>October is excluded from all main season projections and YoY comparisons (May–Sep only). This tab tracks it separately so it doesn't add noise to the core model.</span>
+      <span>ℹ</span><span>October is excluded from all main season projections and YoY comparisons (May–Sep only). This tab tracks it separately.</span>
     </div>
-
     <div class="grid-4">
-      <div class="kpi">
-        <div class="kpi-label">2026 on books</div>
-        <div class="kpi-value" id="oct-ob26">—</div>
-        <div class="kpi-delta" id="oct-ob26-delta">—</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">2025 final actual</div>
-        <div class="kpi-value">1,225</div>
-        <div class="kpi-delta neu">$155,082 revenue · $126.60 ADR</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">2025 on books Mar 27</div>
-        <div class="kpi-value">0</div>
-        <div class="kpi-delta neu">All Oct booked after Mar 27</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">2026 rev on books</div>
-        <div class="kpi-value" id="oct-rev26">—</div>
-        <div class="kpi-delta" id="oct-rev26-delta">—</div>
-      </div>
+      <div class="kpi"><div class="kpi-label">2026 on books</div><div class="kpi-value" id="oct-ob26">—</div><div class="kpi-delta" id="oct-ob26-delta">—</div></div>
+      <div class="kpi"><div class="kpi-label">2025 final actual</div><div class="kpi-value">1,225</div><div class="kpi-delta neu">$155,082 revenue · $126.60 ADR</div></div>
+      <div class="kpi"><div class="kpi-label">2025 on books Mar 27</div><div class="kpi-value">0</div><div class="kpi-delta neu">All Oct booked after Mar 27</div></div>
+      <div class="kpi"><div class="kpi-label">2026 rev on books</div><div class="kpi-value" id="oct-rev26">—</div><div class="kpi-delta" id="oct-rev26-delta">—</div></div>
     </div>
-
     <div class="section-head" style="margin-top:8px;"><h2>2025 October fill curve</h2></div>
     <div class="chart-card" style="margin-bottom:14px;">
       <h3>How October 2025 filled in — nights on books by snapshot date</h3>
       <div class="sub">October bookings don't appear until late June 2025. All 1,225 nights booked after Mar 27.</div>
       <div style="height:200px"><canvas id="chartOctFill"></canvas></div>
     </div>
-
     <div class="method-box">
-      <strong>Why October is separate:</strong> Oct is a shoulder month (season closes Oct 15). In 2025, zero Oct nights were on books at Mar 27 — all 1,225 booked after that date, mostly in-season. Including Oct in the main model would distort the late fill calculation and make YoY comparisons misleading since 2026 Oct bookings are still early. Watch this tab from July onward when Oct 2026 bookings start to accumulate meaningfully.
+      <strong>Why October is separate:</strong> Oct is a shoulder month (season closes Oct 15). In 2025, zero Oct nights were on books at Mar 27. Watch this tab from July onward when Oct 2026 bookings start to accumulate meaningfully.
     </div>
   </div>
-<!-- ══ ASK ══════════════════════════════════════════════════════════════ -->
-  <div style="margin-top:28px;">
-    <div class="section-head"><h2>Ask a question</h2></div>
-    <div class="chart-card" style="display:flex;flex-direction:column;gap:12px;">
-      <div style="display:flex;gap:10px;">
-        <input id="askInput" type="text" placeholder="e.g. How is July pacing vs last year?"
-          style="flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:5px;padding:9px 13px;color:var(--text);font-family:var(--font-mono);font-size:12px;outline:none;"
-          onkeydown="if(event.key==='Enter')askQuestion()">
-        <button onclick="askQuestion()"
-          style="background:var(--amber);color:var(--bg);border:none;border-radius:5px;padding:9px 18px;font-family:var(--font-mono);font-size:11px;font-weight:500;cursor:pointer;letter-spacing:0.06em;white-space:nowrap;">
-          Ask
-        </button>
-      </div>
-      <div id="askAnswer" style="font-family:var(--font-mono);font-size:12px;color:var(--text2);line-height:1.7;min-height:20px;"></div>
-    </div>
-  </div>
+
 </div><!-- /main -->
+
+<!-- FLOATING ASK PANEL -->
+<button class="ask-fab" id="askFab" onclick="toggleAskPanel()" title="Ask about your data">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+  </svg>
+</button>
+
+<div class="ask-panel" id="askPanel">
+  <div class="ask-panel-header">
+    <h3>Ask about your data</h3>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <button class="ask-clear" onclick="clearAskChat()">Clear</button>
+      <button onclick="toggleAskPanel()" style="font-size:20px;line-height:1;">×</button>
+    </div>
+  </div>
+  <div class="ask-messages" id="askMessages">
+    <div class="ask-msg assistant">Hi! Ask me anything about your pacing data — nights added, cancellation rates, YoY comparisons, projections, or anything else.</div>
+  </div>
+  <div class="ask-input-row">
+    <input id="askInput" type="text" placeholder="e.g. How many Jun nights added last 5 days vs 2025?" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAskMessage();}">
+    <button id="askSendBtn" onclick="sendAskMessage()">Send</button>
+  </div>
+</div>
 
 <script>
 // ══════════════════════════════════════════════════════════════════════════
-// GROUND TRUTH DATA — from fill_curve_2025.json + rent roll
-// All monthly figures use stay-date assignment (not arrival-date)
+// GROUND TRUTH DATA
 // ══════════════════════════════════════════════════════════════════════════
 const BASE = {
   months:    ['May','Jun','Jul','Aug','Sep'],
-  // 2025 on-books at Mar 27 (from daily snapshot)
   onBooks25: [2377, 5700, 4407, 2788, 2478],
-  // 2025 final actuals (rent roll, nights by stay date)
   final25:   [3577, 6724, 6931, 6333, 6212],
-  // 2025 revenue by stay month — RESERVATION CHARGES ONLY (excludes locked site fees, pet fees)
-  // Source: rent roll distributed by stay date. Matches what daily snapshot revenue captures.
   rev25:     [430616, 960993, 1076128, 893223, 903735],
-  // 2025 late fill — SNAPSHOT basis: net nights added after Mar 27 (fill curve ground truth)
-  // May includes +391 walk-up adder for same-week bookings invisible to forward-looking snapshots
   lateFill25_snapshot:[1591, 1024, 2524, 3545, 3734],
-  // 2025 late fill — DEMAND basis: gross post-Mar-27 bookings minus cancels of post-Mar-27 bookings only
-  // Correctly matches new bookings against their own cancels; walk-up traffic already in origination report
-  // Jun/Jul/Aug/Sep show substantially more demand than snapshot net captured — capacity was the constraint
-  // 2025 late fill — DEMAND basis: gross post-Mar-27 bookings minus same-day/next-day booking errors only
-  // Source: origination report cross-referenced with cancellation report (errors = cancelled within 1 day of booking)
-  // These are real demand nights — genuine post-booking cancels handled by cancel rate assumption, not baked out
   lateFill25_demand:  [1660, 2052, 3782, 4155, 4586],
-  // Active late fill set (toggled by UI)
   lateFill25:[1591, 1024, 2524, 3545, 3734],
-  // 2026 on-books at Mar 27 (booking cycle start — fixed anchor for late fill calc)
-  // Source: fill_curve_2025_updated.json → baseline_2026_mar27.by_month
-  onBooks26_mar27: [2266, 5110, 3858, 2746, 1981],  // corrected to match Campspot Mar 27 2026 report (15,961 total)
-  // 2025 rate per night — reservation charges only ÷ final nights
+  onBooks26_mar27: [2266, 5110, 3858, 2746, 1981],
   rate25:    [120.38, 142.92, 155.26, 141.04, 145.48],
-  // Plateau dates
   plateaus: {
     May: { date:'2025-06-25', peak:3186, actual:3577, gap:391, note:'Walk-up adder ~391 nights not in snapshots' },
     Jun: { date:'2025-07-03', peak:6724, actual:6724, gap:0, note:'Perfect match' },
@@ -498,8 +375,6 @@ const BASE = {
     Sep: { date:'2025-10-05', peak:6212, actual:6212, gap:0, note:'Perfect match' },
     Oct: { date:'end of season', peak:1225, actual:1225, gap:0, note:'Perfect match' },
   },
-  // 2025 full-season cancellation actuals (from Oct 2024–Mar 2026 export)
-  // Cancel rate = cancelled nights / final actual nights
   cancels25: {
     May: { count:183, nights:803,  fees:31649.47,  lost:97789.00,  rate:22.4 },
     Jun: { count:412, nights:1547, fees:65154.16,  lost:225785.20, rate:23.0 },
@@ -507,8 +382,6 @@ const BASE = {
     Aug: { count:247, nights:950,  fees:39561.44,  lost:136152.35, rate:15.0 },
     Sep: { count:271, nights:1047, fees:42418.25,  lost:157134.20, rate:16.9 },
   },
-  // 2025 cancels recorded through Apr 1 2025 — same point in booking cycle as today
-  // Rate vs 2025 on-books at Apr 1 2025 (from fill curve)
   cancels25_samedate: {
     May: { nights:404, rate:16.8 },
     Jun: { nights:484, rate: 8.3 },
@@ -518,26 +391,22 @@ const BASE = {
   },
   days:  [31, 30, 31, 31, 30],
   SITES: 238,
-  totalRev25: 4264695,     // May–Sep reservation charges only (excl Oct, excl locked site/pet fees)
-  totalNights25: 29777,    // May–Sep only (excludes Oct 1,225)
+  totalRev25: 4264695,
+  totalNights25: 29777,
 };
 
-// ══════════════════════════════════════════════════════════════════════════
-// LIVE 2026 STATE (from Mar 27 2026 snapshot)
-// ══════════════════════════════════════════════════════════════════════════
 let STATE = {
   asOf: 'Mar 30 2026 snapshot',
   onBooks26: [2325, 5174, 3897, 2765, 1997],
-  rate26: 168.67,  // blended rate on books
-  // Site type data
+  rate26: 168.67,
   siteTypes: {
     labels:       ['Presidential','Prem Pull-Thru','Pull-Thru','Prem Back-In','Back-In','Gallatin','Prem Forest','Cabin'],
     nights25:     [546,  3756, 3829, 1799, 3333, 2265, 1284, 581],
     nights26:     [850,  2524, 4283, 1410, 3197, 1580, 1262, 335],
     sites25:      [5,    39,   64,   23,   51,   24,   12,   9],
-    sites26:      [8,    32,   70,   21,   51,   24,   12,   9],   // cabin: 6 standard + 3 luxury = 9
-    rate25:       [184.54, 166.25, 154.78, 135.97, 107.30, 118.44, 147.25, 269.78],  // from 2025 rent roll May-Sep actuals
-    rate26:       [null, null, null, null, null, null, null, null],  // computed dynamically from snapshot revenue ÷ nights
+    sites26:      [8,    32,   70,   21,   51,   24,   12,   9],
+    rate25:       [184.54, 166.25, 154.78, 135.97, 107.30, 118.44, 147.25, 269.78],
+    rate26:       [null, null, null, null, null, null, null, null],
     notes: [
       '+3 from Prem Pull-Thru',
       '−7 net (−3→Pres, −6→Pull-Thru, +2 from Prem Back-In)',
@@ -549,13 +418,9 @@ let STATE = {
       '6 standard + 3 luxury cabins merged; 9 sites vs 9 in 2025',
     ],
   },
-  // Per-month blended rate — computed from snapshot revenue ÷ nights per month
-  // Falls back to BASE.rate25 per month if pipeline data unavailable
-  rate26ByMonth: [120.38, 142.92, 155.26, 141.04, 145.48],  // seeded with 2025 rates until pipeline loads
+  rate26ByMonth: [120.38, 142.92, 155.26, 141.04, 145.48],
   snapshotDate: null,
   totalRevenue26: 0,
-  // Rolling snapshot history — seeded from Mar 20-29 2026 CSVs, extended daily by pipeline
-  // Each entry: {date, total (May-Sep nights), May, Jun, Jul, Aug, Sep, Oct}
   snapshotHistory: [
     {"date":"2026-03-20","total":15317,"Oct":99,"May":2149,"Jun":4883,"Jul":3692,"Aug":2656,"Sep":1937},
     {"date":"2026-03-21","total":15339,"Oct":99,"May":2170,"Jun":4874,"Jul":3695,"Aug":2663,"Sep":1937},
@@ -568,9 +433,7 @@ let STATE = {
     {"date":"2026-03-28","total":15946,"Oct":101,"May":2269,"Jun":5120,"Jul":3849,"Aug":2734,"Sep":1974},
     {"date":"2026-03-29","total":16043,"Oct":101,"May":2299,"Jun":5139,"Jul":3870,"Aug":2754,"Sep":1981},
   ],
-  oct26: 107,       // October nights on books — updated from snapshot, seeded from Apr 2 report
-  // Cancellation data — seeded with full season-to-date baseline (Oct 2024–Mar 2026)
-  // Updated daily by pipeline; pipeline deduplicates so no double-counting
+  oct26: 107,
   cancels: {
     report_date: '2026-04-01',
     row_count: 338,
@@ -587,51 +450,23 @@ let STATE = {
   },
 };
 
-// ══════════════════════════════════════════════════════════════════════════
-// SCENARIO DEFINITIONS
-// ══════════════════════════════════════════════════════════════════════════
-// ── Cancel rate model ────────────────────────────────────────────────────
-// Both cancel rates are functions of days-to-arrival only.
-// Source: 2025 origination × cancellation cross-reference, May-Sep stays.
-// To revert to flat rates: replace calcLockedCancelRate/calcLFCancelRate
-// with simple functions returning a constant (e.g. return 0.11).
-
-// Month midpoints used to compute days-to-arrival from snapshot date
 const MONTH_MIDPOINTS_2026 = {
   May: '2026-05-16', Jun: '2026-06-15', Jul: '2026-07-16',
   Aug: '2026-08-15', Sep: '2026-09-15',
 };
 
-// Locked cohort (pre-Mar-27 bookings): remaining cancel risk vs days to arrival
-// Derived from 2025 pre-Mar-27 cancellation timing vs total pre-booked nights
 const LOCKED_CANCEL_CURVE = [
-  { days: 180, rate: 0.179 },
-  { days: 150, rate: 0.168 },
-  { days: 120, rate: 0.150 },
-  { days:  90, rate: 0.130 },
-  { days:  60, rate: 0.098 },
-  { days:  45, rate: 0.077 },
-  { days:  30, rate: 0.050 },
-  { days:  14, rate: 0.029 },
-  { days:   7, rate: 0.019 },
-  { days:   0, rate: 0.010 },
+  { days: 180, rate: 0.179 }, { days: 150, rate: 0.168 }, { days: 120, rate: 0.150 },
+  { days:  90, rate: 0.130 }, { days:  60, rate: 0.098 }, { days:  45, rate: 0.077 },
+  { days:  30, rate: 0.050 }, { days:  14, rate: 0.029 }, { days:   7, rate: 0.019 }, { days: 0, rate: 0.010 },
 ];
 
-// Late fill demand: cancel rate vs days to arrival (max booking window remaining)
-// Derived from 2025 post-Mar-27 gross bookings × matched cancellations
 const LF_CANCEL_CURVE = [
-  { days: 180, rate: 0.099 },
-  { days: 150, rate: 0.098 },
-  { days: 120, rate: 0.093 },
-  { days:  90, rate: 0.087 },
-  { days:  60, rate: 0.071 },
-  { days:  45, rate: 0.063 },
-  { days:  30, rate: 0.046 },
-  { days:  14, rate: 0.033 },
-  { days:   7, rate: 0.023 },
+  { days: 180, rate: 0.099 }, { days: 150, rate: 0.098 }, { days: 120, rate: 0.093 },
+  { days:  90, rate: 0.087 }, { days:  60, rate: 0.071 }, { days:  45, rate: 0.063 },
+  { days:  30, rate: 0.046 }, { days:  14, rate: 0.033 }, { days:   7, rate: 0.023 },
 ];
 
-// Linear interpolation between curve points
 function interpolateCurve(curve, daysToArrival) {
   if (daysToArrival >= curve[0].days) return curve[0].rate;
   if (daysToArrival <= curve[curve.length-1].days) return curve[curve.length-1].rate;
@@ -659,9 +494,6 @@ function calcLFCancelRate(snapDateStr, monthName) {
   return interpolateCurve(LF_CANCEL_CURVE, daysToArrival(snapDateStr, monthName));
 }
 
-// ── Scenarios — demand multiplier only ───────────────────────────────────
-// Cancel rates are handled dynamically above, not as scenario levers.
-// The scenario toggle controls how much late fill demand we expect vs 2025.
 const SCENARIOS = {
   cons: { label:'Conservative', demandMult:0.85 },
   base: { label:'Base case',    demandMult:1.00 },
@@ -671,16 +503,11 @@ let currentScenario = 'cons';
 
 const FWD_DEMAND_2025 = {"2026-03-27": {"May": 1660, "Jun": 2052, "Jul": 3782, "Aug": 4155, "Sep": 4586}, "2026-03-28": {"May": 1650, "Jun": 2019, "Jul": 3743, "Aug": 4154, "Sep": 4575}, "2026-03-29": {"May": 1643, "Jun": 1997, "Jul": 3727, "Aug": 4151, "Sep": 4548}, "2026-03-30": {"May": 1628, "Jun": 1984, "Jul": 3708, "Aug": 4124, "Sep": 4523}, "2026-03-31": {"May": 1623, "Jun": 1960, "Jul": 3661, "Aug": 4112, "Sep": 4502}, "2026-04-01": {"May": 1610, "Jun": 1914, "Jul": 3615, "Aug": 4111, "Sep": 4476}, "2026-04-02": {"May": 1590, "Jun": 1892, "Jul": 3591, "Aug": 4091, "Sep": 4464}, "2026-04-03": {"May": 1580, "Jun": 1886, "Jul": 3557, "Aug": 4065, "Sep": 4449}, "2026-04-04": {"May": 1552, "Jun": 1855, "Jul": 3533, "Aug": 4051, "Sep": 4412}, "2026-04-05": {"May": 1541, "Jun": 1828, "Jul": 3522, "Aug": 4043, "Sep": 4390}, "2026-04-06": {"May": 1530, "Jun": 1799, "Jul": 3504, "Aug": 4016, "Sep": 4382}, "2026-04-07": {"May": 1523, "Jun": 1771, "Jul": 3477, "Aug": 3986, "Sep": 4356}, "2026-04-08": {"May": 1516, "Jun": 1746, "Jul": 3454, "Aug": 3977, "Sep": 4347}, "2026-04-09": {"May": 1505, "Jun": 1737, "Jul": 3389, "Aug": 3976, "Sep": 4337}, "2026-04-10": {"May": 1491, "Jun": 1714, "Jul": 3379, "Aug": 3969, "Sep": 4334}, "2026-04-11": {"May": 1481, "Jun": 1695, "Jul": 3363, "Aug": 3946, "Sep": 4312}, "2026-04-12": {"May": 1467, "Jun": 1688, "Jul": 3345, "Aug": 3923, "Sep": 4309}, "2026-04-13": {"May": 1454, "Jun": 1679, "Jul": 3330, "Aug": 3918, "Sep": 4305}, "2026-04-14": {"May": 1452, "Jun": 1669, "Jul": 3277, "Aug": 3906, "Sep": 4298}, "2026-04-15": {"May": 1434, "Jun": 1647, "Jul": 3246, "Aug": 3899, "Sep": 4288}, "2026-04-16": {"May": 1430, "Jun": 1625, "Jul": 3246, "Aug": 3876, "Sep": 4284}, "2026-04-17": {"May": 1420, "Jun": 1605, "Jul": 3225, "Aug": 3865, "Sep": 4279}, "2026-04-18": {"May": 1415, "Jun": 1595, "Jul": 3211, "Aug": 3861, "Sep": 4273}, "2026-04-19": {"May": 1401, "Jun": 1585, "Jul": 3198, "Aug": 3857, "Sep": 4267}, "2026-04-20": {"May": 1384, "Jun": 1567, "Jul": 3181, "Aug": 3836, "Sep": 4258}, "2026-04-21": {"May": 1364, "Jun": 1562, "Jul": 3157, "Aug": 3814, "Sep": 4240}, "2026-04-22": {"May": 1364, "Jun": 1549, "Jul": 3137, "Aug": 3811, "Sep": 4235}, "2026-04-23": {"May": 1338, "Jun": 1529, "Jul": 3128, "Aug": 3798, "Sep": 4213}, "2026-04-24": {"May": 1307, "Jun": 1517, "Jul": 3120, "Aug": 3763, "Sep": 4198}, "2026-04-25": {"May": 1278, "Jun": 1500, "Jul": 3091, "Aug": 3756, "Sep": 4183}, "2026-04-26": {"May": 1246, "Jun": 1472, "Jul": 3061, "Aug": 3751, "Sep": 4168}, "2026-04-27": {"May": 1213, "Jun": 1453, "Jul": 3020, "Aug": 3737, "Sep": 4160}, "2026-04-28": {"May": 1201, "Jun": 1438, "Jul": 2985, "Aug": 3721, "Sep": 4148}, "2026-04-29": {"May": 1171, "Jun": 1429, "Jul": 2972, "Aug": 3701, "Sep": 4131}, "2026-04-30": {"May": 1133, "Jun": 1415, "Jul": 2936, "Aug": 3689, "Sep": 4100}, "2026-05-01": {"May": 1100, "Jun": 1385, "Jul": 2917, "Aug": 3666, "Sep": 4074}, "2026-05-02": {"May": 1073, "Jun": 1349, "Jul": 2883, "Aug": 3646, "Sep": 4060}, "2026-05-03": {"May": 1015, "Jun": 1330, "Jul": 2856, "Aug": 3622, "Sep": 4000}, "2026-05-04": {"May": 964, "Jun": 1312, "Jul": 2824, "Aug": 3597, "Sep": 3944}, "2026-05-05": {"May": 918, "Jun": 1288, "Jul": 2786, "Aug": 3566, "Sep": 3920}, "2026-05-06": {"May": 869, "Jun": 1260, "Jul": 2751, "Aug": 3538, "Sep": 3894}, "2026-05-07": {"May": 844, "Jun": 1238, "Jul": 2720, "Aug": 3522, "Sep": 3881}, "2026-05-08": {"May": 800, "Jun": 1208, "Jul": 2714, "Aug": 3511, "Sep": 3859}, "2026-05-09": {"May": 744, "Jun": 1183, "Jul": 2697, "Aug": 3485, "Sep": 3845}, "2026-05-10": {"May": 712, "Jun": 1151, "Jul": 2676, "Aug": 3484, "Sep": 3814}, "2026-05-11": {"May": 696, "Jun": 1132, "Jul": 2669, "Aug": 3471, "Sep": 3806}, "2026-05-12": {"May": 657, "Jun": 1114, "Jul": 2647, "Aug": 3462, "Sep": 3779}, "2026-05-13": {"May": 596, "Jun": 1083, "Jul": 2620, "Aug": 3452, "Sep": 3754}, "2026-05-14": {"May": 548, "Jun": 1056, "Jul": 2608, "Aug": 3434, "Sep": 3710}, "2026-05-15": {"May": 518, "Jun": 1049, "Jul": 2580, "Aug": 3405, "Sep": 3695}, "2026-05-16": {"May": 469, "Jun": 1044, "Jul": 2550, "Aug": 3383, "Sep": 3688}, "2026-05-17": {"May": 447, "Jun": 1027, "Jul": 2533, "Aug": 3360, "Sep": 3660}, "2026-05-18": {"May": 403, "Jun": 1000, "Jul": 2503, "Aug": 3332, "Sep": 3652}, "2026-05-19": {"May": 328, "Jun": 984, "Jul": 2456, "Aug": 3311, "Sep": 3634}, "2026-05-20": {"May": 299, "Jun": 959, "Jul": 2430, "Aug": 3295, "Sep": 3613}, "2026-05-21": {"May": 252, "Jun": 943, "Jul": 2401, "Aug": 3283, "Sep": 3602}, "2026-05-22": {"May": 232, "Jun": 932, "Jul": 2390, "Aug": 3276, "Sep": 3582}, "2026-05-23": {"May": 194, "Jun": 915, "Jul": 2344, "Aug": 3264, "Sep": 3574}, "2026-05-24": {"May": 151, "Jun": 899, "Jul": 2329, "Aug": 3250, "Sep": 3563}, "2026-05-25": {"May": 117, "Jun": 870, "Jul": 2306, "Aug": 3238, "Sep": 3553}, "2026-05-26": {"May": 101, "Jun": 849, "Jul": 2280, "Aug": 3209, "Sep": 3542}, "2026-05-27": {"May": 73, "Jun": 821, "Jul": 2241, "Aug": 3193, "Sep": 3514}, "2026-05-28": {"May": 52, "Jun": 791, "Jul": 2227, "Aug": 3176, "Sep": 3493}, "2026-05-29": {"May": 33, "Jun": 761, "Jul": 2194, "Aug": 3152, "Sep": 3482}, "2026-05-30": {"May": 15, "Jun": 740, "Jul": 2178, "Aug": 3148, "Sep": 3451}, "2026-05-31": {"May": 2, "Jun": 703, "Jul": 2154, "Aug": 3131, "Sep": 3444}, "2026-06-01": {"May": 0, "Jun": 671, "Jul": 2113, "Aug": 3111, "Sep": 3424}, "2026-06-02": {"May": 0, "Jun": 634, "Jul": 2055, "Aug": 3093, "Sep": 3396}, "2026-06-03": {"May": 0, "Jun": 576, "Jul": 2006, "Aug": 3078, "Sep": 3386}, "2026-06-04": {"May": 0, "Jun": 529, "Jul": 1979, "Aug": 3062, "Sep": 3358}, "2026-06-05": {"May": 0, "Jun": 477, "Jul": 1955, "Aug": 3028, "Sep": 3333}, "2026-06-06": {"May": 0, "Jun": 433, "Jul": 1935, "Aug": 3013, "Sep": 3324}, "2026-06-07": {"May": 0, "Jun": 412, "Jul": 1912, "Aug": 3008, "Sep": 3308}, "2026-06-08": {"May": 0, "Jun": 383, "Jul": 1878, "Aug": 2982, "Sep": 3301}, "2026-06-09": {"May": 0, "Jun": 368, "Jul": 1854, "Aug": 2957, "Sep": 3285}, "2026-06-10": {"May": 0, "Jun": 345, "Jul": 1817, "Aug": 2931, "Sep": 3270}, "2026-06-11": {"May": 0, "Jun": 310, "Jul": 1764, "Aug": 2886, "Sep": 3251}, "2026-06-12": {"May": 0, "Jun": 295, "Jul": 1709, "Aug": 2866, "Sep": 3215}, "2026-06-13": {"May": 0, "Jun": 259, "Jul": 1669, "Aug": 2837, "Sep": 3201}, "2026-06-14": {"May": 0, "Jun": 234, "Jul": 1647, "Aug": 2830, "Sep": 3190}, "2026-06-15": {"May": 0, "Jun": 210, "Jul": 1622, "Aug": 2816, "Sep": 3164}, "2026-06-16": {"May": 0, "Jun": 201, "Jul": 1602, "Aug": 2804, "Sep": 3154}, "2026-06-17": {"May": 0, "Jun": 182, "Jul": 1560, "Aug": 2783, "Sep": 3133}, "2026-06-18": {"May": 0, "Jun": 167, "Jul": 1516, "Aug": 2773, "Sep": 3114}, "2026-06-19": {"May": 0, "Jun": 159, "Jul": 1467, "Aug": 2761, "Sep": 3092}, "2026-06-20": {"May": 0, "Jun": 133, "Jul": 1428, "Aug": 2754, "Sep": 3075}, "2026-06-21": {"May": 0, "Jun": 91, "Jul": 1380, "Aug": 2720, "Sep": 3058}, "2026-06-22": {"May": 0, "Jun": 79, "Jul": 1358, "Aug": 2691, "Sep": 3046}, "2026-06-23": {"May": 0, "Jun": 70, "Jul": 1293, "Aug": 2657, "Sep": 3021}, "2026-06-24": {"May": 0, "Jun": 54, "Jul": 1257, "Aug": 2644, "Sep": 3000}, "2026-06-25": {"May": 0, "Jun": 46, "Jul": 1242, "Aug": 2621, "Sep": 2974}, "2026-06-26": {"May": 0, "Jun": 35, "Jul": 1173, "Aug": 2596, "Sep": 2961}, "2026-06-27": {"May": 0, "Jun": 29, "Jul": 1159, "Aug": 2590, "Sep": 2918}, "2026-06-28": {"May": 0, "Jun": 18, "Jul": 1144, "Aug": 2573, "Sep": 2897}, "2026-06-29": {"May": 0, "Jun": 14, "Jul": 1119, "Aug": 2548, "Sep": 2883}, "2026-06-30": {"May": 0, "Jun": 7, "Jul": 1097, "Aug": 2521, "Sep": 2856}, "2026-07-01": {"May": 0, "Jun": 0, "Jul": 1049, "Aug": 2486, "Sep": 2842}, "2026-07-02": {"May": 0, "Jun": 0, "Jul": 994, "Aug": 2437, "Sep": 2835}, "2026-07-03": {"May": 0, "Jun": 0, "Jul": 948, "Aug": 2417, "Sep": 2828}, "2026-07-04": {"May": 0, "Jun": 0, "Jul": 908, "Aug": 2394, "Sep": 2810}, "2026-07-05": {"May": 0, "Jun": 0, "Jul": 879, "Aug": 2371, "Sep": 2807}, "2026-07-06": {"May": 0, "Jun": 0, "Jul": 850, "Aug": 2342, "Sep": 2800}, "2026-07-07": {"May": 0, "Jun": 0, "Jul": 802, "Aug": 2319, "Sep": 2776}, "2026-07-08": {"May": 0, "Jun": 0, "Jul": 764, "Aug": 2290, "Sep": 2744}, "2026-07-09": {"May": 0, "Jun": 0, "Jul": 691, "Aug": 2245, "Sep": 2717}, "2026-07-10": {"May": 0, "Jun": 0, "Jul": 646, "Aug": 2214, "Sep": 2686}, "2026-07-11": {"May": 0, "Jun": 0, "Jul": 613, "Aug": 2196, "Sep": 2649}, "2026-07-12": {"May": 0, "Jun": 0, "Jul": 552, "Aug": 2165, "Sep": 2628}, "2026-07-13": {"May": 0, "Jun": 0, "Jul": 500, "Aug": 2121, "Sep": 2606}, "2026-07-14": {"May": 0, "Jun": 0, "Jul": 451, "Aug": 2051, "Sep": 2593}, "2026-07-15": {"May": 0, "Jun": 0, "Jul": 404, "Aug": 2008, "Sep": 2557}, "2026-07-16": {"May": 0, "Jun": 0, "Jul": 373, "Aug": 1976, "Sep": 2533}, "2026-07-17": {"May": 0, "Jun": 0, "Jul": 345, "Aug": 1944, "Sep": 2513}, "2026-07-18": {"May": 0, "Jun": 0, "Jul": 311, "Aug": 1918, "Sep": 2492}, "2026-07-19": {"May": 0, "Jun": 0, "Jul": 282, "Aug": 1893, "Sep": 2473}, "2026-07-20": {"May": 0, "Jun": 0, "Jul": 269, "Aug": 1860, "Sep": 2465}, "2026-07-21": {"May": 0, "Jun": 0, "Jul": 250, "Aug": 1819, "Sep": 2441}, "2026-07-22": {"May": 0, "Jun": 0, "Jul": 211, "Aug": 1794, "Sep": 2426}, "2026-07-23": {"May": 0, "Jun": 0, "Jul": 176, "Aug": 1765, "Sep": 2399}, "2026-07-24": {"May": 0, "Jun": 0, "Jul": 149, "Aug": 1708, "Sep": 2371}, "2026-07-25": {"May": 0, "Jun": 0, "Jul": 110, "Aug": 1690, "Sep": 2356}, "2026-07-26": {"May": 0, "Jun": 0, "Jul": 74, "Aug": 1664, "Sep": 2352}, "2026-07-27": {"May": 0, "Jun": 0, "Jul": 62, "Aug": 1622, "Sep": 2324}, "2026-07-28": {"May": 0, "Jun": 0, "Jul": 39, "Aug": 1569, "Sep": 2299}, "2026-07-29": {"May": 0, "Jun": 0, "Jul": 21, "Aug": 1515, "Sep": 2281}, "2026-07-30": {"May": 0, "Jun": 0, "Jul": 11, "Aug": 1463, "Sep": 2265}, "2026-07-31": {"May": 0, "Jun": 0, "Jul": 6, "Aug": 1424, "Sep": 2247}, "2026-08-01": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 1400, "Sep": 2236}, "2026-08-02": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 1337, "Sep": 2222}, "2026-08-03": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 1254, "Sep": 2203}, "2026-08-04": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 1194, "Sep": 2190}, "2026-08-05": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 1129, "Sep": 2161}, "2026-08-06": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 1061, "Sep": 2130}, "2026-08-07": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 998, "Sep": 2091}, "2026-08-08": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 944, "Sep": 2066}, "2026-08-09": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 859, "Sep": 2028}, "2026-08-10": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 833, "Sep": 2005}, "2026-08-11": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 782, "Sep": 1986}, "2026-08-12": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 748, "Sep": 1954}, "2026-08-13": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 677, "Sep": 1929}, "2026-08-14": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 616, "Sep": 1892}, "2026-08-15": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 548, "Sep": 1878}, "2026-08-16": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 510, "Sep": 1852}, "2026-08-17": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 440, "Sep": 1816}, "2026-08-18": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 373, "Sep": 1792}, "2026-08-19": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 331, "Sep": 1773}, "2026-08-20": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 310, "Sep": 1759}, "2026-08-21": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 287, "Sep": 1716}, "2026-08-22": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 260, "Sep": 1687}, "2026-08-23": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 216, "Sep": 1659}, "2026-08-24": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 182, "Sep": 1645}, "2026-08-25": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 168, "Sep": 1604}, "2026-08-26": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 148, "Sep": 1587}, "2026-08-27": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 122, "Sep": 1532}, "2026-08-28": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 99, "Sep": 1470}, "2026-08-29": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 75, "Sep": 1449}, "2026-08-30": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 42, "Sep": 1426}, "2026-08-31": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 22, "Sep": 1396}, "2026-09-01": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 1332}, "2026-09-02": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 1291}, "2026-09-03": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 1233}, "2026-09-04": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 1173}, "2026-09-05": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 1102}, "2026-09-06": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 1048}, "2026-09-07": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 991}, "2026-09-08": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 947}, "2026-09-09": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 887}, "2026-09-10": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 865}, "2026-09-11": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 822}, "2026-09-12": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 785}, "2026-09-13": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 713}, "2026-09-14": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 676}, "2026-09-15": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 624}, "2026-09-16": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 579}, "2026-09-17": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 542}, "2026-09-18": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 516}, "2026-09-19": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 468}, "2026-09-20": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 410}, "2026-09-21": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 376}, "2026-09-22": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 321}, "2026-09-23": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 236}, "2026-09-24": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 181}, "2026-09-25": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 126}, "2026-09-26": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 101}, "2026-09-27": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 71}, "2026-09-28": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 53}, "2026-09-29": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 24}, "2026-09-30": {"May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 6}};
 
-// Nearest-neighbor lookup for forward demand table
 function getFwdDemand(snapDate, monthName) {
   if (FWD_DEMAND_2025[snapDate]) return FWD_DEMAND_2025[snapDate][monthName] || 0;
-  // Find nearest date
   const dates = Object.keys(FWD_DEMAND_2025).sort();
   let best = dates[0];
-  for (const d of dates) {
-    if (d <= snapDate) best = d;
-    else break;
-  }
+  for (const d of dates) { if (d <= snapDate) best = d; else break; }
   return FWD_DEMAND_2025[best]?.[monthName] || 0;
 }
 
@@ -688,16 +515,10 @@ function computeProjection(scenKey) {
   const s = SCENARIOS[scenKey];
   const snapDate = STATE.snapshotDate || new Date().toISOString().slice(0,10);
   const cap100 = BASE.days.map(d => BASE.SITES * d);
-
   return BASE.months.map((m, i) => {
-    // Forward demand: how many nights were booked from today forward through month end in 2025
-    // This replaces the alreadyLanded/remainingLF mechanic — no Mar 27 anchor needed
     const fwdDemand25 = getFwdDemand(snapDate, m);
-
-    // Cancel rates: both dynamic based on days to arrival
     const lockedCancelRate = calcLockedCancelRate(snapDate, m);
     const lfCancelRate     = calcLFCancelRate(snapDate, m);
-
     const locked    = Math.round(STATE.onBooks26[i] * (1 - lockedCancelRate));
     const lfGross   = Math.round(fwdDemand25 * s.demandMult);
     const lfNet     = Math.round(lfGross * (1 - lfCancelRate));
@@ -706,25 +527,15 @@ function computeProjection(scenKey) {
     const rev       = proj * monthRate;
     const occ       = proj / cap100[i] * 100;
     const cancelEst = Math.round(STATE.onBooks26[i] * lockedCancelRate);
-
-    return {
-      month:m, onBooks:STATE.onBooks26[i], locked,
-      fwdDemand25, lfGross, lfNet, lfCancelRate, lockedCancelRate,
-      proj, cap:cap100[i], occ, rev, final25:BASE.final25[i],
-      cancel: cancelEst, monthRate,
-    };
+    return { month:m, onBooks:STATE.onBooks26[i], locked, fwdDemand25, lfGross, lfNet, lfCancelRate, lockedCancelRate, proj, cap:cap100[i], occ, rev, final25:BASE.final25[i], cancel:cancelEst, monthRate };
   });
 }
 
-// ══════════════════════════════════════════════════════════════════════════
-// ══════════════════════════════════════════════════════════════════════════
 let charts = {};
 const C = {
-  amber:'#e8a030', blue:'#5b9bd5', green:'#4caf7d',
-  gray:'#5a5856', red:'#e05c4b', purple:'#a78bfa',
-  dAmber:'rgba(232,160,48,0.18)', dBlue:'rgba(91,155,213,0.18)',
-  dGreen:'rgba(76,175,125,0.15)', dGray:'rgba(90,88,86,0.22)',
-  dRed:'rgba(224,92,75,0.15)',
+  amber:'#e8a030', blue:'#5b9bd5', green:'#4caf7d', gray:'#5a5856', red:'#e05c4b', purple:'#a78bfa',
+  dAmber:'rgba(232,160,48,0.18)', dBlue:'rgba(91,155,213,0.18)', dGreen:'rgba(76,175,125,0.15)',
+  dGray:'rgba(90,88,86,0.22)', dRed:'rgba(224,92,75,0.15)',
 };
 
 const baseOpts = (yFmt) => ({
@@ -747,20 +558,11 @@ function fmtN(n) { return n >= 1000000 ? '$'+(n/1000000).toFixed(2)+'M' : n >= 1
 function fmtComma(n) { return n.toLocaleString(); }
 function pct(a,b) { return ((a-b)/b*100).toFixed(1); }
 function sign(n) { return n >= 0 ? '+' : ''; }
-function pill(val, good, warn) {
-  const cls = val >= good ? 'pill-g' : val >= warn ? 'pill-a' : 'pill-r';
-  return `<span class="pill ${cls}">${val}</span>`;
-}
 function ratioPill(r) {
-  const pct = (r*100).toFixed(0)+'%';
-  return r >= 0.95 ? `<span class="pill pill-g">${pct}</span>`
-       : r >= 0.80 ? `<span class="pill pill-a">${pct}</span>`
-       :              `<span class="pill pill-r">${pct}</span>`;
+  const p = (r*100).toFixed(0)+'%';
+  return r >= 0.95 ? `<span class="pill pill-g">${p}</span>` : r >= 0.80 ? `<span class="pill pill-a">${p}</span>` : `<span class="pill pill-r">${p}</span>`;
 }
 
-// ══════════════════════════════════════════════════════════════════════════
-// RENDER FUNCTIONS
-// ══════════════════════════════════════════════════════════════════════════
 function renderKPIs() {
   const snapDate  = STATE.snapshotDate || new Date().toISOString().slice(0,10);
   const ob25arr   = get2025Equivalent(snapDate);
@@ -774,18 +576,14 @@ function renderKPIs() {
   const projRev = proj.reduce((a,r)=>a+r.rev,0);
   const d25 = new Date(snapDate); d25.setFullYear(d25.getFullYear()-1);
   const d25label = d25.toLocaleDateString('en-US',{month:'short',day:'numeric'});
-
   document.getElementById('kv-nights').textContent = fmtComma(ob26);
   document.getElementById('kd-nights').innerHTML = `<span class="${diff>=0?'pos':'neg'}">${sign(diff)}${fmtComma(diff)} vs 2025 (${sign(parseFloat(diffPct))}${diffPct}%)</span><span style="font-size:10px;color:var(--text3);"> · '25 @ ${d25label}</span>`;
   document.getElementById('kpi-nights').className = `kpi ${diff < -1000 ? 'warn' : diff < 0 ? '' : 'good'}`;
-
   document.getElementById('kv-revenue').textContent = fmtN(rev26);
   document.getElementById('kd-revenue').innerHTML = `<span class="neu">2025 final: $4.26M (res charges) · rate +${pct(STATE.rate26,143.22)}% YoY</span>`;
-
   document.getElementById('kv-rate').textContent = `$${STATE.rate26.toFixed(2)}`;
   document.getElementById('kd-rate').innerHTML = `<span class="pos">▲ +${pct(STATE.rate26,143.22)}% vs 2025 ($143.22)</span>`;
   document.getElementById('kpi-rate').className = 'kpi good';
-
   document.getElementById('kv-proj').textContent = fmtN(projRev);
   const vs25r = pct(projRev, BASE.totalRev25);
   document.getElementById('kd-proj').innerHTML = `<span class="${parseFloat(vs25r)>=0?'pos':'amb'}">${sign(parseFloat(vs25r))}${vs25r}% vs 2025 · ${fmtComma(projTotal)} nights</span>`;
@@ -797,15 +595,10 @@ function renderAlert() {
   const ob26 = STATE.onBooks26.reduce((a,b)=>a+b,0);
   const ob25 = ob25arr.reduce((a,b)=>a+b,0);
   const diffPct = ((ob26-ob25)/ob25*100).toFixed(1);
-  const worst = BASE.months.reduce((w,m,i) => {
-    const r = (STATE.onBooks26[i]-ob25arr[i])/ob25arr[i]*100;
-    return r < w.r ? {m, r} : w;
-  }, {m:'',r:0});
+  const worst = BASE.months.reduce((w,m,i) => { const r = (STATE.onBooks26[i]-ob25arr[i])/ob25arr[i]*100; return r < w.r ? {m, r} : w; }, {m:'',r:0});
   const d25 = new Date(snapDate); d25.setFullYear(d25.getFullYear()-1);
   const d25label = d25.toLocaleDateString('en-US',{month:'short',day:'numeric'});
-
-  const txt = `2026 total on books is ${sign(parseFloat(diffPct))}${diffPct}% vs 2025 at same date (${fmtComma(ob26)} vs ${fmtComma(ob25)} nights · '25 measured ${d25label}). Weakest month: ${worst.m} (${worst.r.toFixed(1)}%). Rate premium +${pct(STATE.rate26,143.22)}% partially offsets volume softness.`;
-  document.getElementById('alertText').textContent = txt;
+  document.getElementById('alertText').textContent = `2026 total on books is ${sign(parseFloat(diffPct))}${diffPct}% vs 2025 at same date (${fmtComma(ob26)} vs ${fmtComma(ob25)} nights · '25 measured ${d25label}). Weakest month: ${worst.m} (${worst.r.toFixed(1)}%). Rate premium +${pct(STATE.rate26,143.22)}% partially offsets volume softness.`;
   document.getElementById('alertBanner').className = `alert-banner ${parseFloat(diffPct) < -10 ? 'warn' : 'info'}`;
 }
 
@@ -813,7 +606,7 @@ function renderPacingBar() {
   const snapDate = STATE.snapshotDate || new Date().toISOString().slice(0,10);
   const ob25arr  = get2025Equivalent(snapDate);
   const pb25 = new Date(snapDate); pb25.setFullYear(pb25.getFullYear()-1);
-  const d25label  = pb25.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  const d25label = pb25.toLocaleDateString('en-US',{month:'short',day:'numeric'});
   const snap26 = new Date(snapDate).toLocaleDateString('en-US',{month:'short',day:'numeric'});
   const subEl = document.getElementById('pacingBarSub');
   if (subEl) subEl.textContent = `2025 measured ${d25label}. 2026 measured ${snap26} (latest snapshot). Both at equivalent booking cycle date.`;
@@ -821,46 +614,18 @@ function renderPacingBar() {
   const leg26 = document.getElementById('legend-2026-label');
   if (leg25) leg25.textContent = `2025 on books ${d25label}`;
   if (leg26) leg26.textContent = `2026 on books ${snap26}`;
-  mkChart('chartPacingBar', {
-    type:'bar',
-    data:{
-      labels: BASE.months,
-      datasets:[
-        { label:`2025 @ ${d25label}`, data:ob25arr, backgroundColor:C.dGray, borderColor:C.gray, borderWidth:1 },
-        { label:'2026 now', data:STATE.onBooks26, backgroundColor:C.dAmber, borderColor:C.amber, borderWidth:1 },
-      ]
-    },
-    options:{ ...baseOpts(), plugins:{legend:{display:false}} }
-  });
+  mkChart('chartPacingBar', { type:'bar', data:{ labels:BASE.months, datasets:[{ label:`2025 @ ${d25label}`, data:ob25arr, backgroundColor:C.dGray, borderColor:C.gray, borderWidth:1 },{ label:'2026 now', data:STATE.onBooks26, backgroundColor:C.dAmber, borderColor:C.amber, borderWidth:1 }] }, options:{ ...baseOpts(), plugins:{legend:{display:false}} } });
 }
 
 function renderRevRangeBars() {
-  const scenDefs = [
-    { label:'Conservative', key:'cons', color:C.red },
-    { label:'Base case',    key:'base', color:C.amber },
-    { label:'Optimistic',  key:'opt',  color:C.green },
-  ];
-  const actual25 = BASE.totalRev25;
-  const max = 5500000;
+  const scenDefs = [{ label:'Conservative', key:'cons', color:C.red },{ label:'Base case', key:'base', color:C.amber },{ label:'Optimistic', key:'opt', color:C.green }];
+  const actual25 = BASE.totalRev25, max = 5500000;
   const html = scenDefs.map(s => {
     const proj = computeProjection(s.key);
     const nights = proj.reduce((a,r)=>a+r.proj,0);
     const rev = proj.reduce((a,r)=>a+r.rev,0);
-    const barW = (rev/max*100).toFixed(1);
-    const act25W = (actual25/max*100).toFixed(1);
-    const vsAct = pct(rev, actual25);
-    return `
-    <div style="margin-bottom:14px;">
-      <div style="display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:11px;color:var(--text3);margin-bottom:4px;">
-        <span style="color:var(--text2)">${s.label}</span>
-        <span>${fmtN(rev)} &nbsp;<span class="${parseFloat(vsAct)>=0?'pos':'neg'}">${sign(parseFloat(vsAct))}${vsAct}% vs 2025</span></span>
-      </div>
-      <div class="proj-track">
-        <div style="position:absolute;top:0;left:0;height:100%;width:${act25W}%;background:var(--text3);opacity:0.3;border-radius:3px;"></div>
-        <div class="proj-fill" style="width:${barW}%;background:${s.color};opacity:0.85;"></div>
-      </div>
-      <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-top:2px;">${fmtComma(nights)} projected nights</div>
-    </div>`;
+    const barW = (rev/max*100).toFixed(1), act25W = (actual25/max*100).toFixed(1), vsAct = pct(rev, actual25);
+    return `<div style="margin-bottom:14px;"><div style="display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:11px;color:var(--text3);margin-bottom:4px;"><span style="color:var(--text2)">${s.label}</span><span>${fmtN(rev)} &nbsp;<span class="${parseFloat(vsAct)>=0?'pos':'neg'}">${sign(parseFloat(vsAct))}${vsAct}% vs 2025</span></span></div><div class="proj-track"><div style="position:absolute;top:0;left:0;height:100%;width:${act25W}%;background:var(--text3);opacity:0.3;border-radius:3px;"></div><div class="proj-fill" style="width:${barW}%;background:${s.color};opacity:0.85;"></div></div><div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-top:2px;">${fmtComma(nights)} projected nights</div></div>`;
   }).join('');
   document.getElementById('revRangeBars').innerHTML = html + `<div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-top:4px;">Gray bar = 2025 actual ($4.26M res charges)</div>`;
 }
@@ -872,161 +637,59 @@ function renderFillPctBars() {
     const pct25 = (ob25arr[i] / BASE.final25[i] * 100).toFixed(1);
     const pct26 = (STATE.onBooks26[i] / BASE.final25[i] * 100).toFixed(1);
     const color = parseFloat(pct26) >= parseFloat(pct25)*0.95 ? C.amber : parseFloat(pct26) >= parseFloat(pct25)*0.85 ? C.amber : C.red;
-    return `
-    <div class="fill-row">
-      <div class="fill-label">${m}</div>
-      <div class="fill-track">
-        <div class="fill-bar25" style="width:${Math.min(parseFloat(pct25),100)}%"></div>
-        <div class="fill-bar26" style="width:${Math.min(parseFloat(pct26),100)}%;background:${color}"></div>
-      </div>
-      <div style="font-family:var(--font-mono);font-size:10px;color:var(--text2);width:110px;text-align:right;">
-        <span style="color:${color}">${pct26}%</span> <span style="color:var(--text3)">vs ${pct25}%</span>
-      </div>
-    </div>`;
+    return `<div class="fill-row"><div class="fill-label">${m}</div><div class="fill-track"><div class="fill-bar25" style="width:${Math.min(parseFloat(pct25),100)}%"></div><div class="fill-bar26" style="width:${Math.min(parseFloat(pct26),100)}%;background:${color}"></div></div><div style="font-family:var(--font-mono);font-size:10px;color:var(--text2);width:110px;text-align:right;"><span style="color:${color}">${pct26}%</span> <span style="color:var(--text3)">vs ${pct25}%</span></div></div>`;
   }).join('');
   document.getElementById('fillPctBars').innerHTML = html + `<div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-top:8px;">Bars: 2026 (colored) vs 2025 (gray) · % of 2025 final actual</div>`;
 }
 
 function renderSiteRatioChart() {
   const st = STATE.siteTypes;
-  const demandRatios = st.nights26.map((n26, i) => {
-    const raw = n26 / st.nights25[i];
-    return (raw * st.sites25[i] / st.sites26[i]);
-  });
+  const demandRatios = st.nights26.map((n26, i) => (n26 / st.nights25[i]) * (st.sites25[i] / st.sites26[i]));
   const colors = demandRatios.map(r => r >= 0.95 ? C.green : r >= 0.80 ? C.amber : C.red);
-  mkChart('chartSiteRatio', {
-    type:'bar',
-    data:{
-      labels: st.labels,
-      datasets:[{ data:demandRatios, backgroundColor:colors.map(c=>c+'44'), borderColor:colors, borderWidth:1 }]
-    },
-    options:{
-      ...baseOpts(v=>(v*100).toFixed(0)+'%'),
-      plugins:{ legend:{display:false}, annotation:{} },
-      scales:{
-        x:{ grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'#5a5856',font:{size:9,family:'DM Mono'},maxRotation:35} },
-        y:{ min:0, max:1.6, grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'#5a5856',font:{size:10,family:'DM Mono'},callback:v=>(v*100).toFixed(0)+'%'} }
-      }
-    }
-  });
+  mkChart('chartSiteRatio', { type:'bar', data:{ labels:st.labels, datasets:[{ data:demandRatios, backgroundColor:colors.map(c=>c+'44'), borderColor:colors, borderWidth:1 }] }, options:{ ...baseOpts(v=>(v*100).toFixed(0)+'%'), plugins:{legend:{display:false}}, scales:{ x:{ grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'#5a5856',font:{size:9,family:'DM Mono'},maxRotation:35} }, y:{ min:0, max:1.6, grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'#5a5856',font:{size:10,family:'DM Mono'},callback:v=>(v*100).toFixed(0)+'%'} } } } });
 }
 
 function renderSiteTypeTab() {
   const st = STATE.siteTypes;
   const rows = st.labels.map((lbl,i) => {
-    const raw = st.nights26[i]/st.nights25[i];
-    const dem = raw * st.sites25[i]/st.sites26[i];
+    const raw = st.nights26[i]/st.nights25[i], dem = raw * st.sites25[i]/st.sites26[i];
     const signal = dem >= 0.95 ? '✓ Tracking' : dem >= 0.80 ? '⚠ Watch' : '✕ Concern';
     const sigCls = dem >= 0.95 ? 'pos' : dem >= 0.80 ? 'amb' : 'neg';
-    return `<tr>
-      <td>${lbl}</td>
-      <td>${st.sites25[i]}→${st.sites26[i]}</td>
-      <td>${fmtComma(st.nights25[i])}</td>
-      <td>${fmtComma(st.nights26[i])}</td>
-      <td>${(raw*100).toFixed(0)}%</td>
-      <td>${ratioPill(dem)}</td>
-      <td>$${st.rate25[i].toFixed(2)}</td>
-      <td>${st.rate26[i] != null ? '$'+st.rate26[i].toFixed(2) : '<span style="color:var(--text3)">—</span>'}</td>
-      <td><span class="${sigCls}">${signal}</span></td>
-      <td style="color:var(--text3);font-size:11px;">${st.notes[i]}</td>
-    </tr>`;
+    return `<tr><td>${lbl}</td><td>${st.sites25[i]}→${st.sites26[i]}</td><td>${fmtComma(st.nights25[i])}</td><td>${fmtComma(st.nights26[i])}</td><td>${(raw*100).toFixed(0)}%</td><td>${ratioPill(dem)}</td><td>$${st.rate25[i].toFixed(2)}</td><td>${st.rate26[i] != null ? '$'+st.rate26[i].toFixed(2) : '<span style="color:var(--text3)">—</span>'}</td><td><span class="${sigCls}">${signal}</span></td><td style="color:var(--text3);font-size:11px;">${st.notes[i]}</td></tr>`;
   }).join('');
   document.getElementById('siteDetailBody').innerHTML = rows;
-
-  mkChart('chartSiteNights', {
-    type:'bar',
-    data:{
-      labels:st.labels,
-      datasets:[
-        { label:'2025', data:st.nights25, backgroundColor:C.dGray, borderColor:C.gray, borderWidth:1 },
-        { label:'2026', data:st.nights26, backgroundColor:C.dAmber, borderColor:C.amber, borderWidth:1 },
-      ]
-    },
-    options:{ ...baseOpts(), plugins:{legend:{display:false}},
-      scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a5856',font:{size:9,family:'DM Mono'},maxRotation:35}},
-               y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a5856',font:{size:10,family:'DM Mono'}}}} }
-  });
-
+  mkChart('chartSiteNights', { type:'bar', data:{ labels:st.labels, datasets:[{ label:'2025', data:st.nights25, backgroundColor:C.dGray, borderColor:C.gray, borderWidth:1 },{ label:'2026', data:st.nights26, backgroundColor:C.dAmber, borderColor:C.amber, borderWidth:1 }] }, options:{ ...baseOpts(), plugins:{legend:{display:false}}, scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a5856',font:{size:9,family:'DM Mono'},maxRotation:35}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a5856',font:{size:10,family:'DM Mono'}}}} } });
   const demandRatios = st.nights26.map((n,i) => (n/st.nights25[i])*(st.sites25[i]/st.sites26[i]));
   const colors = demandRatios.map(r => r >= 0.95 ? C.green : r >= 0.80 ? C.amber : C.red);
-  mkChart('chartDemandRatio', {
-    type:'bar',
-    data:{ labels:st.labels, datasets:[{ data:demandRatios, backgroundColor:colors.map(c=>c+'44'), borderColor:colors, borderWidth:1.5 }] },
-    options:{ ...baseOpts(),
-      plugins:{ legend:{display:false} },
-      scales:{
-        x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a5856',font:{size:9,family:'DM Mono'},maxRotation:35}},
-        y:{min:0,max:1.7,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a5856',font:{size:10,family:'DM Mono'},callback:v=>(v*100).toFixed(0)+'%'}}
-      }
-    }
-  });
+  mkChart('chartDemandRatio', { type:'bar', data:{ labels:st.labels, datasets:[{ data:demandRatios, backgroundColor:colors.map(c=>c+'44'), borderColor:colors, borderWidth:1.5 }] }, options:{ ...baseOpts(), plugins:{legend:{display:false}}, scales:{ x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a5856',font:{size:9,family:'DM Mono'},maxRotation:35}}, y:{min:0,max:1.7,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a5856',font:{size:10,family:'DM Mono'},callback:v=>(v*100).toFixed(0)+'%'}} } } });
 }
 
 function renderProjectionsTab() {
-  const s = SCENARIOS[currentScenario];
   const proj = computeProjection(currentScenario);
   const totalNights = proj.reduce((a,r)=>a+r.proj,0);
   const totalRev = proj.reduce((a,r)=>a+r.rev,0);
-
-  // Season summary KPIs — all 3 scenarios
   ['cons','base','opt'].forEach(scenKey => {
     const p = computeProjection(scenKey);
-    const tn = p.reduce((a,r)=>a+r.proj,0);
-    const tr = p.reduce((a,r)=>a+r.rev,0);
+    const tn = p.reduce((a,r)=>a+r.proj,0), tr = p.reduce((a,r)=>a+r.rev,0);
     const vsR = pct(tr, BASE.totalRev25);
-    const vsN = pct(tn, BASE.totalNights25);
     document.getElementById(`fcst-${scenKey}-rev`).textContent = fmtN(tr);
-    document.getElementById(`fcst-${scenKey}-nights`).innerHTML =
-      `${fmtComma(tn)} nights &nbsp;<span class="${parseFloat(vsR)>=0?'pos':'neg'}">${sign(parseFloat(vsR))}${vsR}% rev vs 2025</span>`;
+    document.getElementById(`fcst-${scenKey}-nights`).innerHTML = `${fmtComma(tn)} nights &nbsp;<span class="${parseFloat(vsR)>=0?'pos':'neg'}">${sign(parseFloat(vsR))}${vsR}% rev vs 2025</span>`;
   });
-
-  // Month cards — nights + revenue + occ
   const cards = proj.map(r => {
-    const vs = pct(r.proj, r.final25);
-    const vsRev = pct(r.rev, BASE.rev25[BASE.months.indexOf(r.month)]);
+    const vs = pct(r.proj, r.final25), vsRev = pct(r.rev, BASE.rev25[BASE.months.indexOf(r.month)]);
     const cls = parseFloat(vs) >= 0 ? 'pos' : parseFloat(vs) >= -10 ? 'amb' : 'neg';
     const clsR = parseFloat(vsRev) >= 0 ? 'pos' : 'neg';
-    return `<div class="kpi">
-      <div class="kpi-label">${r.month}</div>
-      <div class="kpi-value ${cls}" style="font-size:18px;">${fmtComma(r.proj)}<span style="font-size:11px;font-weight:400;color:var(--text3);margin-left:4px;">nts</span></div>
-      <div class="kpi-delta"><span class="${cls}">${sign(parseFloat(vs))}${vs}%</span> vs '25 · ${r.occ.toFixed(1)}% occ</div>
-      <div class="kpi-value ${clsR}" style="font-size:16px;margin-top:6px;">$${(r.rev/1000).toFixed(0)}K</div>
-      <div class="kpi-delta"><span class="${clsR}">${sign(parseFloat(vsRev))}${vsRev}%</span> vs '25 rev</div>
-    </div>`;
+    return `<div class="kpi"><div class="kpi-label">${r.month}</div><div class="kpi-value ${cls}" style="font-size:18px;">${fmtComma(r.proj)}<span style="font-size:11px;font-weight:400;color:var(--text3);margin-left:4px;">nts</span></div><div class="kpi-delta"><span class="${cls}">${sign(parseFloat(vs))}${vs}%</span> vs '25 · ${r.occ.toFixed(1)}% occ</div><div class="kpi-value ${clsR}" style="font-size:16px;margin-top:6px;">$${(r.rev/1000).toFixed(0)}K</div><div class="kpi-delta"><span class="${clsR}">${sign(parseFloat(vsRev))}${vsRev}%</span> vs '25 rev</div></div>`;
   }).join('');
   document.getElementById('projMonthCards').innerHTML = cards;
-
-  // Chart
-  const cap97 = BASE.days.map(d => BASE.SITES*d);  // 100% capacity
-  const snapDate = STATE.snapshotDate || new Date().toISOString().slice(0,10);
-
-  // Table
   const rows = proj.map(r => {
     const vs = pct(r.proj,r.final25);
-    return `<tr>
-      <td>${r.month}</td>
-      <td>${fmtComma(r.onBooks)}</td>
-      <td>${fmtComma(r.cancel)} <span style="font-size:10px;color:var(--text3);">${(r.lockedCancelRate*100).toFixed(1)}%</span></td>
-      <td>${fmtComma(r.locked)}</td>
-      <td>${fmtComma(r.fwdDemand25)}</td>
-      <td>${fmtComma(r.lfGross)} → ${fmtComma(r.lfNet)} <span style="font-size:10px;color:var(--text3);">${(r.lfCancelRate*100).toFixed(1)}%</span></td>
-      <td>${fmtComma(r.proj)}</td>
-      <td>${fmtComma(r.cap)}</td>
-      <td>${r.occ.toFixed(1)}%</td>
-      <td><span class="${parseFloat(vs)>=0?'pos':'neg'}">${sign(parseFloat(vs))}${vs}%</span></td>
-    </tr>`;
+    return `<tr><td>${r.month}</td><td>${fmtComma(r.onBooks)}</td><td>${fmtComma(r.cancel)} <span style="font-size:10px;color:var(--text3);">${(r.lockedCancelRate*100).toFixed(1)}%</span></td><td>${fmtComma(r.locked)}</td><td>${fmtComma(r.fwdDemand25)}</td><td>${fmtComma(r.lfGross)} → ${fmtComma(r.lfNet)} <span style="font-size:10px;color:var(--text3);">${(r.lfCancelRate*100).toFixed(1)}%</span></td><td>${fmtComma(r.proj)}</td><td>${fmtComma(r.cap)}</td><td>${r.occ.toFixed(1)}%</td><td><span class="${parseFloat(vs)>=0?'pos':'neg'}">${sign(parseFloat(vs))}${vs}%</span></td></tr>`;
   }).join('');
   document.getElementById('projTableBody').innerHTML = rows;
-  document.getElementById('projTableFoot').innerHTML = `<tr>
-    <td>Total</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
-    <td>${fmtComma(totalNights)}</td><td>—</td><td>—</td>
-    <td><span class="${parseFloat(pct(totalNights,BASE.totalNights25))>=0?'pos':'neg'}">${sign(parseFloat(pct(totalNights,BASE.totalNights25)))}${pct(totalNights,BASE.totalNights25)}%</span></td>
-  </tr>`;
+  document.getElementById('projTableFoot').innerHTML = `<tr><td>Total</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>${fmtComma(totalNights)}</td><td>—</td><td>—</td><td><span class="${parseFloat(pct(totalNights,BASE.totalNights25))>=0?'pos':'neg'}">${sign(parseFloat(pct(totalNights,BASE.totalNights25)))}${pct(totalNights,BASE.totalNights25)}%</span></td></tr>`;
 }
 
-// ══════════════════════════════════════════════════════════════════════════
-// FILE UPLOAD HANDLING (wide + tall format CSVs)
-// ══════════════════════════════════════════════════════════════════════════
 function handleFiles(e) {
   const files = Array.from(e.target.files);
   if (!files.length) return;
@@ -1056,13 +719,8 @@ function parseSnapshotFile(filename, text) {
   if (!dateMatch) return null;
   const snapDate = dateMatch[1];
   const lines = text.split('\n');
-
-  // Detect format: tall (has "Site Type Name" column) vs wide
-  if (lines[0].includes('Site Type Name')) {
-    return parseTallFormat(snapDate, text);
-  } else {
-    return parseWideFormat(snapDate, text);
-  }
+  if (lines[0].includes('Site Type Name')) return parseTallFormat(snapDate, text);
+  else return parseWideFormat(snapDate, text);
 }
 
 function classifySite(t) {
@@ -1070,13 +728,13 @@ function classifySite(t) {
   if (t.includes('PRESIDENTIAL')) return 'Presidential';
   if (t.includes('PREMIUM PULL')) return 'Prem Pull-Thru';
   if (t.includes('PULL-THRU') || t.includes('PULL THRU')) return 'Pull-Thru';
-  if (t.includes('PREMIUM FOREST')) return 'Prem Forest';    // must precede PREMIUM BACK
+  if (t.includes('PREMIUM FOREST')) return 'Prem Forest';
   if (t.includes('PREMIUM BACK')) return 'Prem Back-In';
   if (t.includes('GALLATIN') || t.includes('FOREST BACK')) return 'Forest Back-In';
   if (t.includes('BACK IN')) return 'Back-In';
   if (t.includes('DRY')) return 'Dry Site';
   if (t.includes('ELECTRIC')) return 'Electric Only';
-  if (t.includes('LUXURY') || t.includes('CABIN')) return 'Cabin';  // all cabin variants → one bucket
+  if (t.includes('LUXURY') || t.includes('CABIN')) return 'Cabin';
   if (t.includes('APARTMENT')) return 'Apartment';
   return 'Other';
 }
@@ -1085,72 +743,45 @@ function parseTallFormat(snapDate, text) {
   const rows = parseCSV(text);
   if (rows.length < 2) return null;
   const header = rows[0];
-  const dateIdx = header.indexOf('Date');
-  const typeIdx = header.indexOf('Site Type Name');
-  const occIdx  = header.indexOf('Occupied Sites');
+  const dateIdx = header.indexOf('Date'), typeIdx = header.indexOf('Site Type Name'), occIdx = header.indexOf('Occupied Sites');
   if (dateIdx<0 || typeIdx<0 || occIdx<0) return null;
-
-  const MONTHS = {
-    May:['2026-05-01','2026-05-31'], Jun:['2026-06-01','2026-06-30'],
-    Jul:['2026-07-01','2026-07-31'], Aug:['2026-08-01','2026-08-31'],
-    Sep:['2026-09-01','2026-09-30'],
-  };
+  const MONTHS = { May:['2026-05-01','2026-05-31'], Jun:['2026-06-01','2026-06-30'], Jul:['2026-07-01','2026-07-31'], Aug:['2026-08-01','2026-08-31'], Sep:['2026-09-01','2026-09-30'] };
   const totals = {May:0,Jun:0,Jul:0,Aug:0,Sep:0};
   for (let i=1;i<rows.length;i++) {
     const r = rows[i];
     if (!r[typeIdx] || r[typeIdx].toUpperCase().includes('DO NOT USE')) continue;
-    const date = r[dateIdx];
-    const occ  = parseInt(r[occIdx])||0;
-    for (const [m,[s,e]] of Object.entries(MONTHS)) {
-      if (date >= s && date <= e) { totals[m] += occ; break; }
-    }
+    const date = r[dateIdx], occ = parseInt(r[occIdx])||0;
+    for (const [m,[s,e]] of Object.entries(MONTHS)) { if (date >= s && date <= e) { totals[m] += occ; break; } }
   }
   return { date: snapDate, onBooks: BASE.months.map(m=>totals[m]||0) };
 }
 
 function parseWideFormat(snapDate, text) {
   const lines = text.split('\n');
-  // Row 0 = date headers, Row 1 = col names, Row 2+ = data
   const dateRow = parseCSVLine(lines[0]);
   const dateCols = {};
   dateRow.forEach((v,i) => { if (/\d{4}-\d{2}-\d{2}/.test(v)) dateCols[i] = v; });
-
-  const MONTHS = {
-    May:['2026-05-01','2026-05-31'], Jun:['2026-06-01','2026-06-30'],
-    Jul:['2026-07-01','2026-07-31'], Aug:['2026-08-01','2026-08-31'],
-    Sep:['2026-09-01','2026-09-30'],
-  };
+  const MONTHS = { May:['2026-05-01','2026-05-31'], Jun:['2026-06-01','2026-06-30'], Jul:['2026-07-01','2026-07-31'], Aug:['2026-08-01','2026-08-31'], Sep:['2026-09-01','2026-09-30'] };
   const totals = {May:0,Jun:0,Jul:0,Aug:0,Sep:0};
-
   for (let i=2; i<lines.length-1; i++) {
     const cols = parseCSVLine(lines[i]);
     const siteType = cols[5]||'';
     if (!siteType || siteType.toUpperCase().includes('DO NOT USE')) continue;
     for (const [colIdx, dateStr] of Object.entries(dateCols)) {
-      for (const [m,[s,e]] of Object.entries(MONTHS)) {
-        if (dateStr >= s && dateStr <= e) {
-          totals[m] += parseInt(cols[colIdx])||0; break;
-        }
-      }
+      for (const [m,[s,e]] of Object.entries(MONTHS)) { if (dateStr >= s && dateStr <= e) { totals[m] += parseInt(cols[colIdx])||0; break; } }
     }
   }
   return { date: snapDate, onBooks: BASE.months.map(m=>totals[m]||0) };
 }
 
 function applySnapshot(snap) {
-  if (snap.onBooks.some(v=>v>0)) {
-    STATE.onBooks26 = snap.onBooks;
-    refreshAll();
-  }
+  if (snap.onBooks.some(v=>v>0)) { STATE.onBooks26 = snap.onBooks; refreshAll(); }
 }
 
-function parseCSV(text) {
-  return text.trim().split('\n').map(parseCSVLine);
-}
+function parseCSV(text) { return text.trim().split('\n').map(parseCSVLine); }
 
 function parseCSVLine(line) {
-  const result = [];
-  let cur = '', inQ = false;
+  const result = []; let cur = '', inQ = false;
   for (const ch of line) {
     if (ch === '"') { inQ = !inQ; }
     else if (ch === ',' && !inQ) { result.push(cur.trim()); cur=''; }
@@ -1160,15 +791,11 @@ function parseCSVLine(line) {
   return result;
 }
 
-// ══════════════════════════════════════════════════════════════════════════
-// TAB / SCENARIO SWITCHING
-// ══════════════════════════════════════════════════════════════════════════
 function switchTab(name) {
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
   document.querySelector(`[onclick="switchTab('${name}')"]`).classList.add('active');
-  // Render on demand
   if (name==='sitetype')    renderSiteTypeTab();
   if (name==='projections') renderProjectionsTab();
   if (name==='october')     renderOctober();
@@ -1189,23 +816,18 @@ const LF_BY_MONTH = {
 function setLateFill(mode) {
   lateFillMode = mode;
   BASE.lateFill25 = BASE[`lateFill25_${mode}`];
-  // Sync all late fill toggle buttons wherever they appear
   document.querySelectorAll('[id^="lf-"], [id^="ov-lf-"]').forEach(b => b.classList.remove('active'));
   const proj = document.getElementById('lf-'+mode);
   const ov   = document.getElementById('ov-lf-'+mode);
   if (proj) proj.classList.add('active');
   if (ov)   ov.classList.add('active');
-  // Update explainer in projections tab
   const el = document.getElementById('lfExplainer');
   if (el) el.textContent = LF_EXPLAINER[mode];
-  // Refresh everything that depends on late fill
   renderKPIs();
   renderRevRangeBars();
   renderProjectionsTab();
-  // Re-render forecast tab if it's active or has been rendered
-  if (false) {
-  }
 }
+
 
 function setScenario(key) {
   currentScenario = key;
@@ -1214,578 +836,139 @@ function setScenario(key) {
   renderProjectionsTab();
 }
 
-// ── 2025 fill curve — daily total on-books (all months summed) ───────────────
-// Source: 114 daily Campspot snapshots Mar 27–Oct 16 2025
-// Used to compute real 7-day and 30-day 2025 comparisons for momentum cards.
-// Gaps in data are handled by nearest-neighbor interpolation (lookupFC25).
 const FC25_TOTALS = {"2025-03-27":17750,"2025-03-28":17833,"2025-03-29":17884,"2025-03-30":17975,"2025-03-31":18079,"2025-04-01":18159,"2025-04-02":18242,"2025-04-03":18279,"2025-04-04":18355,"2025-04-05":18420,"2025-04-06":18502,"2025-04-07":18600,"2025-04-08":18629,"2025-04-09":18679,"2025-04-10":18716,"2025-04-11":18779,"2025-04-12":18779,"2025-04-13":18779,"2025-04-14":18779,"2025-04-15":18931,"2025-04-16":19045,"2025-04-17":19064,"2025-04-18":19092,"2025-04-19":19104,"2025-04-20":19174,"2025-04-21":19265,"2025-04-22":19262,"2025-04-23":19340,"2025-04-24":19361,"2025-04-25":19389,"2025-04-26":19467,"2025-04-27":19558,"2025-04-28":19626,"2025-04-29":19622,"2025-04-30":19710,"2025-05-01":19811,"2025-05-02":19911,"2025-05-04":20160,"2025-05-05":20253,"2025-05-06":20349,"2025-05-07":20399,"2025-05-08":20465,"2025-05-09":20545,"2025-05-10":20604,"2025-05-11":20649,"2025-05-13":20839,"2025-05-14":20932,"2025-05-15":21019,"2025-05-16":21119,"2025-05-17":21208,"2025-05-18":21319,"2025-05-19":21469,"2025-05-20":21553,"2025-05-21":21645,"2025-05-22":21647,"2025-05-23":21719,"2025-05-24":21809,"2025-05-25":21886,"2025-05-26":21975,"2025-05-27":22082,"2025-05-28":22152,"2025-05-29":22250,"2025-05-30":22280,"2025-05-31":22330,"2025-06-01":22422,"2025-06-02":22496,"2025-06-03":22608,"2025-06-04":22706,"2025-06-05":22818,"2025-06-06":22896,"2025-06-07":22924,"2025-06-08":22978,"2025-06-09":23043,"2025-06-11":23198,"2025-06-12":23275,"2025-06-13":23307,"2025-06-14":23351,"2025-06-15":23410,"2025-06-16":23471,"2025-06-17":23531,"2025-06-18":23584,"2025-06-19":23631,"2025-06-20":23683,"2025-06-21":23792,"2025-06-22":23855,"2025-06-24":24414,"2025-06-25":24468,"2025-06-28":24643,"2025-07-03":24931,"2025-07-06":25071,"2025-07-09":25358,"2025-07-14":25825,"2025-07-17":26015,"2025-07-20":26184,"2025-07-23":26392,"2025-07-26":26572,"2025-07-29":26834,"2025-08-01":26940,"2025-08-04":27140,"2025-08-07":27359,"2025-08-11":27628,"2025-08-14":27835,"2025-08-17":28015,"2025-08-20":28156,"2025-08-23":28323,"2025-08-24":28386,"2025-08-27":28510,"2025-08-30":28687,"2025-09-02":28841,"2025-09-04":28921,"2025-09-07":29100,"2025-09-10":28631,"2025-09-16":26980,"2025-09-18":27050,"2025-09-21":27225,"2025-09-25":27503,"2025-09-28":27620,"2025-10-01":27757,"2025-10-05":27884,"2025-10-08":27970,"2025-10-11":28036,"2025-10-14":28054,"2025-10-16":28056};
-// Per-month breakdown [May, Jun, Jul, Aug, Sep] at each snapshot date
 const FC25_BY_MONTH = {"2025-03-27":[2377,5700,4407,2788,2478],"2025-03-28":[2381,5725,4449,2788,2490],"2025-03-29":[2378,5737,4468,2791,2510],"2025-03-30":[2392,5752,4484,2819,2528],"2025-03-31":[2397,5773,4534,2826,2549],"2025-04-01":[2406,5809,4572,2809,2563],"2025-04-02":[2409,5837,4594,2832,2570],"2025-04-03":[2409,5829,4606,2854,2581],"2025-04-04":[2419,5841,4626,2862,2607],"2025-04-05":[2410,5849,4657,2872,2632],"2025-04-06":[2421,5872,4681,2891,2637],"2025-04-07":[2431,5892,4707,2914,2656],"2025-04-08":[2438,5900,4705,2921,2665],"2025-04-09":[2432,5896,4761,2930,2660],"2025-04-10":[2439,5909,4770,2937,2661],"2025-04-11":[2448,5917,4774,2958,2682],"2025-04-12":[2448,5917,4774,2958,2682],"2025-04-13":[2448,5917,4774,2958,2682],"2025-04-14":[2448,5917,4774,2958,2682],"2025-04-15":[2460,5944,4813,3018,2696],"2025-04-16":[2476,5971,4840,3050,2708],"2025-04-17":[2483,5977,4832,3057,2715],"2025-04-18":[2480,5977,4840,3064,2731],"2025-04-19":[2479,5971,4850,3068,2736],"2025-04-20":[2491,5988,4862,3087,2746],"2025-04-21":[2507,5996,4886,3109,2767],"2025-04-22":[2473,6000,4910,3107,2772],"2025-04-23":[2487,6024,4915,3122,2792],"2025-04-24":[2491,6021,4908,3135,2806],"2025-04-25":[2493,6024,4925,3132,2815],"2025-04-26":[2514,6026,4952,3145,2830],"2025-04-27":[2541,6042,4979,3163,2833],"2025-04-28":[2549,6052,4997,3183,2845],"2025-04-29":[2533,6049,4974,3204,2862],"2025-04-30":[2542,6065,4989,3223,2891],"2025-05-01":[2543,6098,5014,3242,2914],"2025-05-02":[2550,6125,5041,3264,2931],"2025-05-04":[2580,6128,5079,3328,3045],"2025-05-05":[2596,6148,5100,3337,3072],"2025-05-06":[2623,6140,5119,3364,3103],"2025-05-07":[2618,6148,5135,3390,3108],"2025-05-08":[2637,6156,5141,3403,3128],"2025-05-09":[2657,6167,5153,3427,3141],"2025-05-10":[2670,6182,5169,3423,3160],"2025-05-11":[2676,6201,5173,3436,3163],"2025-05-13":[2738,6224,5209,3453,3215],"2025-05-14":[2755,6235,5224,3466,3252],"2025-05-15":[2780,6229,5249,3494,3267],"2025-05-16":[2823,6233,5277,3514,3272],"2025-05-17":[2837,6241,5287,3554,3289],"2025-05-18":[2869,6253,5315,3581,3301],"2025-05-19":[2936,6263,5357,3598,3315],"2025-05-20":[2963,6268,5369,3616,3337],"2025-05-21":[2997,6286,5395,3632,3335],"2025-05-22":[3006,6258,5397,3634,3352],"2025-05-23":[3043,6254,5415,3647,3360],"2025-05-24":[3076,6277,5428,3656,3372],"2025-05-25":[3098,6285,5452,3670,3381],"2025-05-26":[3109,6300,5476,3695,3395],"2025-05-27":[3130,6324,5494,3710,3424],"2025-05-28":[3148,6334,5496,3726,3448],"2025-05-29":[3165,6344,5528,3754,3459],"2025-05-30":[3177,6348,5510,3760,3485],"2025-05-31":[3185,6353,5523,3778,3491],"2025-06-01":[3184,6364,5564,3796,3514],"2025-06-02":[3184,6386,5581,3816,3529],"2025-06-03":[3184,6422,5627,3830,3545],"2025-06-04":[3184,6451,5655,3846,3570],"2025-06-05":[3184,6482,5673,3884,3595],"2025-06-06":[3184,6526,5687,3895,3604],"2025-06-07":[3184,6529,5693,3902,3616],"2025-06-08":[3184,6544,5713,3914,3623],"2025-06-09":[3184,6555,5724,3941,3639],"2025-06-11":[3184,6579,5785,3994,3656],"2025-06-12":[3184,6586,5819,4008,3678],"2025-06-13":[3184,6599,5817,4015,3692],"2025-06-14":[3184,6609,5836,4022,3700],"2025-06-15":[3184,6627,5842,4031,3726],"2025-06-16":[3184,6635,5862,4053,3737],"2025-06-17":[3184,6652,5884,4057,3754],"2025-06-18":[3184,6658,5905,4068,3769],"2025-06-19":[3184,6648,5937,4068,3794],"2025-06-20":[3184,6669,5952,4068,3810],"2025-06-21":[3184,6684,5993,4109,3822],"2025-06-22":[3184,6691,6007,4142,3831],"2025-06-24":[3186,6718,6103,4182,3869],"2025-06-25":[3186,6719,6111,4196,3897],"2025-06-28":[3186,6724,6156,4239,3979],"2025-07-03":[3186,6724,6303,4343,4013],"2025-07-06":[3186,6724,6364,4422,4013],"2025-07-09":[3186,6724,6466,4522,4097],"2025-07-14":[3186,6724,6643,4719,4190],"2025-07-17":[3186,6724,6680,4805,4255],"2025-07-20":[3186,6724,6727,4876,4300],"2025-07-23":[3186,6724,6790,4945,4368],"2025-07-26":[3186,6724,6852,5018,4405],"2025-07-29":[3186,6724,6913,5153,4455],"2025-08-01":[3186,6724,6932,5237,4464],"2025-08-04":[3186,6724,6931,5394,4499],"2025-08-07":[3186,6724,6931,5540,4564],"2025-08-11":[3186,6724,6931,5714,4643],"2025-08-14":[3186,6724,6931,5878,4680],"2025-08-17":[3186,6724,6931,6008,4720],"2025-08-20":[3186,6724,6931,6105,4757],"2025-08-23":[3186,6724,6931,6186,4820],"2025-08-24":[3186,6724,6931,6220,4847],"2025-08-27":[3186,6724,6931,6247,4934],"2025-08-30":[3186,6724,6931,6315,5033],"2025-09-02":[3186,6724,6931,6333,5145],"2025-09-04":[3186,6724,6931,6333,5208],"2025-09-07":[3186,6724,6931,6333,5353],"2025-09-10":[3186,6724,6931,6333,5457],"2025-09-16":[631,6724,6931,6333,5714],"2025-09-18":[631,6724,6931,6333,5777],"2025-09-21":[631,6724,6931,6333,5893],"2025-09-25":[631,6724,6931,6333,6111],"2025-09-28":[631,6724,6931,6333,6171],"2025-10-01":[631,6724,6931,6333,6212],"2025-10-05":[631,6724,6931,6333,6212],"2025-10-08":[631,6724,6931,6333,6212],"2025-10-11":[631,6724,6931,6333,6212],"2025-10-14":[631,6724,6931,6333,6212],"2025-10-16":[631,6724,6931,6333,6212]};
 
 const FC25_DATES = Object.keys(FC25_TOTALS).sort();
-const FC25_EARLIEST = FC25_DATES[0];   // 2025-03-27
+const FC25_EARLIEST = FC25_DATES[0];
 const FC25_LATEST   = FC25_DATES[FC25_DATES.length - 1];
 
-// Returns the 2025 equivalent per-month on-books array for a given 2026 snapshot date.
-// Subtracts one year, finds nearest neighbor in fill curve, returns [May,Jun,Jul,Aug,Sep].
 function get2025Equivalent(snapshotDate2026) {
-  const d26 = new Date(snapshotDate2026);
-  const d25 = new Date(d26);
+  const d26 = new Date(snapshotDate2026), d25 = new Date(d26);
   d25.setFullYear(d25.getFullYear() - 1);
   const target = d25.toISOString().slice(0, 10);
-  // Clamp to available range
   if (target <= FC25_EARLIEST) return FC25_BY_MONTH[FC25_EARLIEST];
   if (target >= FC25_LATEST)   return FC25_BY_MONTH[FC25_LATEST];
-  // Exact match
   if (FC25_BY_MONTH[target]) return FC25_BY_MONTH[target];
-  // Nearest neighbor
   let bestDate = FC25_DATES[0], bestDelta = Infinity;
-  for (const d of FC25_DATES) {
-    const delta = Math.abs(new Date(d) - d25);
-    if (delta < bestDelta) { bestDelta = delta; bestDate = d; }
-  }
+  for (const d of FC25_DATES) { const delta = Math.abs(new Date(d) - d25); if (delta < bestDelta) { bestDelta = delta; bestDate = d; } }
   return FC25_BY_MONTH[bestDate];
 }
 
-// Nearest-neighbor lookup: finds closest available date in FC25_TOTALS.
-// Prefers earlier neighbor (conservative — don't project forward).
 function lookupFC25(isoDate) {
   if (FC25_TOTALS[isoDate] !== undefined) return { val: FC25_TOTALS[isoDate], date: isoDate, clamped: false };
-  // Find nearest available date
   const target = new Date(isoDate);
   let bestDate = null, bestDelta = Infinity;
-  for (const d of FC25_DATES) {
-    const delta = Math.abs(new Date(d) - target);
-    if (delta < bestDelta) { bestDelta = delta; bestDate = d; }
-  }
+  for (const d of FC25_DATES) { const delta = Math.abs(new Date(d) - target); if (delta < bestDelta) { bestDelta = delta; bestDate = d; } }
   return { val: FC25_TOTALS[bestDate], date: bestDate, clamped: true };
 }
 
-// Given a 2026 snapshot date string, compute 2025 momentum for a window of N days.
-// Returns { nights, revenue, actualDays, label, clamped }
-// Uses $145.59 blended pre-season ADR for 2025 revenue.
-function calc2025Momentum(snapshotDate2026, windowDays) {
-  const ADR_2025 = 143.22;  // pre-season blended ADR — reservation charges only, weighted by Mar-27 mix
-  const FLOOR    = FC25_EARLIEST; // 2025-03-27
-
-  // Equivalent 2025 date = snapshot date minus 1 year
-  const snap26 = new Date(snapshotDate2026);
-  const snap25 = new Date(snap26);
-  snap25.setFullYear(snap25.getFullYear() - 1);
-
-  // Start date = snap25 minus windowDays
-  const start25 = new Date(snap25);
-  start25.setDate(start25.getDate() - windowDays);
-
-  // Clamp start to floor if before earliest snapshot
-  const startStr = start25.toISOString().slice(0, 10);
-  const snapStr  = snap25.toISOString().slice(0, 10);
-  const clamped  = startStr < FLOOR;
-  const effectiveStart = clamped ? FLOOR : startStr;
-
-  // Actual day span between effective start and snap25
-  const startLookup = lookupFC25(effectiveStart);
-  const endLookup   = lookupFC25(snapStr);
-  const actualDays  = Math.round((new Date(endLookup.date) - new Date(startLookup.date)) / 86400000);
-
-  const nights  = Math.max(0, endLookup.val - startLookup.val);
-  const revenue = Math.round(nights * ADR_2025);
-
-  // Build a label showing the actual date range used
-  const fmt = d => { const [,m,dy] = d.split('-'); return `${['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m]} ${+dy}`; };
-  const label = `${fmt(startLookup.date)}→${fmt(endLookup.date)} '25`;
-
-  return { nights, revenue, actualDays, label, clamped: clamped || startLookup.clamped || endLookup.clamped };
-}
-
 function renderMomentum() {
-  // ── How this works ────────────────────────────────────────────────────────
-  // Each card compares today's report total against a prior report in history:
-  //   Yesterday  : today's total − report from 1 day ago  (history entry dated snapDate − 1)
-  //   Last 7 days: today's total − report from 8 days ago (history entry dated snapDate − 8)
-  //   Last 30 days: today's total − report from 31 days ago (history entry dated snapDate − 31)
-  //
-  // "Today's total" = STATE.onBooks26 sum, which is the live snapshot loaded from Drive.
-  // snapDate = the date of that snapshot (the Campspot report date).
-  // We look backwards from snapDate — not wall-clock — so the window always
-  // aligns with the actual report dates in history.
-  //
-  // 2025 comparison: FC25_TOTALS lookup at the equivalent dates one year prior.
-  // Revenue: 2026 nights × blended rate. No 2025 revenue (data not available).
-  // ─────────────────────────────────────────────────────────────────────────
-
-  const snapDate = STATE.snapshotDate;
-  const hist     = STATE.snapshotHistory;
+  const snapDate = STATE.snapshotDate, hist = STATE.snapshotHistory;
   const nowTotal = STATE.onBooks26.reduce((a, b) => a + b, 0);
-
-  // If no snapshot date yet (pipeline hasn't loaded), show pending state
   if (!snapDate) {
-    document.getElementById('momentumCards').innerHTML =
-      ['Added — yesterday', 'Added — last 7 days', 'Added — last 30 days'].map(lbl =>
-        pendingCard(lbl, 'Waiting for pipeline data')
-      ).join('');
+    document.getElementById('momentumCards').innerHTML = ['Added — yesterday', 'Added — last 7 days', 'Added — last 30 days'].map(lbl => pendingCard(lbl, 'Waiting for pipeline data')).join('');
     return;
   }
-
-  // Look up exact history entry by date string
-  function histEntry(dateStr) {
-    return hist.find(h => h.date === dateStr) || null;
-  }
-
-  // Compute a date string N days before a given date string
-  function dateMinus(dateStr, n) {
-    const d = new Date(dateStr + 'T12:00:00');
-    d.setDate(d.getDate() - n);
-    return d.toISOString().slice(0, 10);
-  }
-
-  // Format date string as "Apr 6"
+  function histEntry(dateStr) { return hist.find(h => h.date === dateStr) || null; }
+  function dateMinus(dateStr, n) { const d = new Date(dateStr + 'T12:00:00'); d.setDate(d.getDate() - n); return d.toISOString().slice(0, 10); }
   const MONTHS = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  function fmt(dateStr) {
-    const [, m, dy] = dateStr.split('-');
-    return `${MONTHS[+m]} ${+dy}`;
-  }
-
-  // Look up 2025 nights and revenue added in a window ending at snapDate, going back windowDays
-  // Uses FC25_BY_MONTH for per-month breakdown × BASE.rate25 for accurate revenue
+  function fmt(dateStr) { const [, m, dy] = dateStr.split('-'); return `${MONTHS[+m]} ${+dy}`; }
   function get2025data(snapDate, windowDays) {
-    const end25     = dateMinus(snapDate, 365);
-    const start25   = dateMinus(end25, windowDays);
-    const endLookup   = lookupFC25(end25);
-    const startLookup = lookupFC25(start25);
-
-    // Total nights from FC25_TOTALS
+    const end25 = dateMinus(snapDate, 365), start25 = dateMinus(end25, windowDays);
+    const endLookup = lookupFC25(end25), startLookup = lookupFC25(start25);
     const nights = Math.max(0, endLookup.val - startLookup.val);
-
-    // Per-month nights from FC25_BY_MONTH × 2025 ADR per month
-    const endByMonth   = FC25_BY_MONTH[endLookup.date]   || [0,0,0,0,0];
+    const endByMonth = FC25_BY_MONTH[endLookup.date] || [0,0,0,0,0];
     const startByMonth = FC25_BY_MONTH[startLookup.date] || [0,0,0,0,0];
     let revenue = 0;
-    for (let i = 0; i < 5; i++) {
-      const monthNights = Math.max(0, (endByMonth[i] || 0) - (startByMonth[i] || 0));
-      revenue += monthNights * BASE.rate25[i];
-    }
-
+    for (let i = 0; i < 5; i++) revenue += Math.max(0, (endByMonth[i]||0) - (startByMonth[i]||0)) * BASE.rate25[i];
     return { nights, revenue: Math.round(revenue), startDate: startLookup.date, endDate: endLookup.date };
   }
+  const date1ago = dateMinus(snapDate, 1), date8ago = dateMinus(snapDate, 8), date31ago = dateMinus(snapDate, 31);
+  const entry1d = histEntry(date1ago), entry8d = histEntry(date8ago), entry31d = histEntry(date31ago);
 
-  // Build the three lookback entries
-  const date1ago  = dateMinus(snapDate, 1);
-  const date8ago  = dateMinus(snapDate, 8);
-  const date31ago = dateMinus(snapDate, 31);
-
-  const entry1d  = histEntry(date1ago);
-  const entry8d  = histEntry(date8ago);
-  const entry31d = histEntry(date31ago);
-
-  // Pending card — shown when history entry not available yet
   function pendingCard(label, reason) {
-    return `<div class="kpi" style="padding:14px 16px;opacity:0.5;">
-      <div class="kpi-label" style="margin-bottom:10px;">${label}</div>
-      <div style="font-family:var(--font-mono);font-size:11px;color:var(--text2);margin-bottom:6px;">${reason}</div>
-      <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);">Available once history accumulates</div>
-    </div>`;
+    return `<div class="kpi" style="padding:14px 16px;opacity:0.5;"><div class="kpi-label" style="margin-bottom:10px;">${label}</div><div style="font-family:var(--font-mono);font-size:11px;color:var(--text2);margin-bottom:6px;">${reason}</div><div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);">Available once history accumulates</div></div>`;
   }
 
-  // Live card — shown when history entry exists
   function liveCard(label, priorEntry, windowDays, prior25) {
     const nights26 = nowTotal - priorEntry.total;
-    const nowRev   = STATE.totalRevenue26 || (nowTotal * STATE.rate26);
+    const nowRev = STATE.totalRevenue26 || (nowTotal * STATE.rate26);
     const priorRev = priorEntry.revenue != null ? priorEntry.revenue : null;
-    const rev26    = priorRev != null ? Math.round(nowRev - priorRev) : Math.round(nights26 * STATE.rate26);
-    const revNote  = priorRev != null ? '' : ' (est.)';
-    const nights25 = prior25.nights;
-    const rev25    = prior25.revenue;
-    const dn       = nights26 - nights25;
-    const dr       = rev26 - rev25;
-    const nightsColor = nights26 >= 0 ? C.amber : C.red;
-    const revColor    = rev26 >= 0 ? C.green : C.red;
-    const dnClass     = dn >= 0 ? 'pos' : 'neg';
-    const dnSign      = dn >= 0 ? '+' : '';
-    const drClass     = dr >= 0 ? 'pos' : 'neg';
-    const drSign      = dr >= 0 ? '+' : '';
-
-    return `<div class="kpi" style="padding:14px 16px;">
-      <div class="kpi-label" style="margin-bottom:6px;">${label}</div>
-      <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-bottom:10px;">${fmt(priorEntry.date)} → ${fmt(snapDate)}</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">
-        <div>
-          <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:3px;letter-spacing:0.06em;">NIGHTS</div>
-          <div style="font-family:var(--font-mono);font-size:22px;font-weight:500;color:${nightsColor};line-height:1;">${nights26 >= 0 ? '+' : ''}${nights26.toLocaleString()}</div>
-          <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-top:3px;">vs '25: +${nights25.toLocaleString()}</div>
-          <div style="font-family:var(--font-mono);font-size:10px;margin-top:1px;" class="${dnClass}">${dnSign}${dn.toLocaleString()} YoY</div>
-        </div>
-        <div>
-          <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:3px;letter-spacing:0.06em;">REVENUE${revNote}</div>
-          <div style="font-family:var(--font-mono);font-size:22px;font-weight:500;color:${revColor};line-height:1;">${rev26 >= 0 ? '+' : ''}$${Math.abs(Math.round(rev26/1000))}K</div>
-          <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-top:3px;">vs '25: +$${Math.round(rev25/1000)}K</div>
-          <div style="font-family:var(--font-mono);font-size:10px;margin-top:1px;" class="${drClass}">${drSign}$${Math.abs(Math.round(dr/1000))}K YoY</div>
-        </div>
-      </div>
-      <div style="font-family:var(--font-mono);font-size:10px;border-top:1px solid var(--border);padding-top:6px;color:var(--text3);">
-        '25 window: ${fmt(prior25.startDate)} → ${fmt(prior25.endDate)}
-      </div>
-    </div>`;
+    const rev26 = priorRev != null ? Math.round(nowRev - priorRev) : Math.round(nights26 * STATE.rate26);
+    const revNote = priorRev != null ? '' : ' (est.)';
+    const dn = nights26 - prior25.nights, dr = rev26 - prior25.revenue;
+    const nightsColor = nights26 >= 0 ? C.amber : C.red, revColor = rev26 >= 0 ? C.green : C.red;
+    return `<div class="kpi" style="padding:14px 16px;"><div class="kpi-label" style="margin-bottom:6px;">${label}</div><div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-bottom:10px;">${fmt(priorEntry.date)} → ${fmt(snapDate)}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;"><div><div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:3px;letter-spacing:0.06em;">NIGHTS</div><div style="font-family:var(--font-mono);font-size:22px;font-weight:500;color:${nightsColor};line-height:1;">${nights26 >= 0 ? '+' : ''}${nights26.toLocaleString()}</div><div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-top:3px;">vs '25: +${prior25.nights.toLocaleString()}</div><div style="font-family:var(--font-mono);font-size:10px;margin-top:1px;" class="${dn>=0?'pos':'neg'}">${dn>=0?'+':''}${dn.toLocaleString()} YoY</div></div><div><div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:3px;letter-spacing:0.06em;">REVENUE${revNote}</div><div style="font-family:var(--font-mono);font-size:22px;font-weight:500;color:${revColor};line-height:1;">${rev26 >= 0 ? '+' : ''}$${Math.abs(Math.round(rev26/1000))}K</div><div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-top:3px;">vs '25: +$${Math.round(prior25.revenue/1000)}K</div><div style="font-family:var(--font-mono);font-size:10px;margin-top:1px;" class="${dr>=0?'pos':'neg'}">${dr>=0?'+':''}$${Math.abs(Math.round(dr/1000))}K YoY</div></div></div><div style="font-family:var(--font-mono);font-size:10px;border-top:1px solid var(--border);padding-top:6px;color:var(--text3);">'25 window: ${fmt(prior25.startDate)} → ${fmt(prior25.endDate)}</div></div>`;
   }
 
-  const mom1  = get2025data(snapDate, 1);
-  const mom7  = get2025data(snapDate, 7);
-  const mom30 = get2025data(snapDate, 30);
-
+  const mom1 = get2025data(snapDate, 1), mom7 = get2025data(snapDate, 7), mom30 = get2025data(snapDate, 30);
   document.getElementById('momentumCards').innerHTML =
     (entry1d  ? liveCard('Added — yesterday',    entry1d,  1,  mom1)  : pendingCard('Added — yesterday',    'Need report from ' + date1ago)) +
     (entry8d  ? liveCard('Added — last 7 days',  entry8d,  7,  mom7)  : pendingCard('Added — last 7 days',  'Need report from ' + date8ago)) +
     (entry31d ? liveCard('Added — last 30 days', entry31d, 30, mom30) : pendingCard('Added — last 30 days', 'Need report from ' + date31ago));
-
   document.getElementById('momentumCards').style.gridTemplateColumns = '1fr 1fr 1fr';
 }
 
-
-// 2025 cancellation cumulative lookup — keyed by equivalent 2026 date
-// n=nights, c=count, r=cancel rate vs 2025 on-books at that date
-// Rate denominator: fill curve value if available, else 2025 final actual
 const CANCELS25_BY_DATE = {
   '2026-03-27': {May:{n:378,c:74,r:10.6},Jun:{n:457,c:121,r:6.8},Jul:{n:198,c:56,r:2.9},Aug:{n:206,c:39,r:3.3},Sep:{n:108,c:20,r:1.7}},
-  '2026-03-28': {May:{n:383,c:76,r:10.7},Jun:{n:477,c:124,r:7.1},Jul:{n:198,c:56,r:2.9},Aug:{n:206,c:39,r:3.3},Sep:{n:108,c:20,r:1.7}},
-  '2026-03-29': {May:{n:386,c:77,r:10.8},Jun:{n:477,c:124,r:7.1},Jul:{n:198,c:56,r:2.9},Aug:{n:206,c:39,r:3.3},Sep:{n:116,c:21,r:1.9}},
-  '2026-03-30': {May:{n:386,c:77,r:10.8},Jun:{n:479,c:125,r:7.1},Jul:{n:198,c:56,r:2.9},Aug:{n:214,c:40,r:3.4},Sep:{n:116,c:21,r:1.9}},
-  '2026-03-31': {May:{n:389,c:78,r:10.9},Jun:{n:484,c:127,r:7.2},Jul:{n:212,c:60,r:3.1},Aug:{n:231,c:41,r:3.6},Sep:{n:123,c:22,r:2.0}},
   '2026-04-01': {May:{n:404,c:80,r:11.3},Jun:{n:484,c:127,r:7.2},Jul:{n:218,c:62,r:3.1},Aug:{n:231,c:41,r:3.6},Sep:{n:127,c:23,r:2.0}},
-  '2026-04-02': {May:{n:410,c:82,r:11.5},Jun:{n:501,c:130,r:7.5},Jul:{n:232,c:67,r:3.3},Aug:{n:240,c:43,r:3.8},Sep:{n:127,c:23,r:2.0}},
-  '2026-04-03': {May:{n:417,c:83,r:11.7},Jun:{n:529,c:135,r:7.9},Jul:{n:237,c:68,r:3.4},Aug:{n:250,c:45,r:3.9},Sep:{n:127,c:23,r:2.0}},
-  '2026-04-04': {May:{n:433,c:86,r:12.1},Jun:{n:536,c:138,r:8.0},Jul:{n:237,c:68,r:3.4},Aug:{n:250,c:45,r:3.9},Sep:{n:127,c:23,r:2.0}},
   '2026-04-05': {May:{n:433,c:86,r:12.1},Jun:{n:540,c:139,r:8.0},Jul:{n:237,c:68,r:3.4},Aug:{n:250,c:45,r:3.9},Sep:{n:131,c:24,r:2.1}},
-  '2026-04-06': {May:{n:434,c:87,r:12.1},Jun:{n:546,c:140,r:8.1},Jul:{n:242,c:69,r:3.5},Aug:{n:253,c:47,r:4.0},Sep:{n:142,c:26,r:2.3}},
-  '2026-04-07': {May:{n:434,c:87,r:12.1},Jun:{n:554,c:142,r:8.2},Jul:{n:277,c:73,r:4.0},Aug:{n:253,c:47,r:4.0},Sep:{n:142,c:26,r:2.3}},
-  '2026-04-08': {May:{n:446,c:90,r:12.5},Jun:{n:572,c:146,r:8.5},Jul:{n:282,c:74,r:4.1},Aug:{n:254,c:48,r:4.0},Sep:{n:156,c:28,r:2.5}},
   '2026-04-09': {May:{n:455,c:93,r:12.7},Jun:{n:578,c:148,r:8.6},Jul:{n:289,c:76,r:4.2},Aug:{n:254,c:48,r:4.0},Sep:{n:158,c:29,r:2.5}},
-  '2026-04-10': {May:{n:455,c:93,r:12.7},Jun:{n:594,c:151,r:8.8},Jul:{n:296,c:77,r:4.3},Aug:{n:254,c:48,r:4.0},Sep:{n:158,c:29,r:2.5}},
-  '2026-04-11': {May:{n:463,c:95,r:12.9},Jun:{n:598,c:152,r:8.9},Jul:{n:310,c:80,r:4.5},Aug:{n:254,c:48,r:4.0},Sep:{n:158,c:29,r:2.5}},
-  '2026-04-12': {May:{n:471,c:97,r:13.2},Jun:{n:601,c:153,r:8.9},Jul:{n:315,c:82,r:4.5},Aug:{n:254,c:48,r:4.0},Sep:{n:158,c:29,r:2.5}},
-  '2026-04-13': {May:{n:472,c:98,r:13.2},Jun:{n:601,c:153,r:8.9},Jul:{n:322,c:83,r:4.6},Aug:{n:254,c:48,r:4.0},Sep:{n:158,c:29,r:2.5}},
-  '2026-04-14': {May:{n:472,c:98,r:13.2},Jun:{n:613,c:157,r:9.1},Jul:{n:325,c:84,r:4.7},Aug:{n:254,c:48,r:4.0},Sep:{n:158,c:29,r:2.5}},
   '2026-04-15': {May:{n:477,c:101,r:13.3},Jun:{n:622,c:159,r:9.3},Jul:{n:325,c:84,r:4.7},Aug:{n:254,c:48,r:4.0},Sep:{n:160,c:30,r:2.6}},
-  '2026-04-16': {May:{n:479,c:102,r:13.4},Jun:{n:646,c:163,r:9.6},Jul:{n:346,c:87,r:5.0},Aug:{n:258,c:49,r:4.1},Sep:{n:160,c:30,r:2.6}},
-  '2026-04-17': {May:{n:479,c:102,r:13.4},Jun:{n:659,c:166,r:9.8},Jul:{n:347,c:88,r:5.0},Aug:{n:258,c:49,r:4.1},Sep:{n:160,c:30,r:2.6}},
-  '2026-04-18': {May:{n:493,c:105,r:13.8},Jun:{n:671,c:170,r:10.0},Jul:{n:347,c:88,r:5.0},Aug:{n:258,c:49,r:4.1},Sep:{n:160,c:30,r:2.6}},
-  '2026-04-19': {May:{n:497,c:106,r:13.9},Jun:{n:671,c:170,r:10.0},Jul:{n:351,c:89,r:5.1},Aug:{n:258,c:49,r:4.1},Sep:{n:160,c:30,r:2.6}},
   '2026-04-20': {May:{n:497,c:106,r:13.9},Jun:{n:673,c:172,r:10.0},Jul:{n:351,c:89,r:5.1},Aug:{n:258,c:49,r:4.1},Sep:{n:160,c:30,r:2.6}},
-  '2026-04-21': {May:{n:512,c:110,r:14.3},Jun:{n:677,c:173,r:10.1},Jul:{n:351,c:89,r:5.1},Aug:{n:262,c:50,r:4.1},Sep:{n:160,c:30,r:2.6}},
-  '2026-04-22': {May:{n:514,c:112,r:14.4},Jun:{n:683,c:175,r:10.2},Jul:{n:358,c:90,r:5.2},Aug:{n:262,c:50,r:4.1},Sep:{n:164,c:31,r:2.6}},
-  '2026-04-23': {May:{n:518,c:114,r:14.5},Jun:{n:702,c:180,r:10.4},Jul:{n:377,c:94,r:5.4},Aug:{n:273,c:52,r:4.3},Sep:{n:169,c:32,r:2.7}},
-  '2026-04-24': {May:{n:531,c:116,r:14.8},Jun:{n:712,c:182,r:10.6},Jul:{n:392,c:97,r:5.7},Aug:{n:283,c:54,r:4.5},Sep:{n:169,c:32,r:2.7}},
-  '2026-04-25': {May:{n:534,c:117,r:14.9},Jun:{n:735,c:189,r:10.9},Jul:{n:395,c:98,r:5.7},Aug:{n:290,c:56,r:4.6},Sep:{n:169,c:32,r:2.7}},
-  '2026-04-26': {May:{n:534,c:117,r:14.9},Jun:{n:735,c:189,r:10.9},Jul:{n:409,c:99,r:5.9},Aug:{n:290,c:56,r:4.6},Sep:{n:169,c:32,r:2.7}},
-  '2026-04-27': {May:{n:534,c:117,r:14.9},Jun:{n:739,c:191,r:11.0},Jul:{n:419,c:101,r:6.0},Aug:{n:290,c:56,r:4.6},Sep:{n:169,c:32,r:2.7}},
-  '2026-04-28': {May:{n:576,c:125,r:16.1},Jun:{n:785,c:195,r:11.7},Jul:{n:428,c:103,r:6.2},Aug:{n:290,c:56,r:4.6},Sep:{n:169,c:32,r:2.7}},
-  '2026-04-29': {May:{n:579,c:126,r:16.2},Jun:{n:790,c:196,r:11.7},Jul:{n:428,c:103,r:6.2},Aug:{n:295,c:58,r:4.7},Sep:{n:169,c:32,r:2.7}},
   '2026-04-30': {May:{n:591,c:128,r:16.5},Jun:{n:790,c:196,r:11.7},Jul:{n:428,c:103,r:6.2},Aug:{n:303,c:60,r:4.8},Sep:{n:169,c:32,r:2.7}},
-  '2026-05-01': {May:{n:591,c:128,r:16.5},Jun:{n:798,c:197,r:11.9},Jul:{n:435,c:105,r:6.3},Aug:{n:308,c:61,r:4.9},Sep:{n:169,c:32,r:2.7}},
-  '2026-05-02': {May:{n:607,c:131,r:17.0},Jun:{n:834,c:203,r:12.4},Jul:{n:443,c:107,r:6.4},Aug:{n:308,c:61,r:4.9},Sep:{n:169,c:32,r:2.7}},
-  '2026-05-03': {May:{n:607,c:131,r:17.0},Jun:{n:842,c:208,r:12.5},Jul:{n:448,c:110,r:6.5},Aug:{n:311,c:62,r:4.9},Sep:{n:173,c:33,r:2.8}},
-  '2026-05-04': {May:{n:613,c:133,r:17.1},Jun:{n:845,c:209,r:12.6},Jul:{n:459,c:113,r:6.6},Aug:{n:326,c:65,r:5.1},Sep:{n:174,c:34,r:2.8}},
-  '2026-05-05': {May:{n:619,c:134,r:17.3},Jun:{n:878,c:213,r:13.1},Jul:{n:477,c:117,r:6.9},Aug:{n:326,c:65,r:5.1},Sep:{n:174,c:34,r:2.8}},
-  '2026-05-06': {May:{n:636,c:137,r:17.8},Jun:{n:890,c:216,r:13.2},Jul:{n:485,c:120,r:7.0},Aug:{n:326,c:65,r:5.1},Sep:{n:179,c:35,r:2.9}},
-  '2026-05-07': {May:{n:644,c:140,r:18.0},Jun:{n:906,c:220,r:13.5},Jul:{n:490,c:121,r:7.1},Aug:{n:330,c:67,r:5.2},Sep:{n:179,c:35,r:2.9}},
-  '2026-05-08': {May:{n:647,c:141,r:18.1},Jun:{n:916,c:223,r:13.6},Jul:{n:503,c:124,r:7.3},Aug:{n:333,c:68,r:5.3},Sep:{n:179,c:35,r:2.9}},
-  '2026-05-09': {May:{n:647,c:141,r:18.1},Jun:{n:933,c:227,r:13.9},Jul:{n:507,c:125,r:7.3},Aug:{n:338,c:69,r:5.3},Sep:{n:187,c:37,r:3.0}},
-  '2026-05-10': {May:{n:653,c:142,r:18.3},Jun:{n:933,c:227,r:13.9},Jul:{n:510,c:126,r:7.4},Aug:{n:343,c:70,r:5.4},Sep:{n:192,c:38,r:3.1}},
-  '2026-05-11': {May:{n:656,c:143,r:18.3},Jun:{n:961,c:234,r:14.3},Jul:{n:515,c:128,r:7.4},Aug:{n:343,c:70,r:5.4},Sep:{n:192,c:38,r:3.1}},
-  '2026-05-12': {May:{n:656,c:143,r:18.3},Jun:{n:972,c:238,r:14.5},Jul:{n:520,c:130,r:7.5},Aug:{n:343,c:70,r:5.4},Sep:{n:192,c:38,r:3.1}},
-  '2026-05-13': {May:{n:667,c:148,r:18.6},Jun:{n:980,c:242,r:14.6},Jul:{n:520,c:130,r:7.5},Aug:{n:346,c:71,r:5.5},Sep:{n:201,c:39,r:3.2}},
-  '2026-05-14': {May:{n:671,c:150,r:18.8},Jun:{n:996,c:248,r:14.8},Jul:{n:522,c:131,r:7.5},Aug:{n:354,c:72,r:5.6},Sep:{n:201,c:39,r:3.2}},
-  '2026-05-15': {May:{n:683,c:153,r:19.1},Jun:{n:999,c:250,r:14.9},Jul:{n:525,c:133,r:7.6},Aug:{n:354,c:72,r:5.6},Sep:{n:203,c:40,r:3.3}},
-  '2026-05-16': {May:{n:702,c:158,r:19.6},Jun:{n:1001,c:251,r:14.9},Jul:{n:525,c:133,r:7.6},Aug:{n:356,c:73,r:5.6},Sep:{n:213,c:41,r:3.4}},
-  '2026-05-17': {May:{n:707,c:159,r:19.8},Jun:{n:1014,c:253,r:15.1},Jul:{n:530,c:134,r:7.6},Aug:{n:356,c:73,r:5.6},Sep:{n:213,c:41,r:3.4}},
-  '2026-05-18': {May:{n:710,c:160,r:19.8},Jun:{n:1035,c:257,r:15.4},Jul:{n:535,c:136,r:7.7},Aug:{n:359,c:74,r:5.7},Sep:{n:218,c:42,r:3.5}},
-  '2026-05-19': {May:{n:716,c:162,r:20.0},Jun:{n:1065,c:264,r:15.8},Jul:{n:539,c:137,r:7.8},Aug:{n:359,c:74,r:5.7},Sep:{n:218,c:42,r:3.5}},
-  '2026-05-20': {May:{n:725,c:164,r:20.3},Jun:{n:1072,c:267,r:15.9},Jul:{n:539,c:137,r:7.8},Aug:{n:359,c:74,r:5.7},Sep:{n:227,c:44,r:3.7}},
-  '2026-05-21': {May:{n:746,c:170,r:20.9},Jun:{n:1114,c:276,r:16.6},Jul:{n:554,c:141,r:8.0},Aug:{n:366,c:75,r:5.8},Sep:{n:227,c:44,r:3.7}},
-  '2026-05-22': {May:{n:746,c:170,r:20.9},Jun:{n:1144,c:282,r:17.0},Jul:{n:557,c:142,r:8.0},Aug:{n:366,c:75,r:5.8},Sep:{n:227,c:44,r:3.7}},
-  '2026-05-23': {May:{n:749,c:171,r:20.9},Jun:{n:1145,c:283,r:17.0},Jul:{n:562,c:144,r:8.1},Aug:{n:366,c:75,r:5.8},Sep:{n:227,c:44,r:3.7}},
-  '2026-05-24': {May:{n:765,c:174,r:21.4},Jun:{n:1161,c:287,r:17.3},Jul:{n:562,c:144,r:8.1},Aug:{n:366,c:75,r:5.8},Sep:{n:228,c:45,r:3.7}},
-  '2026-05-25': {May:{n:768,c:175,r:21.5},Jun:{n:1170,c:290,r:17.4},Jul:{n:567,c:146,r:8.2},Aug:{n:367,c:76,r:5.8},Sep:{n:228,c:45,r:3.7}},
-  '2026-05-26': {May:{n:778,c:177,r:21.8},Jun:{n:1173,c:291,r:17.4},Jul:{n:587,c:152,r:8.5},Aug:{n:367,c:76,r:5.8},Sep:{n:228,c:45,r:3.7}},
-  '2026-05-27': {May:{n:781,c:178,r:21.8},Jun:{n:1191,c:298,r:17.7},Jul:{n:597,c:154,r:8.6},Aug:{n:367,c:76,r:5.8},Sep:{n:228,c:45,r:3.7}},
-  '2026-05-28': {May:{n:781,c:178,r:21.8},Jun:{n:1214,c:306,r:18.1},Jul:{n:599,c:156,r:8.6},Aug:{n:371,c:77,r:5.9},Sep:{n:228,c:45,r:3.7}},
-  '2026-05-29': {May:{n:794,c:181,r:22.2},Jun:{n:1228,c:310,r:18.3},Jul:{n:623,c:162,r:9.0},Aug:{n:371,c:77,r:5.9},Sep:{n:228,c:45,r:3.7}},
-  '2026-05-30': {May:{n:795,c:182,r:22.2},Jun:{n:1248,c:314,r:18.6},Jul:{n:647,c:165,r:9.3},Aug:{n:371,c:77,r:5.9},Sep:{n:229,c:46,r:3.7}},
   '2026-05-31': {May:{n:803,c:183,r:22.4},Jun:{n:1262,c:319,r:18.8},Jul:{n:649,c:166,r:9.4},Aug:{n:371,c:77,r:5.9},Sep:{n:229,c:46,r:3.7}},
-  '2026-06-01': {May:{n:803,c:183,r:22.4},Jun:{n:1278,c:323,r:19.0},Jul:{n:683,c:174,r:9.9},Aug:{n:371,c:77,r:5.9},Sep:{n:242,c:49,r:3.9}},
-  '2026-06-02': {May:{n:803,c:183,r:22.4},Jun:{n:1295,c:328,r:19.3},Jul:{n:694,c:178,r:10.0},Aug:{n:373,c:78,r:5.9},Sep:{n:242,c:49,r:3.9}},
-  '2026-06-03': {May:{n:803,c:183,r:22.4},Jun:{n:1308,c:331,r:19.5},Jul:{n:696,c:179,r:10.0},Aug:{n:373,c:78,r:5.9},Sep:{n:242,c:49,r:3.9}},
-  '2026-06-04': {May:{n:803,c:183,r:22.4},Jun:{n:1321,c:334,r:19.6},Jul:{n:703,c:180,r:10.1},Aug:{n:376,c:79,r:5.9},Sep:{n:242,c:49,r:3.9}},
-  '2026-06-05': {May:{n:803,c:183,r:22.4},Jun:{n:1324,c:335,r:19.7},Jul:{n:709,c:182,r:10.2},Aug:{n:379,c:80,r:6.0},Sep:{n:242,c:49,r:3.9}},
-  '2026-06-06': {May:{n:803,c:183,r:22.4},Jun:{n:1342,c:341,r:20.0},Jul:{n:725,c:187,r:10.5},Aug:{n:382,c:81,r:6.0},Sep:{n:246,c:50,r:4.0}},
-  '2026-06-07': {May:{n:803,c:183,r:22.4},Jun:{n:1349,c:344,r:20.1},Jul:{n:748,c:192,r:10.8},Aug:{n:382,c:81,r:6.0},Sep:{n:246,c:50,r:4.0}},
-  '2026-06-08': {May:{n:803,c:183,r:22.4},Jun:{n:1354,c:346,r:20.1},Jul:{n:760,c:195,r:11.0},Aug:{n:382,c:81,r:6.0},Sep:{n:246,c:50,r:4.0}},
-  '2026-06-09': {May:{n:803,c:183,r:22.4},Jun:{n:1367,c:348,r:20.3},Jul:{n:766,c:196,r:11.1},Aug:{n:388,c:83,r:6.1},Sep:{n:250,c:51,r:4.0}},
-  '2026-06-10': {May:{n:803,c:183,r:22.4},Jun:{n:1383,c:354,r:20.6},Jul:{n:771,c:197,r:11.1},Aug:{n:388,c:83,r:6.1},Sep:{n:264,c:53,r:4.2}},
-  '2026-06-11': {May:{n:803,c:183,r:22.4},Jun:{n:1393,c:358,r:20.7},Jul:{n:790,c:199,r:11.4},Aug:{n:395,c:84,r:6.2},Sep:{n:269,c:54,r:4.3}},
-  '2026-06-12': {May:{n:803,c:183,r:22.4},Jun:{n:1399,c:361,r:20.8},Jul:{n:833,c:207,r:12.0},Aug:{n:410,c:88,r:6.5},Sep:{n:269,c:54,r:4.3}},
-  '2026-06-13': {May:{n:803,c:183,r:22.4},Jun:{n:1411,c:368,r:21.0},Jul:{n:837,c:209,r:12.1},Aug:{n:412,c:89,r:6.5},Sep:{n:272,c:55,r:4.4}},
-  '2026-06-14': {May:{n:803,c:183,r:22.4},Jun:{n:1416,c:369,r:21.1},Jul:{n:864,c:214,r:12.5},Aug:{n:412,c:89,r:6.5},Sep:{n:272,c:55,r:4.4}},
-  '2026-06-15': {May:{n:803,c:183,r:22.4},Jun:{n:1416,c:369,r:21.1},Jul:{n:869,c:215,r:12.5},Aug:{n:412,c:89,r:6.5},Sep:{n:272,c:55,r:4.4}},
-  '2026-06-16': {May:{n:803,c:183,r:22.4},Jun:{n:1416,c:369,r:21.1},Jul:{n:880,c:218,r:12.7},Aug:{n:436,c:92,r:6.9},Sep:{n:277,c:56,r:4.5}},
-  '2026-06-17': {May:{n:803,c:183,r:22.4},Jun:{n:1428,c:371,r:21.2},Jul:{n:893,c:222,r:12.9},Aug:{n:442,c:93,r:7.0},Sep:{n:277,c:56,r:4.5}},
-  '2026-06-18': {May:{n:803,c:183,r:22.4},Jun:{n:1447,c:377,r:21.5},Jul:{n:909,c:226,r:13.1},Aug:{n:450,c:95,r:7.1},Sep:{n:277,c:56,r:4.5}},
-  '2026-06-19': {May:{n:803,c:183,r:22.4},Jun:{n:1451,c:379,r:21.6},Jul:{n:935,c:231,r:13.5},Aug:{n:459,c:97,r:7.2},Sep:{n:277,c:56,r:4.5}},
-  '2026-06-20': {May:{n:803,c:183,r:22.4},Jun:{n:1469,c:383,r:21.8},Jul:{n:938,c:232,r:13.5},Aug:{n:462,c:98,r:7.3},Sep:{n:281,c:57,r:4.5}},
-  '2026-06-21': {May:{n:803,c:183,r:22.4},Jun:{n:1485,c:387,r:22.1},Jul:{n:938,c:232,r:13.5},Aug:{n:462,c:98,r:7.3},Sep:{n:284,c:58,r:4.6}},
-  '2026-06-22': {May:{n:803,c:183,r:22.4},Jun:{n:1496,c:393,r:22.2},Jul:{n:942,c:233,r:13.6},Aug:{n:464,c:99,r:7.3},Sep:{n:284,c:58,r:4.6}},
-  '2026-06-23': {May:{n:803,c:183,r:22.4},Jun:{n:1505,c:398,r:22.4},Jul:{n:948,c:235,r:13.7},Aug:{n:471,c:101,r:7.4},Sep:{n:293,c:60,r:4.7}},
-  '2026-06-24': {May:{n:803,c:183,r:22.4},Jun:{n:1510,c:400,r:22.5},Jul:{n:958,c:239,r:13.8},Aug:{n:474,c:102,r:7.5},Sep:{n:293,c:60,r:4.7}},
-  '2026-06-25': {May:{n:803,c:183,r:22.4},Jun:{n:1511,c:401,r:22.5},Jul:{n:961,c:240,r:13.9},Aug:{n:474,c:102,r:7.5},Sep:{n:298,c:61,r:4.8}},
-  '2026-06-26': {May:{n:803,c:183,r:22.4},Jun:{n:1515,c:403,r:22.5},Jul:{n:981,c:245,r:14.2},Aug:{n:484,c:105,r:7.6},Sep:{n:298,c:61,r:4.8}},
-  '2026-06-27': {May:{n:803,c:183,r:22.4},Jun:{n:1521,c:405,r:22.6},Jul:{n:993,c:251,r:14.3},Aug:{n:484,c:105,r:7.6},Sep:{n:301,c:62,r:4.8}},
-  '2026-06-28': {May:{n:803,c:183,r:22.4},Jun:{n:1525,c:406,r:22.7},Jul:{n:1005,c:254,r:14.5},Aug:{n:510,c:107,r:8.1},Sep:{n:301,c:62,r:4.8}},
-  '2026-06-29': {May:{n:803,c:183,r:22.4},Jun:{n:1535,c:409,r:22.8},Jul:{n:1006,c:255,r:14.5},Aug:{n:510,c:107,r:8.1},Sep:{n:310,c:64,r:5.0}},
   '2026-06-30': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1010,c:258,r:14.6},Aug:{n:520,c:109,r:8.2},Sep:{n:326,c:68,r:5.2}},
-  '2026-07-01': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1016,c:261,r:14.7},Aug:{n:524,c:110,r:8.3},Sep:{n:330,c:69,r:5.3}},
-  '2026-07-02': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1026,c:263,r:14.8},Aug:{n:545,c:116,r:8.6},Sep:{n:338,c:72,r:5.4}},
-  '2026-07-03': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1034,c:266,r:14.9},Aug:{n:556,c:120,r:8.8},Sep:{n:346,c:74,r:5.6}},
-  '2026-07-04': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1044,c:268,r:15.1},Aug:{n:557,c:121,r:8.8},Sep:{n:346,c:74,r:5.6}},
-  '2026-07-05': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1046,c:269,r:15.1},Aug:{n:557,c:121,r:8.8},Sep:{n:359,c:77,r:5.8}},
-  '2026-07-06': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1054,c:271,r:15.2},Aug:{n:563,c:122,r:8.9},Sep:{n:359,c:77,r:5.8}},
-  '2026-07-07': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1079,c:278,r:15.6},Aug:{n:567,c:123,r:9.0},Sep:{n:366,c:79,r:5.9}},
-  '2026-07-08': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1090,c:284,r:15.7},Aug:{n:568,c:124,r:9.0},Sep:{n:366,c:79,r:5.9}},
-  '2026-07-09': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1100,c:287,r:15.9},Aug:{n:571,c:125,r:9.0},Sep:{n:368,c:80,r:5.9}},
-  '2026-07-10': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1107,c:290,r:16.0},Aug:{n:598,c:131,r:9.4},Sep:{n:378,c:82,r:6.1}},
-  '2026-07-11': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1113,c:292,r:16.1},Aug:{n:602,c:132,r:9.5},Sep:{n:384,c:85,r:6.2}},
-  '2026-07-12': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1121,c:295,r:16.2},Aug:{n:608,c:134,r:9.6},Sep:{n:384,c:85,r:6.2}},
-  '2026-07-13': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1124,c:297,r:16.2},Aug:{n:608,c:134,r:9.6},Sep:{n:384,c:85,r:6.2}},
-  '2026-07-14': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1130,c:299,r:16.3},Aug:{n:614,c:136,r:9.7},Sep:{n:387,c:86,r:6.2}},
-  '2026-07-15': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1155,c:309,r:16.7},Aug:{n:618,c:137,r:9.8},Sep:{n:393,c:87,r:6.3}},
-  '2026-07-16': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1162,c:311,r:16.8},Aug:{n:627,c:139,r:9.9},Sep:{n:407,c:89,r:6.6}},
-  '2026-07-17': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1178,c:316,r:17.0},Aug:{n:627,c:139,r:9.9},Sep:{n:411,c:90,r:6.6}},
-  '2026-07-18': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1183,c:317,r:17.1},Aug:{n:627,c:139,r:9.9},Sep:{n:412,c:91,r:6.6}},
-  '2026-07-19': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1193,c:319,r:17.2},Aug:{n:635,c:142,r:10.0},Sep:{n:413,c:92,r:6.6}},
-  '2026-07-20': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1206,c:323,r:17.4},Aug:{n:638,c:144,r:10.1},Sep:{n:416,c:93,r:6.7}},
-  '2026-07-21': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1219,c:325,r:17.6},Aug:{n:642,c:145,r:10.1},Sep:{n:416,c:93,r:6.7}},
-  '2026-07-22': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1241,c:327,r:17.9},Aug:{n:652,c:147,r:10.3},Sep:{n:416,c:93,r:6.7}},
-  '2026-07-23': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1262,c:332,r:18.2},Aug:{n:657,c:150,r:10.4},Sep:{n:423,c:96,r:6.8}},
-  '2026-07-24': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1273,c:335,r:18.4},Aug:{n:661,c:151,r:10.4},Sep:{n:423,c:96,r:6.8}},
-  '2026-07-25': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1279,c:337,r:18.5},Aug:{n:664,c:152,r:10.5},Sep:{n:427,c:97,r:6.9}},
-  '2026-07-26': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1280,c:338,r:18.5},Aug:{n:664,c:152,r:10.5},Sep:{n:430,c:98,r:6.9}},
-  '2026-07-27': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1285,c:339,r:18.5},Aug:{n:673,c:155,r:10.6},Sep:{n:445,c:101,r:7.2}},
-  '2026-07-28': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1288,c:341,r:18.6},Aug:{n:692,c:158,r:10.9},Sep:{n:453,c:103,r:7.3}},
-  '2026-07-29': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1288,c:341,r:18.6},Aug:{n:706,c:162,r:11.1},Sep:{n:464,c:106,r:7.5}},
-  '2026-07-30': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1288,c:341,r:18.6},Aug:{n:716,c:166,r:11.3},Sep:{n:481,c:109,r:7.7}},
   '2026-07-31': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1291,c:342,r:18.6},Aug:{n:718,c:167,r:11.3},Sep:{n:503,c:115,r:8.1}},
-  '2026-08-01': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1291,c:342,r:18.6},Aug:{n:730,c:170,r:11.5},Sep:{n:507,c:117,r:8.2}},
-  '2026-08-02': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:756,c:175,r:11.9},Sep:{n:523,c:121,r:8.4}},
-  '2026-08-03': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:759,c:176,r:12.0},Sep:{n:526,c:122,r:8.5}},
-  '2026-08-04': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:772,c:181,r:12.2},Sep:{n:541,c:127,r:8.7}},
-  '2026-08-05': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:778,c:184,r:12.3},Sep:{n:556,c:130,r:9.0}},
-  '2026-08-06': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:780,c:186,r:12.3},Sep:{n:564,c:132,r:9.1}},
-  '2026-08-07': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:788,c:189,r:12.4},Sep:{n:568,c:133,r:9.1}},
-  '2026-08-08': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:796,c:192,r:12.6},Sep:{n:579,c:137,r:9.3}},
-  '2026-08-09': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:804,c:195,r:12.7},Sep:{n:579,c:137,r:9.3}},
-  '2026-08-10': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:819,c:199,r:12.9},Sep:{n:594,c:140,r:9.6}},
-  '2026-08-11': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:838,c:205,r:13.2},Sep:{n:601,c:143,r:9.7}},
-  '2026-08-12': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:841,c:207,r:13.3},Sep:{n:607,c:145,r:9.8}},
-  '2026-08-13': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:851,c:211,r:13.4},Sep:{n:615,c:147,r:9.9}},
-  '2026-08-14': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:857,c:213,r:13.5},Sep:{n:627,c:149,r:10.1}},
-  '2026-08-15': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:873,c:222,r:13.8},Sep:{n:638,c:152,r:10.3}},
-  '2026-08-16': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:877,c:223,r:13.8},Sep:{n:649,c:155,r:10.4}},
-  '2026-08-17': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:881,c:224,r:13.9},Sep:{n:662,c:158,r:10.7}},
-  '2026-08-18': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:889,c:226,r:14.0},Sep:{n:666,c:160,r:10.7}},
-  '2026-08-19': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:892,c:228,r:14.1},Sep:{n:668,c:162,r:10.8}},
-  '2026-08-20': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:893,c:229,r:14.1},Sep:{n:674,c:164,r:10.8}},
-  '2026-08-21': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:904,c:231,r:14.3},Sep:{n:676,c:165,r:10.9}},
-  '2026-08-22': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:908,c:232,r:14.3},Sep:{n:715,c:172,r:11.5}},
-  '2026-08-23': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:908,c:232,r:14.3},Sep:{n:717,c:173,r:11.5}},
-  '2026-08-24': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:909,c:233,r:14.4},Sep:{n:728,c:175,r:11.7}},
-  '2026-08-25': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:931,c:240,r:14.7},Sep:{n:747,c:180,r:12.0}},
-  '2026-08-26': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:933,c:241,r:14.7},Sep:{n:752,c:181,r:12.1}},
-  '2026-08-27': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:933,c:241,r:14.7},Sep:{n:766,c:184,r:12.3}},
-  '2026-08-28': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:938,c:243,r:14.8},Sep:{n:766,c:184,r:12.3}},
-  '2026-08-29': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:939,c:244,r:14.8},Sep:{n:786,c:188,r:12.7}},
-  '2026-08-30': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:939,c:244,r:14.8},Sep:{n:791,c:189,r:12.7}},
   '2026-08-31': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:807,c:193,r:13.0}},
-  '2026-09-01': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:825,c:197,r:13.3}},
-  '2026-09-02': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:843,c:203,r:13.6}},
-  '2026-09-03': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:882,c:211,r:14.2}},
-  '2026-09-04': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:894,c:217,r:14.4}},
-  '2026-09-05': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:900,c:219,r:14.5}},
-  '2026-09-06': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:906,c:221,r:14.6}},
-  '2026-09-07': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:913,c:223,r:14.7}},
-  '2026-09-08': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:938,c:230,r:15.1}},
-  '2026-09-09': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:938,c:230,r:15.1}},
-  '2026-09-10': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:947,c:234,r:15.2}},
-  '2026-09-11': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:959,c:237,r:15.4}},
-  '2026-09-12': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:959,c:237,r:15.4}},
-  '2026-09-13': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:965,c:239,r:15.5}},
-  '2026-09-14': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:966,c:240,r:15.6}},
-  '2026-09-15': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:981,c:244,r:15.8}},
-  '2026-09-16': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:986,c:246,r:15.9}},
-  '2026-09-17': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:990,c:250,r:15.9}},
-  '2026-09-18': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:995,c:252,r:16.0}},
-  '2026-09-19': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:1005,c:255,r:16.2}},
-  '2026-09-20': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:1017,c:259,r:16.4}},
-  '2026-09-21': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:1018,c:260,r:16.4}},
-  '2026-09-22': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:1023,c:261,r:16.5}},
-  '2026-09-23': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:1026,c:263,r:16.5}},
-  '2026-09-24': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:1027,c:264,r:16.5}},
-  '2026-09-25': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:1030,c:265,r:16.6}},
-  '2026-09-26': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:1036,c:267,r:16.7}},
-  '2026-09-27': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:1036,c:267,r:16.7}},
-  '2026-09-28': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:1036,c:267,r:16.7}},
-  '2026-09-29': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:1040,c:269,r:16.7}},
   '2026-09-30': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:1047,c:271,r:16.9}},
-  '2026-10-01': {May:{n:803,c:183,r:22.4},Jun:{n:1547,c:412,r:23.0},Jul:{n:1294,c:343,r:18.7},Aug:{n:950,c:247,r:15.0},Sep:{n:1047,c:271,r:16.9}},
 };
 
 function renderCancels() {
-  const c = STATE.cancels;
-  const months = ['May','Jun','Jul','Aug','Sep'];
-
+  const c = STATE.cancels, months = ['May','Jun','Jul','Aug','Sep'];
   if (!c || !c.by_month) {
-    document.getElementById('cancelTableBody').innerHTML =
-      `<tr><td colspan="10" style="text-align:center;color:var(--text3);padding:18px;">
-        No cancellation data yet — accumulates from daily pipeline runs
-      </td></tr>`;
+    document.getElementById('cancelTableBody').innerHTML = `<tr><td colspan="10" style="text-align:center;color:var(--text3);padding:18px;">No cancellation data yet</td></tr>`;
     document.getElementById('cancelTableFoot').innerHTML = '';
     return;
   }
-
   const bm = c.by_month;
   let totNights=0, totCount=0, totFees=0, totLost=0;
-
-  // Look up 2025 same-date cancel rates dynamically from CANCELS25_BY_DATE
-  // Key = report_date (2026) → equivalent 2025 cancel history through that date
-  const snapKey  = c.report_date || STATE.snapshotDate || '2026-04-01';
-  const c25today = CANCELS25_BY_DATE[snapKey] || CANCELS25_BY_DATE['2026-04-01'];
-
+  const snapKey = c.report_date || STATE.snapshotDate || '2026-04-01';
+  const c25keys = Object.keys(CANCELS25_BY_DATE).sort();
+  let bestKey = c25keys[0];
+  for (const k of c25keys) { if (k <= snapKey) bestKey = k; else break; }
+  const c25today = CANCELS25_BY_DATE[bestKey] || CANCELS25_BY_DATE['2026-04-01'];
   const rows = months.map((m, i) => {
-    const mo      = bm[m] || { nights:0, fees:0, lost:0, count:0 };
-    const c25sd   = c25today[m] || {};
-    const c25fl   = BASE.cancels25[m] || {};
-    const ob      = STATE.onBooks26[i];
-    const rate26  = ob > 0 ? (mo.nights / ob * 100) : 0;
-    const rate25sd = c25sd.r || 0;
-    const rate25fl = c25fl.rate || 0;
-    const recovery = mo.lost > 0 ? (mo.fees / mo.lost * 100) : 0;
-
-    // Color 2026 rate vs same-date 2025 (better = green, worse = red)
-    const rateColor = rate26 === 0 ? 'var(--text3)'
-                    : rate26 < rate25sd ? C.green
-                    : rate26 > rate25sd * 1.15 ? C.red : C.amber;
-
-    totNights += mo.nights;
-    totCount  += mo.count;
-    totFees   += mo.fees;
-    totLost   += mo.lost;
-
-    return `<tr>
-      <td>${m}</td>
-      <td>${fmtComma(mo.nights)}</td>
-      <td>${fmtComma(mo.count)}</td>
-      <td>${fmtComma(ob)}</td>
-      <td><span style="color:${rateColor}">${rate26 > 0 ? rate26.toFixed(1)+'%' : '—'}</span></td>
-      <td style="color:var(--text3)">${rate25sd.toFixed(1)}%</td>
-      <td style="color:var(--text3)">${rate25fl.toFixed(1)}%</td>
-      <td style="color:var(--green)">$${Math.round(mo.fees).toLocaleString()}</td>
-      <td style="color:var(--red)">$${Math.round(mo.lost).toLocaleString()}</td>
-      <td>${mo.lost > 0 ? (mo.fees/mo.lost*100).toFixed(1)+'%' : '—'}</td>
-    </tr>`;
+    const mo = bm[m] || { nights:0, fees:0, lost:0, count:0 };
+    const c25sd = c25today[m] || {}, c25fl = BASE.cancels25[m] || {};
+    const ob = STATE.onBooks26[i], rate26 = ob > 0 ? (mo.nights / ob * 100) : 0;
+    const rate25sd = c25sd.r || 0, rate25fl = c25fl.rate || 0;
+    const rateColor = rate26 === 0 ? 'var(--text3)' : rate26 < rate25sd ? C.green : rate26 > rate25sd * 1.15 ? C.red : C.amber;
+    totNights += mo.nights; totCount += mo.count; totFees += mo.fees; totLost += mo.lost;
+    return `<tr><td>${m}</td><td>${fmtComma(mo.nights)}</td><td>${fmtComma(mo.count)}</td><td>${fmtComma(ob)}</td><td><span style="color:${rateColor}">${rate26 > 0 ? rate26.toFixed(1)+'%' : '—'}</span></td><td style="color:var(--text3)">${rate25sd.toFixed(1)}%</td><td style="color:var(--text3)">${rate25fl.toFixed(1)}%</td><td style="color:var(--green)">$${Math.round(mo.fees).toLocaleString()}</td><td style="color:var(--red)">$${Math.round(mo.lost).toLocaleString()}</td><td>${mo.lost > 0 ? (mo.fees/mo.lost*100).toFixed(1)+'%' : '—'}</td></tr>`;
   }).join('');
-
-  const totOb       = STATE.onBooks26.reduce((a,b)=>a+b,0);
-  const totRate26   = totOb > 0 ? (totNights / totOb * 100).toFixed(1) : '—';
-  const totRecovery = totLost > 0 ? (totFees / totLost * 100).toFixed(1) : '—';
-
+  const totOb = STATE.onBooks26.reduce((a,b)=>a+b,0), totRate26 = totOb > 0 ? (totNights / totOb * 100).toFixed(1) : '—', totRecovery = totLost > 0 ? (totFees / totLost * 100).toFixed(1) : '—';
   document.getElementById('cancelTableBody').innerHTML = rows;
-  document.getElementById('cancelTableFoot').innerHTML = `<tr>
-    <td>Total</td>
-    <td>${fmtComma(totNights)}</td>
-    <td>${fmtComma(totCount)}</td>
-    <td>${fmtComma(totOb)}</td>
-    <td>${totRate26}%</td>
-    <td style="color:var(--text3)">8.4% avg</td>
-    <td style="color:var(--text3)">18.8% avg</td>
-    <td style="color:var(--green)">$${Math.round(totFees).toLocaleString()}</td>
-    <td style="color:var(--red)">$${Math.round(totLost).toLocaleString()}</td>
-    <td>${totRecovery}%</td>
-  </tr>`;
-
-  // Update method box with dynamic dates derived from report_date
-  const mb = document.getElementById('cancelMethodBox');
-  if (mb) {
-    let reportLabel = 'latest pipeline run';
-    let sameDate25Label = 'same date in 2025';
-    if (c.report_date) {
-      const rd = new Date(c.report_date + 'T12:00:00');
-      reportLabel = rd.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
-      const rd25 = new Date(rd);
-      rd25.setFullYear(rd25.getFullYear() - 1);
-      sameDate25Label = rd25.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
-    }
-    mb.innerHTML = `<strong style="color:var(--text2)">'25 rate @ same date</strong> = cumulative 2025 cancels through the equivalent point in the booking cycle, vs 2025 on-books at that date — apples-to-apples operational comparison. <strong style="color:var(--text2)">'25 final rate</strong> = full 2025 season cancelled nights vs final actual nights — projection benchmark. 2026 rate colored vs same-date 2025 (green = running cooler, red = running hotter).`;
-  }
+  document.getElementById('cancelTableFoot').innerHTML = `<tr><td>Total</td><td>${fmtComma(totNights)}</td><td>${fmtComma(totCount)}</td><td>${fmtComma(totOb)}</td><td>${totRate26}%</td><td style="color:var(--text3)">8.4% avg</td><td style="color:var(--text3)">18.8% avg</td><td style="color:var(--green)">$${Math.round(totFees).toLocaleString()}</td><td style="color:var(--red)">$${Math.round(totLost).toLocaleString()}</td><td>${totRecovery}%</td></tr>`;
 }
 
 function renderOctober() {
-  // 2026 Oct on books — comes from snapshot by_site_type totals for Oct
-  // For now use STATE.oct26 if set, otherwise show placeholder
-  const ob26 = STATE.oct26 || 107; // seeded from Apr 2 report
-  const rate26 = STATE.rate26;
-  const rev26 = Math.round(ob26 * rate26);
-  const vs25 = ((ob26 / 1225 - 1) * 100).toFixed(1);
-  const vsColor = parseFloat(vs25) >= 0 ? C.green : C.red;
-
+  const ob26 = STATE.oct26 || 107, rate26 = STATE.rate26, rev26 = Math.round(ob26 * rate26);
+  const vs25 = ((ob26 / 1225 - 1) * 100).toFixed(1), vsColor = parseFloat(vs25) >= 0 ? C.green : C.red;
   document.getElementById('oct-ob26').textContent = ob26.toLocaleString();
-  document.getElementById('oct-ob26-delta').innerHTML =
-    `<span style="color:${vsColor}">${parseFloat(vs25)>=0?'+':''}${vs25}% vs 2025 final (1,225)</span>`;
+  document.getElementById('oct-ob26-delta').innerHTML = `<span style="color:${vsColor}">${parseFloat(vs25)>=0?'+':''}${vs25}% vs 2025 final (1,225)</span>`;
   document.getElementById('oct-rev26').textContent = '$' + Math.round(rev26/1000) + 'K';
-  document.getElementById('oct-rev26-delta').innerHTML =
-    `<span class="neu">@ $${rate26.toFixed(2)}/night blended rate</span>`;
-
-  // 2025 Oct fill curve chart
-  const octDates = [
-    ['Jun 24',356],['Jun 25',359],['Jun 28',359],['Jul 3',362],['Jul 6',362],
-    ['Jul 9',363],['Jul 14',363],['Jul 17',365],['Jul 20',371],['Jul 23',379],
-    ['Jul 26',387],['Jul 29',403],['Aug 1',397],['Aug 4',406],['Aug 7',414],
-    ['Aug 11',430],['Aug 14',436],['Aug 17',446],['Aug 20',453],['Aug 23',476],
-    ['Aug 24',478],['Aug 27',488],['Aug 30',498],['Sep 2',522],['Sep 4',539],
-    ['Sep 7',573],['Sep 16',647],['Sep 18',654],['Sep 21',713],['Sep 25',773],
-    ['Sep 28',830],['Oct 1',926],['Oct 5',1053],['Oct 8',1139],['Oct 11',1205],
-    ['Oct 14',1223],['Oct 16',1225],
-  ];
-  mkChart('chartOctFill', {
-    type: 'line',
-    data: {
-      labels: octDates.map(([d]) => d),
-      datasets: [{
-        label: 'Oct 2025 on books',
-        data: octDates.map(([,v]) => v),
-        borderColor: C.amber, backgroundColor: 'rgba(232,160,48,0.08)',
-        tension: 0.3, pointRadius: 2, borderWidth: 2, fill: true,
-      }]
-    },
-    options: {
-      ...baseOpts(),
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'#5a5856',font:{size:9,family:'DM Mono'},maxRotation:40} },
-        y: { grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'#5a5856',font:{size:10,family:'DM Mono'}} }
-      }
-    }
-  });
+  document.getElementById('oct-rev26-delta').innerHTML = `<span class="neu">@ $${rate26.toFixed(2)}/night blended rate</span>`;
+  const octDates = [['Jun 24',356],['Jun 25',359],['Jun 28',359],['Jul 3',362],['Jul 6',362],['Jul 9',363],['Jul 14',363],['Jul 17',365],['Jul 20',371],['Jul 23',379],['Jul 26',387],['Jul 29',403],['Aug 1',397],['Aug 4',406],['Aug 7',414],['Aug 11',430],['Aug 14',436],['Aug 17',446],['Aug 20',453],['Aug 23',476],['Aug 24',478],['Aug 27',488],['Aug 30',498],['Sep 2',522],['Sep 4',539],['Sep 7',573],['Sep 16',647],['Sep 18',654],['Sep 21',713],['Sep 25',773],['Sep 28',830],['Oct 1',926],['Oct 5',1053],['Oct 8',1139],['Oct 11',1205],['Oct 14',1223],['Oct 16',1225]];
+  mkChart('chartOctFill', { type:'line', data:{ labels:octDates.map(([d])=>d), datasets:[{ label:'Oct 2025 on books', data:octDates.map(([,v])=>v), borderColor:C.amber, backgroundColor:'rgba(232,160,48,0.08)', tension:0.3, pointRadius:2, borderWidth:2, fill:true }] }, options:{ ...baseOpts(), plugins:{legend:{display:false}}, scales:{ x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a5856',font:{size:9,family:'DM Mono'},maxRotation:40}}, y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a5856',font:{size:10,family:'DM Mono'}}} } } });
 }
 
 function refreshAll() {
-  renderKPIs();
-  renderAlert();
-  renderPacingBar();
-  renderRevRangeBars();
-  renderFillPctBars();
-  renderSiteRatioChart();
-  renderMomentum();
-  renderCancels();
+  renderKPIs(); renderAlert(); renderPacingBar(); renderRevRangeBars();
+  renderFillPctBars(); renderSiteRatioChart(); renderMomentum(); renderCancels();
 }
 
-// DRAG AND DROP
 document.addEventListener('dragover', e => { e.preventDefault(); document.getElementById('dropOverlay').classList.add('active'); });
 document.addEventListener('dragleave', e => { if (!e.relatedTarget) document.getElementById('dropOverlay').classList.remove('active'); });
 document.addEventListener('drop', e => {
@@ -1795,16 +978,8 @@ document.addEventListener('drop', e => {
   if (files.length) { document.getElementById('processingOverlay').classList.add('active'); setTimeout(()=>processFiles(files),100); }
 });
 
-// ══════════════════════════════════════════════════════════════════════════
-// GOOGLE DRIVE AUTO-FETCH (Netlify version — direct public Drive URLs)
-// No Google account required. Files must be shared "Anyone with the link".
-// To get the fetch URL for a Drive file:
-//   Drive file ID → https://drive.google.com/uc?export=download&id=FILE_ID
-// ══════════════════════════════════════════════════════════════════════════
-
 function setDriveStatus(state, msg) {
-  const spinner = document.getElementById('driveSpinner');
-  const text    = document.getElementById('driveStatusText');
+  const spinner = document.getElementById('driveSpinner'), text = document.getElementById('driveStatusText');
   if (!spinner || !text) return;
   spinner.style.display = 'none';
   text.textContent = msg;
@@ -1814,137 +989,116 @@ function setDriveStatus(state, msg) {
 async function loadFromDrive() {
   setDriveStatus('info', 'Fetching…');
   try {
-    // Route through Netlify Function (GET) — it fetches all Drive files server-side
-    // using env vars, avoiding CORS and exposing no file IDs in the browser.
     const resp = await fetch('/.netlify/functions/ask-question');
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const payload = await resp.json();
-
     const snap = payload.snapshot;
-    if (!snap) {
-      setDriveStatus('warn', 'No snapshot data yet');
-      refreshAll();
-      return;
-    }
-
+    if (!snap) { setDriveStatus('warn', 'No snapshot data yet'); refreshAll(); return; }
     const months = ['May','Jun','Jul','Aug','Sep'];
     const newNights = months.map(m => snap.totals?.[m] || 0);
     if (newNights.some(v => v > 0)) {
-      STATE.onBooks26       = newNights;
-      STATE.rate26          = snap.blended_rate > 0 ? snap.blended_rate : STATE.rate26;
-      STATE.totalRevenue26  = snap.total_revenue || 0;
-      STATE.snapshotDate    = snap.snapshot_date;
-      STATE.oct26           = snap.totals?.Oct || STATE.oct26;
-
-      // Compute per-month blended rate from snapshot revenue ÷ nights
-      // Falls back to 2025 rate for that month if data missing
+      STATE.onBooks26      = newNights;
+      STATE.rate26         = snap.blended_rate > 0 ? snap.blended_rate : STATE.rate26;
+      STATE.totalRevenue26 = snap.total_revenue || 0;
+      STATE.snapshotDate   = snap.snapshot_date;
+      STATE.oct26          = snap.totals?.Oct || STATE.oct26;
       if (snap.revenue) {
         STATE.rate26ByMonth = months.map((m, i) => {
-          const n = snap.totals?.[m] || 0;
-          const r = snap.revenue?.[m] || 0;
+          const n = snap.totals?.[m] || 0, r = snap.revenue?.[m] || 0;
           return (n > 0 && r > 0) ? Math.round(r / n * 100) / 100 : BASE.rate25[i];
         });
       }
       document.getElementById('lastUpdated').textContent = 'Snapshot: ' + snap.snapshot_date;
       setDriveStatus('ok', 'Live · ' + snap.snapshot_date);
-
-      // Merge Drive history into STATE.snapshotHistory (Drive overrides seed for same dates)
       if (snap.history && snap.history.length) {
         const merged = {};
         STATE.snapshotHistory.forEach(h => merged[h.date] = h);
         snap.history.forEach(h => merged[h.date] = h);
         STATE.snapshotHistory = Object.values(merged).sort((a,b) => a.date.localeCompare(b.date));
       }
-      // Always ensure today's live data is in history
-      const todayEntry = {
-        date: snap.snapshot_date, total: snap.total_nights,
-        May: snap.totals?.May||0, Jun: snap.totals?.Jun||0, Jul: snap.totals?.Jul||0,
-        Aug: snap.totals?.Aug||0, Sep: snap.totals?.Sep||0, Oct: snap.totals?.Oct||0,
-      };
+      const todayEntry = { date: snap.snapshot_date, total: snap.total_nights, May: snap.totals?.May||0, Jun: snap.totals?.Jun||0, Jul: snap.totals?.Jul||0, Aug: snap.totals?.Aug||0, Sep: snap.totals?.Sep||0, Oct: snap.totals?.Oct||0, revenue: snap.total_revenue||0 };
       STATE.snapshotHistory = STATE.snapshotHistory.filter(h => h.date !== snap.snapshot_date);
       STATE.snapshotHistory.push(todayEntry);
       STATE.snapshotHistory.sort((a,b) => a.date.localeCompare(b.date));
-
-      // Update per-site-type nights and rates from snapshot by_site_type
-      // New Code.gs structure: by_site_type[cls][month] = {nights, rev}
-      // Falls back gracefully to old structure (plain number) if pipeline hasn't updated yet
       const bst = snap.by_site_type || {};
-
-      const sumNights = obj => {
-        if (!obj) return 0;
-        return months.reduce((a,m) => {
-          const v = obj[m];
-          return a + (v && typeof v === 'object' ? (v.nights||0) : (v||0));
-        }, 0);
-      };
-      const sumRev = obj => {
-        if (!obj) return 0;
-        return months.reduce((a,m) => {
-          const v = obj[m];
-          return a + (v && typeof v === 'object' ? (v.rev||0) : 0);
-        }, 0);
-      };
-      const calcRate = (obj, fallback) => {
-        const n = sumNights(obj), r = sumRev(obj);
-        return (n > 0 && r > 0) ? Math.round(r / n * 100) / 100 : fallback;
-      };
-
+      const sumNights = obj => { if (!obj) return 0; return months.reduce((a,m) => { const v = obj[m]; return a + (v && typeof v === 'object' ? (v.nights||0) : (v||0)); }, 0); };
+      const sumRev = obj => { if (!obj) return 0; return months.reduce((a,m) => { const v = obj[m]; return a + (v && typeof v === 'object' ? (v.rev||0) : 0); }, 0); };
+      const calcRate = (obj, fallback) => { const n = sumNights(obj), r = sumRev(obj); return (n > 0 && r > 0) ? Math.round(r / n * 100) / 100 : fallback; };
       const keys = ['Presidential','Prem Pull-Thru','Pull-Thru','Prem Back-In','Back-In','Forest Back-In','Prem Forest','Cabin'];
-      const rate25fallback = STATE.siteTypes.rate25;
-
       STATE.siteTypes.nights26 = keys.map(k => sumNights(bst[k]));
-      STATE.siteTypes.rate26   = keys.map((k,i) => calcRate(bst[k], rate25fallback[i]));
-    } else {
-      setDriveStatus('warn', 'Snapshot empty — using baseline');
-    }
-
-    // Parse cancellation data
+      STATE.siteTypes.rate26   = keys.map((k,i) => calcRate(bst[k], STATE.siteTypes.rate25[i]));
+    } else { setDriveStatus('warn', 'Snapshot empty — using baseline'); }
     const cancelData = payload.cancellation;
     if (cancelData && cancelData.by_month) {
-      STATE.cancels = {
-        total:      cancelData.row_count    || 0,
-        totalFees:  cancelData.total_cancel_fees  || 0,
-        totalLost:  cancelData.total_lost_revenue || 0,
-        by_month:   cancelData.by_month,
-        row_count:  cancelData.row_count    || 0,
-        report_date: cancelData.report_date || null,
-      };
+      STATE.cancels = { total: cancelData.row_count||0, totalFees: cancelData.total_cancel_fees||0, totalLost: cancelData.total_lost_revenue||0, by_month: cancelData.by_month, row_count: cancelData.row_count||0, report_date: cancelData.report_date||null };
     }
     refreshAll();
-  } catch (err) {
-    setDriveStatus('error', 'Fetch failed: ' + err.message);
-    refreshAll();
-  }
+  } catch (err) { setDriveStatus('error', 'Fetch failed: ' + err.message); refreshAll(); }
 }
 
-// Initialize late fill explainer and sync overview toggle
-const lfEl = document.getElementById('lfExplainer');
-if (lfEl) lfEl.textContent = LF_EXPLAINER['snapshot'];
-const ovSnap = document.getElementById('ov-lf-snapshot');
-if (ovSnap) ovSnap.classList.add('active');
-async function askQuestion() {
+// ── FLOATING ASK PANEL ────────────────────────────────────────────────────
+let askOpen = false;
+let askHistory = [];
+let askThinking = false;
+
+function toggleAskPanel() {
+  askOpen = !askOpen;
+  document.getElementById('askPanel').classList.toggle('open', askOpen);
+  if (askOpen) setTimeout(() => document.getElementById('askInput').focus(), 180);
+}
+
+function clearAskChat() {
+  askHistory = [];
+  const msgs = document.getElementById('askMessages');
+  msgs.innerHTML = '<div class="ask-msg assistant">Chat cleared. Ask me anything about your pacing data.</div>';
+}
+
+function appendAskMsg(role, text, cls) {
+  const msgs = document.getElementById('askMessages');
+  const div = document.createElement('div');
+  div.className = 'ask-msg ' + (cls || role);
+  div.textContent = text;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+async function sendAskMessage() {
+  if (askThinking) return;
   const input = document.getElementById('askInput');
-  const answer = document.getElementById('askAnswer');
   const q = input.value.trim();
   if (!q) return;
-  answer.style.color = 'var(--text3)';
-  answer.textContent = 'Thinking…';
+  input.value = '';
+  input.disabled = true;
+  document.getElementById('askSendBtn').disabled = true;
+  askThinking = true;
+  appendAskMsg('user', q);
+  askHistory.push({ role: 'user', content: q });
+  const thinkingDiv = appendAskMsg('assistant', 'Thinking\u2026', 'assistant thinking');
   try {
     const resp = await fetch('/.netlify/functions/ask-question', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages: [{ role: 'user', content: q }] }),
+      body: JSON.stringify({ messages: askHistory }),
     });
+    thinkingDiv.remove();
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const data = await resp.json();
-    answer.style.color = 'var(--text2)';
-    answer.textContent = data.reply || 'No response received.';
+    const reply = data.reply || 'No response received.';
+    appendAskMsg('assistant', reply);
+    askHistory.push({ role: 'assistant', content: reply });
   } catch (err) {
-    answer.style.color = 'var(--red)';
-    answer.textContent = 'Error: ' + err.message;
+    thinkingDiv.remove();
+    appendAskMsg('error', 'Error: ' + err.message);
+  } finally {
+    input.disabled = false;
+    document.getElementById('askSendBtn').disabled = false;
+    askThinking = false;
+    input.focus();
   }
 }
-// Kick off Drive fetch on load (replaces bare refreshAll() call)
+
+// Kick off Drive fetch on load
 loadFromDrive();
 </script>
 </body>
