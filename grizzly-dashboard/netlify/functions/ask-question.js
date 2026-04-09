@@ -3,7 +3,7 @@
 // POST → answers chat questions using Claude
 
 // !! IMPORTANT: Replace this with your Apps Script /exec URL after deploying Code.gs !!
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyrFKRzmw6_N91tFYoxfDzPmSvsyjnVUL1T5aLWXPzcxy7_ko1PlYNPThx6P3l_Su-WCQ/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyrFKRznw6_N91tFYoxfDzPmSvsyjnVUL1T5aLWXPzcxy7_ko1PlYNPThx6P3l_Su-WCQ/exec';
 
 const PARK_CONTEXT_STATIC = `
 You are a data analyst assistant for Yellowstone Grizzly RV Park in West Yellowstone, MT.
