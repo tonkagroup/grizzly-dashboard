@@ -860,12 +860,18 @@ function lookupFC25(isoDate) {
   const target = new Date(isoDate);
   if (target <= new Date(FC25_EARLIEST)) return { val: FC25_TOTALS[FC25_EARLIEST], date: FC25_EARLIEST, clamped: true };
   if (target >= new Date(FC25_LATEST))   return { val: FC25_TOTALS[FC25_LATEST],   date: FC25_LATEST,   clamped: true };
-  // Linear interpolation between bracketing anchor dates
   let loDat = FC25_DATES[0], hiDat = FC25_DATES[FC25_DATES.length - 1];
   for (let i = 0; i < FC25_DATES.length - 1; i++) {
     if (new Date(FC25_DATES[i]) <= target && target <= new Date(FC25_DATES[i+1])) {
       loDat = FC25_DATES[i]; hiDat = FC25_DATES[i+1]; break;
     }
+  }
+  const lo = new Date(loDat), hi = new Date(hiDat);
+  const t = (target - lo) / (hi - lo);
+  const val = Math.round(FC25_TOTALS[loDat] + t * (FC25_TOTALS[hiDat] - FC25_TOTALS[loDat]));
+  const nearerDate = (target - lo) <= (hi - target) ? loDat : hiDat;
+  return { val, date: nearerDate, clamped: true };
+}
   }
   const lo = new Date(loDat), hi = new Date(hiDat);
   const t = (target - lo) / (hi - lo);
@@ -886,14 +892,17 @@ function renderMomentum() {
   function dateMinus(dateStr, n) { const d = new Date(dateStr + 'T12:00:00'); d.setDate(d.getDate() - n); return d.toISOString().slice(0, 10); }
   const MONTHS = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   function fmt(dateStr) { const [, m, dy] = dateStr.split('-'); return `${MONTHS[+m]} ${+dy}`; }
-  function get2025data(snapDate, windowDays) {
+function get2025data(snapDate, windowDays) {
     const end25 = dateMinus(snapDate, 365), start25 = dateMinus(end25, windowDays);
     const endLookup = lookupFC25(end25), startLookup = lookupFC25(start25);
     const nights = Math.max(0, endLookup.val - startLookup.val);
-    const endByMonth = FC25_BY_MONTH[endLookup.date] || [0,0,0,0,0];
-    const startByMonth = FC25_BY_MONTH[startLookup.date] || [0,0,0,0,0];
+    // Distribute the interpolated night delta across months using the nearer anchor's mix, then apply 2025 ADR
+    const mix = FC25_BY_MONTH[endLookup.date] || [0,0,0,0,0];
+    const mixTotal = mix.reduce((a,b) => a+b, 0);
     let revenue = 0;
-    for (let i = 0; i < 5; i++) revenue += Math.max(0, (endByMonth[i]||0) - (startByMonth[i]||0)) * BASE.rate25[i];
+    if (mixTotal > 0) {
+      for (let i = 0; i < 5; i++) revenue += (mix[i] / mixTotal) * nights * BASE.rate25[i];
+    }
     return { nights, revenue: Math.round(revenue), startDate: startLookup.date, endDate: endLookup.date };
   }
   const date1ago = dateMinus(snapDate, 1), date8ago = dateMinus(snapDate, 8), date31ago = dateMinus(snapDate, 31);
