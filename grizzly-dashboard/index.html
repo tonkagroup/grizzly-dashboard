@@ -858,9 +858,21 @@ function get2025Equivalent(snapshotDate2026) {
 function lookupFC25(isoDate) {
   if (FC25_TOTALS[isoDate] !== undefined) return { val: FC25_TOTALS[isoDate], date: isoDate, clamped: false };
   const target = new Date(isoDate);
-  let bestDate = null, bestDelta = Infinity;
-  for (const d of FC25_DATES) { const delta = Math.abs(new Date(d) - target); if (delta < bestDelta) { bestDelta = delta; bestDate = d; } }
-  return { val: FC25_TOTALS[bestDate], date: bestDate, clamped: true };
+  if (target <= new Date(FC25_EARLIEST)) return { val: FC25_TOTALS[FC25_EARLIEST], date: FC25_EARLIEST, clamped: true };
+  if (target >= new Date(FC25_LATEST))   return { val: FC25_TOTALS[FC25_LATEST],   date: FC25_LATEST,   clamped: true };
+  // Linear interpolation between bracketing anchor dates
+  let loDat = FC25_DATES[0], hiDat = FC25_DATES[FC25_DATES.length - 1];
+  for (let i = 0; i < FC25_DATES.length - 1; i++) {
+    if (new Date(FC25_DATES[i]) <= target && target <= new Date(FC25_DATES[i+1])) {
+      loDat = FC25_DATES[i]; hiDat = FC25_DATES[i+1]; break;
+    }
+  }
+  const lo = new Date(loDat), hi = new Date(hiDat);
+  const t = (target - lo) / (hi - lo);
+  const val = Math.round(FC25_TOTALS[loDat] + t * (FC25_TOTALS[hiDat] - FC25_TOTALS[loDat]));
+  // For the returned .date, pick the nearer anchor (used for FC25_BY_MONTH lookup — nearest-neighbor is fine there)
+  const nearerDate = (target - lo) <= (hi - target) ? loDat : hiDat;
+  return { val, date: nearerDate, clamped: true };
 }
 
 function renderMomentum() {
