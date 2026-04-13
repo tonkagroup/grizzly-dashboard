@@ -865,13 +865,7 @@ function lookupFC25(isoDate) {
     if (new Date(FC25_DATES[i]) <= target && target <= new Date(FC25_DATES[i+1])) {
       loDat = FC25_DATES[i]; hiDat = FC25_DATES[i+1]; break;
     }
-  }
-  const lo = new Date(loDat), hi = new Date(hiDat);
-  const t = (target - lo) / (hi - lo);
-  const val = Math.round(FC25_TOTALS[loDat] + t * (FC25_TOTALS[hiDat] - FC25_TOTALS[loDat]));
-  const nearerDate = (target - lo) <= (hi - target) ? loDat : hiDat;
-  return { val, date: nearerDate, clamped: true };
-}
+ 
   }
   const lo = new Date(loDat), hi = new Date(hiDat);
   const t = (target - lo) / (hi - lo);
