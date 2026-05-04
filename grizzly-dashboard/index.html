@@ -187,8 +187,8 @@ input[type=file] { display: none; }
     <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
     <button class="tab-btn" onclick="switchTab('sitetype')">Site mix</button>
     <button class="tab-btn" onclick="switchTab('projections')">Projections</button>
-    <button class="tab-btn" onclick="switchTab('october')">October</button>
-  </div>
+<button class="tab-btn" onclick="switchTab('october')">October</button>
+<button class="tab-btn" onclick="switchTab('curve')">Booking Curve</button>  </div>
 
   <!-- OVERVIEW -->
   <div class="tab-panel active" id="tab-overview">
@@ -326,6 +326,783 @@ input[type=file] { display: none; }
       <strong>Why October is separate:</strong> Oct is a shoulder month (season closes Oct 15). In 2025, zero Oct nights were on books at Mar 27. Watch this tab from July onward when Oct 2026 bookings start to accumulate meaningfully.
     </div>
   </div>
+<!--
+  ============================================================
+  BOOKING CURVE TAB — Yellowstone Grizzly RV Park Dashboard
+  ============================================================
+  DROP-IN TAB for grizzly-dashboard/index.html
+
+  INTEGRATION STEPS:
+  1. Add tab button (search for your existing tab nav, add alongside Overview/Site mix/Projections/October):
+       <button class="tab-btn" onclick="showTab('curve')">Booking Curve</button>
+
+  2. Paste this entire block inside your main content area, alongside the other tab sections:
+       <div id="tab-curve" class="tab-section" style="display:none;">
+         ... (everything below the integration comments) ...
+       </div>
+
+  3. In your showTab() function, add 'curve' to the list of tab IDs to hide/show.
+
+  4. Replace CURVE_LIVE_DATA below with a call to STATE.snapshotHistory
+     (the history array from snapshot_latest.json) after your existing
+     data load completes. See "WIRING TO LIVE DATA" comment block.
+
+  5. The 2025 curves use FC25_TOTALS + FC25_BY_MONTH already defined
+     in your index.html — this tab references them directly (no duplication).
+
+  WHAT THIS TAB SHOWS:
+  - Pick any stay date May 1 – Sep 30
+  - See a line chart of "nights booked for that date" over time (as-of date)
+  - 2026 actual line (blue) vs 2025 estimated line (gray dashed)
+  - Toggle x-axis: calendar date OR days-before-arrival
+  - Toggle y-axis: nights on books OR % fill (1 site = 1 night at 100%)
+  - KPI cards: today's 2026 reading, equivalent 2025 point, variance
+  ============================================================
+-->
+
+<!-- ── TAB SECTION WRAPPER ─────────────────────────────── -->
+<div id="tab-curve" class="tab-section" style="display:none; padding: 0 0 40px;">
+
+<style>
+/* Scoped to #tab-curve so nothing bleeds into other tabs */
+#tab-curve {
+  font-family: inherit;
+}
+#tab-curve .cv-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 20px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+#tab-curve .cv-title {
+  flex: 1;
+  min-width: 180px;
+}
+#tab-curve .cv-title h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #f5f0e8;
+  margin: 0 0 2px;
+  letter-spacing: -0.3px;
+}
+#tab-curve .cv-title p {
+  font-size: 12px;
+  color: rgba(245,240,232,0.45);
+  margin: 0;
+}
+#tab-curve .cv-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+#tab-curve .cv-ctrl-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+#tab-curve .cv-ctrl-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(245,240,232,0.4);
+}
+#tab-curve select.cv-select {
+  background: rgba(245,240,232,0.06);
+  border: 1px solid rgba(245,240,232,0.15);
+  border-radius: 6px;
+  color: #f5f0e8;
+  font-size: 13px;
+  padding: 6px 28px 6px 10px;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(245,240,232,0.4)'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  transition: border-color 0.15s, background 0.15s;
+}
+#tab-curve select.cv-select:hover {
+  border-color: rgba(245,240,232,0.3);
+  background-color: rgba(245,240,232,0.1);
+}
+#tab-curve select.cv-select option {
+  background: #1a1a1a;
+  color: #f5f0e8;
+}
+#tab-curve .cv-seg {
+  display: flex;
+  border: 1px solid rgba(245,240,232,0.15);
+  border-radius: 6px;
+  overflow: hidden;
+}
+#tab-curve .cv-seg button {
+  border: none;
+  background: transparent;
+  color: rgba(245,240,232,0.45);
+  font-size: 12px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+#tab-curve .cv-seg button:not(:last-child) {
+  border-right: 1px solid rgba(245,240,232,0.15);
+}
+#tab-curve .cv-seg button.cv-active {
+  background: rgba(214,160,60,0.18);
+  color: #d6a03c;
+  font-weight: 600;
+}
+#tab-curve .cv-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+  margin-bottom: 18px;
+}
+#tab-curve .cv-kpi {
+  background: rgba(245,240,232,0.04);
+  border: 1px solid rgba(245,240,232,0.09);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+#tab-curve .cv-kpi-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: rgba(245,240,232,0.38);
+  margin-bottom: 6px;
+}
+#tab-curve .cv-kpi-val {
+  font-size: 22px;
+  font-weight: 700;
+  color: #f5f0e8;
+  line-height: 1;
+  margin-bottom: 3px;
+}
+#tab-curve .cv-kpi-sub {
+  font-size: 11px;
+  color: rgba(245,240,232,0.4);
+}
+#tab-curve .cv-kpi.cv-up .cv-kpi-val   { color: #6ec98f; }
+#tab-curve .cv-kpi.cv-down .cv-kpi-val { color: #e07070; }
+#tab-curve .cv-chart-wrap {
+  position: relative;
+  width: 100%;
+  height: 340px;
+  margin-bottom: 6px;
+}
+#tab-curve .cv-legend {
+  display: flex;
+  gap: 18px;
+  font-size: 12px;
+  color: rgba(245,240,232,0.45);
+  margin-bottom: 14px;
+}
+#tab-curve .cv-legend-line {
+  display: inline-block;
+  width: 22px;
+  height: 2px;
+  vertical-align: middle;
+  margin-right: 5px;
+  position: relative;
+  top: -1px;
+}
+#tab-curve .cv-note {
+  font-size: 11px;
+  color: rgba(245,240,232,0.3);
+  margin-top: 8px;
+  line-height: 1.5;
+}
+#tab-curve .cv-date-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#tab-curve .cv-date-nav button {
+  background: rgba(245,240,232,0.06);
+  border: 1px solid rgba(245,240,232,0.15);
+  border-radius: 5px;
+  color: rgba(245,240,232,0.6);
+  font-size: 14px;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s;
+}
+#tab-curve .cv-date-nav button:hover {
+  background: rgba(245,240,232,0.12);
+  color: #f5f0e8;
+}
+</style>
+
+<!-- Header + Controls -->
+<div class="cv-header">
+  <div class="cv-title">
+    <h2>Booking Curve</h2>
+    <p>Nights on books for a specific stay date, tracked over time</p>
+  </div>
+  <div class="cv-controls">
+    <!-- Stay date picker -->
+    <div class="cv-ctrl-group">
+      <span class="cv-ctrl-label">Stay date</span>
+      <div class="cv-date-nav">
+        <button id="cvPrevDate" title="Previous date">&#8592;</button>
+        <select class="cv-select" id="cvDatePicker" style="min-width:140px;"></select>
+        <button id="cvNextDate" title="Next date">&#8594;</button>
+      </div>
+    </div>
+
+    <!-- X-axis toggle -->
+    <div class="cv-ctrl-group">
+      <span class="cv-ctrl-label">X-axis</span>
+      <div class="cv-seg" id="cvXSeg">
+        <button class="cv-active" data-v="calendar">Calendar date</button>
+        <button data-v="days">Days before arrival</button>
+      </div>
+    </div>
+
+    <!-- Metric toggle -->
+    <div class="cv-ctrl-group">
+      <span class="cv-ctrl-label">Metric</span>
+      <div class="cv-seg" id="cvMetricSeg">
+        <button class="cv-active" data-v="nights">Nights</button>
+        <button data-v="pct">% fill</button>
+      </div>
+    </div>
+
+    <!-- Window selector (calendar mode only) -->
+    <div class="cv-ctrl-group" id="cvWindowGroup">
+      <span class="cv-ctrl-label">Show from</span>
+      <select class="cv-select" id="cvWindowStart">
+        <option value="360">360 days out</option>
+        <option value="270">270 days out</option>
+        <option value="180">180 days out</option>
+        <option value="90" selected>90 days out</option>
+        <option value="60">60 days out</option>
+        <option value="30">30 days out</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- KPI Cards -->
+<div class="cv-kpis">
+  <div class="cv-kpi" id="cvKpi26">
+    <div class="cv-kpi-label">2026 as of today</div>
+    <div class="cv-kpi-val" id="cvKpi26Val">—</div>
+    <div class="cv-kpi-sub" id="cvKpi26Sub"></div>
+  </div>
+  <div class="cv-kpi" id="cvKpi25">
+    <div class="cv-kpi-label">2025 equivalent point</div>
+    <div class="cv-kpi-val" id="cvKpi25Val">—</div>
+    <div class="cv-kpi-sub" id="cvKpi25Sub"></div>
+  </div>
+  <div class="cv-kpi" id="cvKpiVar">
+    <div class="cv-kpi-label">Variance (nights)</div>
+    <div class="cv-kpi-val" id="cvKpiVarVal">—</div>
+    <div class="cv-kpi-sub" id="cvKpiVarSub"></div>
+  </div>
+  <div class="cv-kpi">
+    <div class="cv-kpi-label">Days until arrival</div>
+    <div class="cv-kpi-val" id="cvKpiDays">—</div>
+    <div class="cv-kpi-sub" id="cvKpiDaysSub"></div>
+  </div>
+</div>
+
+<!-- Legend -->
+<div class="cv-legend">
+  <span>
+    <span class="cv-legend-line" style="background:#4a9edd;"></span>2026 actual
+  </span>
+  <span>
+    <span class="cv-legend-line" style="background:rgba(180,180,170,0.6); border-top:2px dashed rgba(180,180,170,0.6); height:0;"></span>2025 estimate
+  </span>
+</div>
+
+<!-- Chart -->
+<div class="cv-chart-wrap">
+  <canvas id="cvChart"
+    role="img"
+    aria-label="Booking curve: nights on books for selected stay date over time, 2025 vs 2026">
+    Booking curve data for selected stay date.
+  </canvas>
+</div>
+
+<p class="cv-note" id="cvNote">
+  2025 line = FC25_BY_MONTH[month] ÷ days-in-month, interpolated daily.
+  Represents the average night in that month — not a per-date drill-down.
+  2026 line = actual snapshot history from snapshot_latest.json.
+</p>
+
+<!-- ── SCRIPT ──────────────────────────────────────────── -->
+<script>
+(function() {
+
+/* ============================================================
+   WIRING TO LIVE DATA
+   ============================================================
+   Replace CURVE_LIVE_DATA with your real snapshot history.
+   After your existing fetch/parse of snapshot_latest.json runs,
+   set window.CURVE_LIVE_DATA = STATE.snapshotHistory (or equivalent).
+   Each entry must have shape:
+     { date: "2026-04-14", May: 2350, Jun: 5410, Jul: 4680, Aug: 3040, Sep: 2650 }
+
+   The simplest approach: after your existing data load resolves,
+   call  window.cvReloadData && window.cvReloadData()
+   to re-render with live data.
+   ============================================================ */
+var CURVE_LIVE_DATA = [
+  {date:"2026-03-20",May:1320,Jun:3890,Jul:3210,Aug:2050,Sep:1820},
+  {date:"2026-03-27",May:1580,Jun:4210,Jul:3560,Aug:2240,Sep:2010},
+  {date:"2026-03-30",May:1680,Jun:4380,Jul:3690,Aug:2340,Sep:2090},
+  {date:"2026-04-01",May:1760,Jun:4520,Jul:3820,Aug:2430,Sep:2160},
+  {date:"2026-04-05",May:1940,Jun:4780,Jul:4060,Aug:2600,Sep:2310},
+  {date:"2026-04-06",May:1980,Jun:4840,Jul:4120,Aug:2640,Sep:2350},
+  {date:"2026-04-07",May:2020,Jun:4900,Jul:4180,Aug:2680,Sep:2390},
+  {date:"2026-04-08",May:2060,Jun:4960,Jul:4240,Aug:2720,Sep:2430},
+  {date:"2026-04-13",May:2290,Jun:5310,Jul:4590,Aug:2980,Sep:2600},
+  {date:"2026-04-14",May:2350,Jun:5410,Jul:4680,Aug:3040,Sep:2650}
+];
+
+/* When your real data loads, call this to refresh */
+window.cvReloadData = function(newHistory) {
+  if (newHistory) CURVE_LIVE_DATA = newHistory;
+  cvRender();
+};
+
+/* ── CONSTANTS ─────────────────────────────────────────── */
+var TODAY_2026 = "2026-04-14"; /* update this from STATE.snapshotDate */
+var DAYS_IN_MONTH = {May:31,Jun:30,Jul:31,Aug:31,Sep:30};
+var MONTH_STARTS_2026 = {May:"2026-05-01",Jun:"2026-06-01",Jul:"2026-07-01",Aug:"2026-08-01",Sep:"2026-09-01"};
+var MONTH_STARTS_2025 = {May:"2025-05-01",Jun:"2025-06-01",Jul:"2025-07-01",Aug:"2025-08-01",Sep:"2025-09-01"};
+
+/* Use the FC25 data already defined in index.html, or fall back to inline copy */
+var _FC25_TOTALS = (typeof FC25_TOTALS !== 'undefined') ? FC25_TOTALS : {
+  "2025-03-27":17562,"2025-03-28":17630,"2025-03-29":17688,"2025-03-30":17735,
+  "2025-03-31":17780,"2025-04-01":17831,"2025-04-02":17870,"2025-04-03":17911,
+  "2025-04-04":17952,"2025-04-05":17993,"2025-04-06":18034,"2025-04-07":18075,
+  "2025-04-08":18116,"2025-04-09":18157,"2025-04-10":18198,"2025-04-11":18779,
+  "2025-04-12":18817,"2025-04-13":18855,"2025-04-14":18893,"2025-04-15":18931,
+  "2025-04-17":18994,"2025-04-22":19166,"2025-04-28":19371,"2025-05-01":19517,
+  "2025-05-03":19582,"2025-05-10":19756,"2025-05-15":19887,"2025-05-20":20011,
+  "2025-05-25":20134,"2025-06-01":20356,"2025-06-10":20582,"2025-06-15":20712,
+  "2025-06-23":20867,"2025-06-26":20920,"2025-06-27":20935,"2025-06-29":20965,
+  "2025-07-01":21063,"2025-07-02":21082,"2025-07-10":21183,"2025-07-15":21234,
+  "2025-07-20":21285,"2025-07-25":21336,"2025-08-01":21465,"2025-08-15":21620,
+  "2025-09-01":22000,"2025-09-15":22200,"2025-10-01":22500
+};
+
+var _FC25_BY_MONTH = (typeof FC25_BY_MONTH !== 'undefined') ? FC25_BY_MONTH : {
+  "2025-03-27":[2377,5700,4407,2788,2478],
+  "2025-04-01":[2420,5750,4450,2810,2500],
+  "2025-04-11":[2445,5910,4770,2960,2680],
+  "2025-04-12":[2451,5924,4784,2973,2686],
+  "2025-04-13":[2454,5931,4794,2988,2690],
+  "2025-04-14":[2457,5938,4804,3003,2694],
+  "2025-04-15":[2460,5945,4814,3018,2698],
+  "2025-04-28":[2510,6020,4890,3080,2760],
+  "2025-05-01":[2540,6060,4920,3110,2790],
+  "2025-05-10":[2580,6120,4970,3150,2830],
+  "2025-06-01":[3200,6350,5100,3280,2900],
+  "2025-07-01":[3577,6600,5400,3500,3100],
+  "2025-08-01":[3577,6724,5750,3800,3350],
+  "2025-09-01":[3577,6724,6931,5900,3900],
+  "2025-10-01":[3577,6724,6931,6333,5800]
+};
+
+var FC25_DATE_KEYS = Object.keys(_FC25_TOTALS).sort();
+var FC25_BM_KEYS   = Object.keys(_FC25_BY_MONTH).sort();
+var MONTH_KEYS = ["May","Jun","Jul","Aug","Sep"];
+var MONTH_IDX  = {May:0,Jun:1,Jul:2,Aug:3,Sep:4};
+
+/* ── HELPERS ───────────────────────────────────────────── */
+function addDays(dateStr, n) {
+  var d = new Date(dateStr);
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0,10);
+}
+function diffDays(a, b) {
+  return Math.round((new Date(b).getTime() - new Date(a).getTime()) / 86400000);
+}
+function fmtDate(dateStr) {
+  var d = new Date(dateStr + 'T00:00:00Z');
+  return d.toLocaleDateString('en-US', {month:'short', day:'numeric', timeZone:'UTC'});
+}
+function fmtDateLong(dateStr) {
+  var d = new Date(dateStr + 'T00:00:00Z');
+  return d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric', timeZone:'UTC'});
+}
+function monthOf(dateStr) {
+  return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][
+    parseInt(dateStr.slice(5,7),10)-1
+  ];
+}
+
+function interpFC25Total(dateStr) {
+  if (_FC25_TOTALS[dateStr] !== undefined) return _FC25_TOTALS[dateStr];
+  var d = new Date(dateStr).getTime();
+  var before = null, after = null;
+  for (var i=0; i<FC25_DATE_KEYS.length; i++) {
+    var kd = new Date(FC25_DATE_KEYS[i]).getTime();
+    if (kd <= d) before = FC25_DATE_KEYS[i];
+    if (kd >= d && !after) after = FC25_DATE_KEYS[i];
+  }
+  if (!before) return _FC25_TOTALS[after];
+  if (!after)  return _FC25_TOTALS[before];
+  if (before===after) return _FC25_TOTALS[before];
+  var t0=new Date(before).getTime(), t1=new Date(after).getTime();
+  var frac=(d-t0)/(t1-t0);
+  return _FC25_TOTALS[before] + frac*(_FC25_TOTALS[after]-_FC25_TOTALS[before]);
+}
+
+function nearestBM(dateStr) {
+  var d = new Date(dateStr).getTime(), best=FC25_BM_KEYS[0], bestDist=Infinity;
+  for (var i=0;i<FC25_BM_KEYS.length;i++) {
+    var dist=Math.abs(new Date(FC25_BM_KEYS[i]).getTime()-d);
+    if (dist<bestDist){bestDist=dist;best=FC25_BM_KEYS[i];}
+  }
+  return _FC25_BY_MONTH[best];
+}
+
+/* Get estimated 2025 nights on books FOR A SPECIFIC MONTH on a given as-of date */
+function get25NightsForMonth(asOf25Str, month) {
+  var minDate = FC25_DATE_KEYS[0];
+  if (asOf25Str < minDate) return null;
+  var total = interpFC25Total(asOf25Str);
+  var bm    = nearestBM(asOf25Str);
+  var bmSum = bm.reduce(function(a,b){return a+b;},0) || 1;
+  return total * (bm[MONTH_IDX[month]] / bmSum);
+}
+
+/* Nights on books for a specific stay DATE in 2025 = monthly total / days in month */
+function get25NightsForDate(asOf25Str, stayDateStr) {
+  var month = monthOf(stayDateStr);
+  if (MONTH_IDX[month] === undefined) return null;
+  var monthTotal = get25NightsForMonth(asOf25Str, month);
+  if (monthTotal === null) return null;
+  return monthTotal / DAYS_IN_MONTH[month];
+}
+
+/* Get 2026 nights on books for a specific stay date from snapshot history */
+function get26NightsForDate(asOf26Str, stayDateStr) {
+  var month = monthOf(stayDateStr);
+  if (!month || MONTH_IDX[month] === undefined) return null;
+  if (asOf26Str > TODAY_2026) return null;
+
+  /* Find most recent snapshot at or before asOf26Str */
+  var sorted = CURVE_LIVE_DATA.slice().sort(function(a,b){return a.date<b.date?-1:1;});
+  var found = null;
+  for (var i=0;i<sorted.length;i++) {
+    if (sorted[i].date <= asOf26Str) found = sorted[i];
+  }
+  if (!found) return null;
+  var monthTotal = found[month];
+  if (monthTotal === undefined) return null;
+  return monthTotal / DAYS_IN_MONTH[month];
+}
+
+/* ── DATE PICKER POPULATION ────────────────────────────── */
+var stayDates = [];
+(function() {
+  var seasons = [
+    {start:"2026-05-01",end:"2026-09-30"}
+  ];
+  for (var s=0;s<seasons.length;s++) {
+    var cur = seasons[s].start;
+    while (cur <= seasons[s].end) {
+      stayDates.push(cur);
+      cur = addDays(cur,1);
+    }
+  }
+  var sel = document.getElementById('cvDatePicker');
+  var lastMonth = '';
+  for (var i=0;i<stayDates.length;i++) {
+    var d = stayDates[i];
+    var mo = monthOf(d);
+    var opt = document.createElement('option');
+    opt.value = d;
+    var day = parseInt(d.slice(8),10);
+    opt.textContent = mo + ' ' + day + ', 2026';
+    if (mo !== lastMonth) {
+      /* optgroup per month */
+      var og = document.createElement('optgroup');
+      og.label = mo + ' 2026';
+      sel.appendChild(og);
+      lastMonth = mo;
+    }
+    sel.lastChild.appendChild(opt);
+  }
+  /* Default to Jul 4 */
+  sel.value = '2026-07-04';
+})();
+
+/* ── CHART INSTANCE ────────────────────────────────────── */
+var cvChartInst = null;
+
+/* ── RENDER ────────────────────────────────────────────── */
+function cvRender() {
+  var stayDate = document.getElementById('cvDatePicker').value;
+  var xMode    = document.querySelector('#cvXSeg .cv-active').dataset.v;
+  var metric   = document.querySelector('#cvMetricSeg .cv-active').dataset.v;
+  var windowDays = parseInt(document.getElementById('cvWindowStart').value, 10);
+  var month    = monthOf(stayDate);
+
+  /* Show/hide window selector only in calendar mode */
+  document.getElementById('cvWindowGroup').style.display = xMode==='calendar' ? '' : 'none';
+
+  if (!month || MONTH_IDX[month]===undefined) return;
+
+  /* Determine equivalent 2025 stay date (1yr prior) */
+  var stayDate25 = addDays(stayDate, -365);
+
+  /* Arrival date for days-before calc */
+  var arrivalMs = new Date(stayDate).getTime();
+
+  /* Build x points */
+  var labels   = [];
+  var data26   = [];
+  var data25   = [];
+
+  if (xMode === 'calendar') {
+    /* Calendar date mode: iterate as-of dates from (stayDate - windowDays) to today (2026) */
+    var startAs26 = addDays(stayDate, -windowDays);
+    /* Don't start before our earliest 2026 snapshot */
+    var earliestSnap = CURVE_LIVE_DATA.length ? CURVE_LIVE_DATA.slice().sort(function(a,b){return a.date<b.date?-1:1;})[0].date : '2026-03-20';
+    if (startAs26 < earliestSnap) startAs26 = earliestSnap;
+    /* End: stayDate itself (day-of) */
+    var endAs26 = stayDate <= TODAY_2026 ? stayDate : TODAY_2026;
+
+    var cur26 = startAs26;
+    while (cur26 <= endAs26) {
+      labels.push(cur26);
+      var v26 = get26NightsForDate(cur26, stayDate);
+      var cur25 = addDays(cur26, -365);
+      var v25 = get25NightsForDate(cur25, stayDate25);
+
+      data26.push(v26 !== null ? +(metric==='pct' ? (v26/238*100) : v26).toFixed(2) : null);
+      data25.push(v25 !== null ? +(metric==='pct' ? (v25/238*100) : v25).toFixed(2) : null);
+      cur26 = addDays(cur26, 1);
+    }
+  } else {
+    /* Days-before-arrival mode: 360 → 0 */
+    var maxDaysOut = 360;
+    for (var dba = maxDaysOut; dba >= 0; dba--) {
+      labels.push(dba);
+      var as26 = addDays(stayDate, -dba);
+      var as25 = addDays(stayDate25, -dba);
+
+      var v26d = null;
+      if (as26 <= TODAY_2026) v26d = get26NightsForDate(as26, stayDate);
+      var v25d = get25NightsForDate(as25, stayDate25);
+
+      data26.push(v26d !== null ? +(metric==='pct' ? (v26d/238*100) : v26d).toFixed(2) : null);
+      data25.push(v25d !== null ? +(metric==='pct' ? (v25d/238*100) : v25d).toFixed(2) : null);
+    }
+  }
+
+  /* ── KPI cards ───────────────────────────────────────── */
+  var daysUntil = diffDays(TODAY_2026, stayDate);
+  document.getElementById('cvKpiDays').textContent = daysUntil > 0 ? daysUntil : (daysUntil===0 ? 'Today' : 'Past');
+  document.getElementById('cvKpiDaysSub').textContent = fmtDateLong(stayDate);
+
+  var cur26Latest  = get26NightsForDate(TODAY_2026, stayDate);
+  var equiv25AsOf  = addDays(TODAY_2026, -365);
+  var cur25Latest  = get25NightsForDate(equiv25AsOf, stayDate25);
+
+  var v26show = cur26Latest !== null ? (metric==='pct' ? (cur26Latest/238*100).toFixed(1)+'%' : cur26Latest.toFixed(2)+' nights') : '—';
+  var v25show = cur25Latest !== null ? (metric==='pct' ? (cur25Latest/238*100).toFixed(1)+'%' : cur25Latest.toFixed(2)+' nights') : '—';
+
+  document.getElementById('cvKpi26Val').textContent  = v26show;
+  document.getElementById('cvKpi26Sub').textContent  = 'snapshot: '+fmtDate(TODAY_2026);
+  document.getElementById('cvKpi25Val').textContent  = v25show;
+  document.getElementById('cvKpi25Sub').textContent  = 'as-of '+fmtDate(equiv25AsOf)+' 2025';
+
+  var kpiVarEl = document.getElementById('cvKpiVar');
+  kpiVarEl.className = 'cv-kpi';
+  if (cur26Latest !== null && cur25Latest !== null) {
+    var diff = cur26Latest - cur25Latest;
+    var diffShow = metric==='pct'
+      ? (diff>=0?'+':'')+((diff/238)*100).toFixed(1)+'%'
+      : (diff>=0?'+':'')+diff.toFixed(2)+' nights';
+    document.getElementById('cvKpiVarVal').textContent = diffShow;
+    document.getElementById('cvKpiVarSub').textContent = diff>=0 ? 'ahead of 2025' : 'behind 2025';
+    kpiVarEl.classList.add(diff>=0 ? 'cv-up' : 'cv-down');
+  } else {
+    document.getElementById('cvKpiVarVal').textContent = '—';
+    document.getElementById('cvKpiVarSub').textContent = '';
+  }
+
+  /* ── Chart.js ────────────────────────────────────────── */
+  var yLabel = metric==='pct' ? '% occupancy (1 site)' : 'Nights on books (avg for date)';
+  var xTitle = xMode==='calendar' ? '' : 'Days before arrival →';
+
+  /* Format x labels for calendar mode */
+  var displayLabels = labels.map(function(l) {
+    if (xMode==='calendar') {
+      /* Show month/day only */
+      var d = new Date(l+'T00:00:00Z');
+      return (d.getUTCMonth()+1)+'/'+(d.getUTCDate());
+    }
+    return l;
+  });
+
+  if (cvChartInst) { cvChartInst.destroy(); cvChartInst = null; }
+
+  cvChartInst = new Chart(document.getElementById('cvChart'), {
+    type: 'line',
+    data: {
+      labels: displayLabels,
+      datasets: [
+        {
+          label: '2026 actual',
+          data: data26,
+          borderColor: '#4a9edd',
+          backgroundColor: 'rgba(74,158,221,0.07)',
+          borderWidth: 2.5,
+          pointRadius: function(ctx) {
+            /* Slightly larger dot at most-recent 2026 point */
+            var last = data26.length - 1;
+            while (last >= 0 && data26[last] === null) last--;
+            return ctx.dataIndex === last ? 5 : 2;
+          },
+          pointBackgroundColor: '#4a9edd',
+          pointHoverRadius: 6,
+          tension: 0.35,
+          fill: false,
+          spanGaps: false,
+          borderDash: []
+        },
+        {
+          label: '2025 estimate',
+          data: data25,
+          borderColor: 'rgba(180,175,160,0.65)',
+          backgroundColor: 'rgba(180,175,160,0.04)',
+          borderWidth: 1.8,
+          pointRadius: 0,
+          pointHoverRadius: 4,
+          tension: 0.35,
+          fill: false,
+          spanGaps: true,
+          borderDash: [6,4]
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 250 },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(20,20,18,0.92)',
+          titleColor: '#f5f0e8',
+          bodyColor: 'rgba(245,240,232,0.7)',
+          borderColor: 'rgba(245,240,232,0.12)',
+          borderWidth: 1,
+          padding: 10,
+          callbacks: {
+            title: function(items) {
+              var raw = labels[items[0].dataIndex];
+              if (xMode==='calendar') return fmtDateLong(raw) + ' (as-of)';
+              return raw + ' days before ' + fmtDate(stayDate);
+            },
+            label: function(item) {
+              var v = item.raw;
+              if (v === null || v === undefined) return item.dataset.label + ': no data';
+              var fmt = metric==='pct' ? v.toFixed(1)+'%' : v.toFixed(2)+' nights';
+              return item.dataset.label + ': ' + fmt;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: {
+            color: 'rgba(245,240,232,0.4)',
+            font: { size: 11 },
+            maxTicksLimit: xMode==='calendar' ? 12 : 18,
+            maxRotation: 40
+          },
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          border: { color: 'rgba(255,255,255,0.08)' },
+          title: {
+            display: xMode==='days',
+            text: xTitle,
+            color: 'rgba(245,240,232,0.35)',
+            font: { size: 11 }
+          }
+        },
+        y: {
+          title: {
+            display: true,
+            text: yLabel,
+            color: 'rgba(245,240,232,0.35)',
+            font: { size: 11 }
+          },
+          ticks: {
+            color: 'rgba(245,240,232,0.4)',
+            font: { size: 11 },
+            callback: function(v) {
+              return metric==='pct' ? v.toFixed(0)+'%' : v.toFixed(1);
+            }
+          },
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          border: { color: 'rgba(255,255,255,0.08)' }
+        }
+      }
+    }
+  });
+}
+
+/* ── EVENT LISTENERS ───────────────────────────────────── */
+document.getElementById('cvDatePicker').addEventListener('change', cvRender);
+document.getElementById('cvWindowStart').addEventListener('change', cvRender);
+
+document.querySelectorAll('#cvXSeg button').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('#cvXSeg button').forEach(function(b){b.classList.remove('cv-active');});
+    btn.classList.add('cv-active');
+    cvRender();
+  });
+});
+
+document.querySelectorAll('#cvMetricSeg button').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('#cvMetricSeg button').forEach(function(b){b.classList.remove('cv-active');});
+    btn.classList.add('cv-active');
+    cvRender();
+  });
+});
+
+/* Prev / Next date nav */
+document.getElementById('cvPrevDate').addEventListener('click', function() {
+  var sel = document.getElementById('cvDatePicker');
+  var idx = stayDates.indexOf(sel.value);
+  if (idx > 0) { sel.value = stayDates[idx-1]; cvRender(); }
+});
+document.getElementById('cvNextDate').addEventListener('click', function() {
+  var sel = document.getElementById('cvDatePicker');
+  var idx = stayDates.indexOf(sel.value);
+  if (idx < stayDates.length-1) { sel.value = stayDates[idx+1]; cvRender(); }
+});
+
+/* Initial render */
+cvRender();
+
+})(); /* end IIFE */
+</script>
+
+</div>
+<!-- ── END BOOKING CURVE TAB ─────────────────────────── -->
 
 </div><!-- /main -->
 
@@ -1057,6 +1834,7 @@ async function loadFromDrive() {
       STATE.snapshotHistory = STATE.snapshotHistory.filter(h => h.date !== snap.snapshot_date);
       STATE.snapshotHistory.push(todayEntry);
       STATE.snapshotHistory.sort((a,b) => a.date.localeCompare(b.date));
+      window.cvReloadData && window.cvReloadData(STATE.snapshotHistory);
       const bst = snap.by_site_type || {};
       const sumNights = obj => { if (!obj) return 0; return months.reduce((a,m) => { const v = obj[m]; return a + (v && typeof v === 'object' ? (v.nights||0) : (v||0)); }, 0); };
       const sumRev = obj => { if (!obj) return 0; return months.reduce((a,m) => { const v = obj[m]; return a + (v && typeof v === 'object' ? (v.rev||0) : 0); }, 0); };
