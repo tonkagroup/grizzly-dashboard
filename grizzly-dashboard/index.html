@@ -1894,7 +1894,25 @@ async function sendAskMessage() {
     const resp = await fetch('/.netlify/functions/ask-question', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages: askHistory }),
+      body: JSON.stringify({
+  messages: askHistory,
+  dashboardContext: {
+    snapshotDate: STATE.snapshotDate,
+    onBooks26: STATE.onBooks26,
+    rate26: STATE.rate26,
+    rate26ByMonth: STATE.rate26ByMonth,
+    totalRevenue26: STATE.totalRevenue26,
+    oct26: STATE.oct26,
+    snapshotHistory: STATE.snapshotHistory,
+    siteTypes: STATE.siteTypes,
+    cancels: STATE.cancels,
+    projections: {
+      conservative: computeProjection('cons'),
+      base: computeProjection('base'),
+      optimistic: computeProjection('opt'),
+    },
+  },
+}),
     });
     thinkingDiv.remove();
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
